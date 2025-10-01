@@ -1,0 +1,292 @@
+import React, { useState, useEffect, useCallback } from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { MessageCircle, Flag, Bookmark, Eye, AlertTriangle, MapPin } from "lucide-react";
+import { Like } from "@/entities/Like";
+import { SavedPost } from "@/entities/SavedPost";
+import { User } from "@/entities/User";
+import { motion } from "framer-motion";
+import UserPreviewModal from "./UserPreviewModal";
+
+const ApplauseIcon = ({ className, filled = false }) => (
+  <svg viewBox="0 0 24 24" className={className} fill={filled ? "currentColor" : "none"} stroke="currentColor" strokeWidth="1.5">
+    <path d="M7 22V18M17 22V18M12 18V22M7 11.5C7 9.567 8.567 8 10.5 8H13.5C15.433 8 17 9.567 17 11.5C17 12.5 16.5 13.5 15.5 14.5L12 18L8.5 14.5C7.5 13.5 7 12.5 7 11.5Z"/>
+    <path d="M5 11C3.5 9 3.5 6.5 5 4.5M19 11C20.5 9 20.5 6.5 19 4.5M3 9C1 6.5 1 3 3 0.5M21 9C23 6.5 23 3 21 0.5"/>
+  </svg>
+);
+
+const styleLabels = {
+  portrait: { label: "Portrait", color: "bg-blue-100 text-blue-800" },
+  fashion: { label: "Fashion", color: "bg-purple-100 text-purple-800" },
+  boudoir: { label: "Boudoir", color: "bg-pink-100 text-pink-800" },
+  art_nude: { label: "Art Nude", color: "bg-rose-100 text-rose-800" },
+  street: { label: "Street", color: "bg-green-100 text-green-800" },
+  landscape: { label: "Landscape", color: "bg-emerald-100 text-emerald-800" },
+  nature: { label: "Nature", color: "bg-green-200 text-green-900" },
+  conceptual: { label: "Conceptual", color: "bg-amber-100 text-amber-800" },
+  editorial: { label: "Editorial", color: "bg-indigo-100 text-indigo-800" },
+  fine_art: { label: "Fine Art", color: "bg-violet-100 text-violet-800" },
+  wedding: { label: "Wedding", color: "bg-rose-100 text-rose-800" },
+  sport: { label: "Sport", color: "bg-orange-100 text-orange-800" },
+  advertising: { label: "Advertising", color: "bg-cyan-100 text-cyan-800" },
+  beauty: { label: "Beauty", color: "bg-pink-200 text-pink-900" },
+  lifestyle: { label: "Lifestyle", color: "bg-yellow-100 text-yellow-800" },
+  documentary: { label: "Documentary", color: "bg-gray-100 text-gray-800" },
+  travel: { label: "Travel", color: "bg-blue-200 text-blue-900" },
+  architecture: { label: "Architecture", color: "bg-slate-100 text-slate-800" },
+  macro: { label: "Macro", color: "bg-lime-100 text-lime-800" },
+  wildlife: { label: "Wildlife", color: "bg-green-100 text-green-800" },
+  food: { label: "Food", color: "bg-orange-200 text-orange-900" },
+  product: { label: "Product", color: "bg-purple-200 text-purple-900" },
+  automotive: { label: "Automotive", color: "bg-red-100 text-red-800" },
+  event: { label: "Event", color: "bg-teal-100 text-teal-800" },
+  corporate: { label: "Corporate", color: "bg-blue-300 text-blue-900" },
+  maternity: { label: "Maternity", color: "bg-pink-300 text-pink-900" },
+  family: { label: "Family", color: "bg-warm-100 text-warm-800" },
+  children: { label: "Children", color: "bg-yellow-200 text-yellow-900" },
+  pet: { label: "Pet", color: "bg-amber-200 text-amber-900" },
+  black_white: { label: "Black & White", color: "bg-gray-200 text-gray-900" },
+  abstract: { label: "Abstract", color: "bg-indigo-200 text-indigo-900" },
+  surreal: { label: "Surreal", color: "bg-purple-300 text-purple-900" },
+  vintage: { label: "Vintage", color: "bg-amber-300 text-amber-900" },
+  minimalist: { label: "Minimalist", color: "bg-slate-200 text-slate-900" },
+  candid: { label: "Candid", color: "bg-green-300 text-green-900" },
+  glamour: { label: "Glamour", color: "bg-rose-200 text-rose-900" }
+};
+
+const triggerWarningLabels = {
+  artistic_nudity: "Artistiek naakt",
+  blood: "Bloed",
+  violence: "Geweld",
+  drugs: "Drugs",
+  alcohol: "Alcohol",
+  smoking: "Roken",
+  mental_health: "Mental health",
+  self_harm: "Zelfbeschadiging",
+  eating_disorders: "Eetstoornissen",
+  death: "Dood",
+  weapons: "Wapens",
+  medical: "Medisch",
+  needles: "Naalden",
+  spiders: "Spinnen",
+  snakes: "Slangen",
+  heights: "Hoogtevrees",
+  claustrophobia: "Claustrofobie",
+  flashing_lights: "Flitsende lichten",
+  loud_sounds: "Harde geluiden"
+};
+
+export default function PostCard({ post }) {
+  const [user, setUser] = useState(null);
+  const [likes, setLikes] = useState([]);
+  const [isLiked, setIsLiked] = useState(false);
+  const [isSaved, setIsSaved] = useState(false);
+  const [showSensitive, setShowSensitive] = useState(false);
+  const [showUserPreview, setShowUserPreview] = useState(false);
+  const [previewUser, setPreviewUser] = useState(null);
+  const [showFullCaption, setShowFullCaption] = useState(false);
+
+  const loadLikes = useCallback(async () => {
+    const postLikes = await Like.filter({ post_id: post.id });
+    setLikes(postLikes);
+    if (user) setIsLiked(postLikes.some(like => like.user_email === user.email));
+  }, [post.id, user]);
+
+  const checkIfSaved = useCallback(async () => {
+    if (user) {
+      const saved = await SavedPost.filter({ post_id: post.id, user_email: user.email });
+      setIsSaved(saved.length > 0);
+    }
+  }, [post.id, user]);
+
+  useEffect(() => {
+    const loadUserData = async () => {
+      const hasTriggerWarnings = post.trigger_warnings && post.trigger_warnings.length > 0;
+      let currentUserPreference = false;
+      try {
+        const userData = await User.me();
+        setUser(userData);
+        currentUserPreference = userData.show_sensitive_content || false;
+      } catch (error) { 
+        setUser(null); 
+      } finally {
+        if (hasTriggerWarnings) setShowSensitive(currentUserPreference);
+        else setShowSensitive(true);
+      }
+    };
+    loadUserData();
+  }, [post.trigger_warnings]);
+
+  useEffect(() => {
+    if (user) {
+      loadLikes();
+      checkIfSaved();
+    }
+  }, [user, loadLikes, checkIfSaved]);
+
+  const handleLike = async () => {
+    if (!user) return;
+    if (isLiked) {
+      const likeToRemove = likes.find(like => like.user_email === user.email);
+      if (likeToRemove) await Like.delete(likeToRemove.id);
+    } else await Like.create({ post_id: post.id, user_email: user.email });
+    loadLikes();
+  };
+
+  const handleSave = async () => {
+    if (!user) return;
+    if (isSaved) {
+      const savedToRemove = await SavedPost.filter({ post_id: post.id, user_email: user.email });
+      if (savedToRemove[0]) await SavedPost.delete(savedToRemove[0].id);
+    } else await SavedPost.create({ post_id: post.id, user_email: user.email });
+    checkIfSaved();
+  };
+
+  const handleUserClick = async (personObject) => {
+    let userToPreview = personObject;
+    if (personObject && !personObject.display_name) {
+      const users = await User.filter({display_name: personObject.name});
+      if(users.length > 0) userToPreview = users[0];
+      else {
+        userToPreview = {
+          display_name: personObject.name,
+          avatar_url: `https://source.unsplash.com/400x400/?portrait`,
+          bio: `Een gepassioneerde ${personObject.role} binnen de Exhibit community.`,
+        }
+      }
+    }
+    setPreviewUser(userToPreview);
+    setShowUserPreview(true);
+  };
+
+  const hasTriggerWarnings = post.trigger_warnings && post.trigger_warnings.length > 0;
+  const shouldBlur = hasTriggerWarnings && !showSensitive;
+  const captionLength = post.caption?.length || 0;
+  const shouldTruncate = captionLength > 150;
+
+  return (
+    <>
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
+        <Card className="overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 border-slate-200/30 bg-white/80 backdrop-blur-sm rounded-2xl mx-4 mb-6">
+          <CardContent className="p-0">
+            <div className="relative">
+              {shouldBlur && (
+                <div className="absolute inset-0 z-10 bg-black/90 flex items-center justify-center">
+                  <div className="text-center text-white p-6">
+                    <AlertTriangle className="w-12 h-12 mx-auto mb-4 text-amber-400" />
+                    <p className="font-semibold text-lg mb-2">Gevoelige Inhoud</p>
+                    <div className="text-sm mb-4 space-y-1">
+                      {post.trigger_warnings.map((w, i) => <Badge key={i} variant="destructive" className="mr-1">{triggerWarningLabels[w] || w}</Badge>)}
+                    </div>
+                    <Button size="sm" onClick={() => setShowSensitive(true)} className="bg-white text-black hover:bg-gray-200">
+                      <Eye className="w-4 h-4 mr-2" />Toch bekijken
+                    </Button>
+                  </div>
+                </div>
+              )}
+              <img 
+                src={post.image_url} 
+                alt={post.title} 
+                className="w-full h-auto max-h-[80vh] object-contain bg-slate-100/50" 
+                onError={(e) => { 
+                  e.target.onerror = null; 
+                  e.target.src='https://images.unsplash.com/photo-1584824486509-112e4181ff6b?w=800&q=80'; 
+                }} 
+              />
+            </div>
+
+            <div className="p-3 space-y-2">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-1">
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    onClick={handleLike} 
+                    className={`hover:bg-blue-100 transition-colors ${isLiked ? 'text-blue-600 bg-blue-50' : 'text-slate-500'}`}
+                  >
+                    <ApplauseIcon className="w-5 h-5" />
+                  </Button>
+                  <Button variant="ghost" size="sm" className="text-slate-500 hover:bg-blue-100">
+                    <MessageCircle className="w-5 h-5" />
+                  </Button>
+                </div>
+                {likes.length > 0 && <span className="text-xs font-medium text-slate-600">{likes.length} applaus</span>}
+                <div className="flex items-center space-x-1">
+                  <Button 
+                    variant="ghost" 
+                    size="sm"
+                    onClick={handleSave} 
+                    className={`hover:bg-blue-100 transition-colors ${isSaved ? 'text-blue-600 bg-blue-50' : 'text-slate-500'}`}
+                  >
+                    <Bookmark className={`w-5 h-5 ${isSaved ? 'fill-current' : ''}`} />
+                  </Button>
+                  <Button variant="ghost" size="sm" className="text-slate-500 hover:bg-amber-100">
+                    <Flag className="w-5 h-5" />
+                  </Button>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <h3 className="font-semibold text-base text-slate-900">{post.title}</h3>
+                
+                {post.caption && (
+                  <div className="text-sm text-slate-600">
+                    {shouldTruncate && !showFullCaption ? (
+                      <>
+                        <p className="inline">{post.caption.substring(0, 150)}... </p>
+                        <button 
+                          onClick={() => setShowFullCaption(true)}
+                          className="text-blue-600 hover:underline font-medium inline"
+                        >
+                          meer
+                        </button>
+                      </>
+                    ) : (
+                      <p>{post.caption}</p>
+                    )}
+                  </div>
+                )}
+
+                {post.tagged_people && post.tagged_people.length > 0 && (
+                  <div className="flex flex-wrap gap-2 text-xs">
+                    {post.tagged_people.map((person, index) => (
+                      <button 
+                        key={index}
+                        onClick={() => handleUserClick(person)} 
+                        className="text-blue-600 hover:underline"
+                      >
+                        {person.name} ({person.role.replace('_', ' ')})
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+              
+              <div className="flex flex-wrap gap-1 pt-1">
+                {[post.photography_style, ...(post.tags || [])].slice(0, 4).map((tagId, index) => {
+                  const tagInfo = styleLabels[tagId];
+                  if (!tagInfo) return null;
+                  return <Badge key={index} variant="outline" className={`${tagInfo.color} text-xs py-0 px-2 font-normal`}>{tagInfo.label}</Badge>;
+                })}
+                {post.tags && post.tags.length > 3 && (
+                  <Badge variant="outline" className="text-xs py-0 px-2 font-normal text-slate-500">
+                    +{post.tags.length - 3}
+                  </Badge>
+                )}
+              </div>
+
+              {post.location && (
+                <div className="flex items-center text-xs text-slate-400 pt-1">
+                  <MapPin className="w-3 h-3 mr-1" />
+                  <span className="truncate">{post.location}</span>
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      </motion.div>
+      <UserPreviewModal user={previewUser} open={showUserPreview} onOpenChange={setShowUserPreview} />
+    </>
+  );
+}

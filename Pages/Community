@@ -1,0 +1,107 @@
+import React, { useState, useEffect } from "react";
+import { Community as CommunityEntity } from "@/entities/Community";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Users, Shield, Handshake, Camera, Award, Zap } from "lucide-react";
+import { motion } from "framer-motion";
+
+const communityIcons = {
+  safety_consent: Shield,
+  networking: Handshake,
+  techniques: Camera,
+  equipment: Zap,
+  inspiration: Award
+};
+
+const communityColors = {
+  safety_consent: "bg-red-100 text-red-800 border-red-200",
+  networking: "bg-blue-100 text-blue-800 border-blue-200",
+  techniques: "bg-purple-100 text-purple-800 border-purple-200",
+  equipment: "bg-green-100 text-green-800 border-green-200",
+  inspiration: "bg-amber-100 text-amber-800 border-amber-200"
+};
+
+export default function Community() {
+  const [communities, setCommunities] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    loadCommunities();
+  }, []);
+
+  const loadCommunities = async () => {
+    setLoading(true);
+    const allCommunities = await CommunityEntity.list();
+    setCommunities(allCommunities);
+    setLoading(false);
+  };
+
+  return (
+    <div className="max-w-6xl mx-auto px-4 py-2">
+      {loading ? (
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {Array(6).fill(0).map((_, i) => (
+            <Card key={i} className="animate-pulse">
+              <CardHeader>
+                <div className="bg-slate-200 h-6 rounded mb-2"></div>
+                <div className="bg-slate-200 h-4 rounded w-2/3"></div>
+              </CardHeader>
+              <CardContent>
+                <div className="bg-slate-200 h-16 rounded"></div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      ) : communities.length === 0 ? (
+        <div className="text-center py-16">
+          <Users className="w-16 h-16 mx-auto mb-4 text-slate-300" />
+          <h3 className="text-lg font-medium text-slate-900 mb-2">Communities komen binnenkort</h3>
+          <p className="text-slate-600">We werken hard aan het opzetten van inspirerende community spaces</p>
+        </div>
+      ) : (
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {communities.map((community, index) => {
+            const IconComponent = communityIcons[community.category] || Users;
+            const colorClass = communityColors[community.category] || "bg-gray-100 text-gray-800 border-gray-200";
+            
+            return (
+              <motion.div
+                key={community.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.1 }}
+              >
+                <Card className="hover:shadow-lg transition-all duration-300 border-slate-200 h-full bg-white/80 backdrop-blur-sm">
+                  <CardHeader>
+                    <div className="flex items-start justify-between">
+                      <div className="flex items-center space-x-3">
+                        <div className={`p-2 rounded-lg ${colorClass} border`}>
+                          <IconComponent className="w-5 h-5" />
+                        </div>
+                        <div>
+                          <CardTitle className="text-lg text-slate-900">{community.name}</CardTitle>
+                          <Badge variant="outline" className={`mt-1 ${colorClass} border text-xs`}>
+                            {community.member_count} leden
+                          </Badge>
+                        </div>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="pt-0">
+                    <p className="text-slate-600 text-sm leading-relaxed mb-4">
+                      {community.description}
+                    </p>
+                    <Button variant="outline" className="w-full">
+                      Bekijk community
+                    </Button>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}

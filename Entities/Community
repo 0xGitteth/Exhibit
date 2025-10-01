@@ -1,0 +1,39 @@
+{
+  "name": "Community",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Naam van de community"
+    },
+    "description": {
+      "type": "string",
+      "description": "Beschrijving van de community"
+    },
+    "welcome_message": {
+      "type": "string",
+      "description": "Welkomstbericht voor nieuwe leden"
+    },
+    "member_count": {
+      "type": "number",
+      "default": 0,
+      "description": "Aantal leden"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "safety_consent",
+        "networking",
+        "techniques",
+        "equipment",
+        "inspiration"
+      ],
+      "description": "Categorie van de community"
+    }
+  },
+  "required": [
+    "name",
+    "description",
+    "welcome_message"
+  ]
+}

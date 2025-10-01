@@ -1,0 +1,23 @@
+{
+  "name": "Comment",
+  "type": "object",
+  "properties": {
+    "post_id": {
+      "type": "string",
+      "description": "ID van de post"
+    },
+    "content": {
+      "type": "string",
+      "description": "Inhoud van de reactie"
+    },
+    "author_name": {
+      "type": "string",
+      "description": "Naam van de auteur"
+    }
+  },
+  "required": [
+    "post_id",
+    "content",
+    "author_name"
+  ]
+}

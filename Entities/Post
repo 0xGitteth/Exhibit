@@ -1,0 +1,188 @@
+{
+  "name": "Post",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Titel van de post"
+    },
+    "caption": {
+      "type": "string",
+      "description": "Bijschrift bij de foto"
+    },
+    "image_url": {
+      "type": "string",
+      "description": "URL naar de geüploade foto"
+    },
+    "photography_style": {
+      "type": "string",
+      "enum": [
+        "portrait",
+        "fashion",
+        "boudoir",
+        "art_nude",
+        "street",
+        "landscape",
+        "nature",
+        "conceptual",
+        "editorial",
+        "fine_art",
+        "wedding",
+        "sport",
+        "advertising",
+        "beauty",
+        "lifestyle",
+        "documentary",
+        "travel",
+        "architecture",
+        "macro",
+        "wildlife",
+        "food",
+        "product",
+        "automotive",
+        "event",
+        "corporate",
+        "maternity",
+        "family",
+        "children",
+        "pet",
+        "black_white",
+        "abstract",
+        "surreal",
+        "vintage",
+        "minimalist",
+        "candid",
+        "glamour"
+      ],
+      "description": "Hoofd fotografiestijl"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "portrait",
+          "fashion",
+          "boudoir",
+          "art_nude",
+          "street",
+          "landscape",
+          "nature",
+          "conceptual",
+          "editorial",
+          "fine_art",
+          "wedding",
+          "sport",
+          "advertising",
+          "beauty",
+          "lifestyle",
+          "documentary",
+          "travel",
+          "architecture",
+          "macro",
+          "wildlife",
+          "food",
+          "product",
+          "automotive",
+          "event",
+          "corporate",
+          "maternity",
+          "family",
+          "children",
+          "pet",
+          "black_white",
+          "abstract",
+          "surreal",
+          "vintage",
+          "minimalist",
+          "candid",
+          "glamour"
+        ]
+      },
+      "description": "Extra stijlen en tags voor de post"
+    },
+    "trigger_warnings": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "artistic_nudity",
+          "blood",
+          "violence",
+          "drugs",
+          "alcohol",
+          "smoking",
+          "mental_health",
+          "self_harm",
+          "eating_disorders",
+          "death",
+          "weapons",
+          "medical",
+          "needles",
+          "spiders",
+          "snakes",
+          "heights",
+          "claustrophobia",
+          "flashing_lights",
+          "loud_sounds"
+        ]
+      },
+      "description": "Triggerwarnings voor gevoelige inhoud"
+    },
+    "photographer_name": {
+      "type": "string",
+      "description": "Naam van de fotograaf"
+    },
+    "model_name": {
+      "type": "string",
+      "description": "Naam van het model"
+    },
+    "tagged_people": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Naam van getagde persoon"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "model",
+              "photographer",
+              "makeup_artist",
+              "stylist",
+              "assistant",
+              "other"
+            ],
+            "description": "Rol van de persoon"
+          },
+          "instagram": {
+            "type": "string",
+            "description": "Instagram handle (optioneel)"
+          }
+        },
+        "required": [
+          "name",
+          "role"
+        ]
+      },
+      "description": "Mensen getagd in deze foto"
+    },
+    "location": {
+      "type": "string",
+      "description": "Locatie waar foto is gemaakt"
+    },
+    "is_approved": {
+      "type": "boolean",
+      "default": true,
+      "description": "Of de post is goedgekeurd door content moderatie"
+    }
+  },
+  "required": [
+    "title",
+    "image_url",
+    "photography_style"
+  ]
+}
