@@ -1,1 +1,3 @@
-exports.me = async () => ({ email: 'stub@exhibit.local' });
+export const User = {
+	me: async () => ({ email: 'stub@exhibit.local', display_name: 'Stub User', roles: ['model'] })
+};
