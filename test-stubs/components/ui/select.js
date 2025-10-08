@@ -1,6 +1,42 @@
-const React = require('react');
-exports.Select = ({ children }) => React.createElement('div', null, children);
-exports.SelectContent = ({ children }) => React.createElement('div', null, children);
-exports.SelectItem = ({ children }) => React.createElement('div', null, children);
-exports.SelectTrigger = ({ children }) => React.createElement('div', null, children);
-exports.SelectValue = ({ children }) => React.createElement('div', null, children);
+import React from 'react';
+import PropTypes from 'prop-types';
+
+export function Select({ children }) {
+  return React.createElement('div', null, children);
+}
+
+Select.propTypes = {
+  children: PropTypes.node,
+};
+
+export function SelectContent({ children }) {
+  return React.createElement('div', null, children);
+}
+
+SelectContent.propTypes = {
+  children: PropTypes.node,
+};
+
+export function SelectItem({ children, ...props }) {
+  return React.createElement('div', props, children);
+}
+
+SelectItem.propTypes = {
+  children: PropTypes.node,
+};
+
+export function SelectTrigger({ children, ...props }) {
+  return React.createElement('div', props, children);
+}
+
+SelectTrigger.propTypes = {
+  children: PropTypes.node,
+};
+
+export function SelectValue({ children }) {
+  return React.createElement('div', null, children);
+}
+
+SelectValue.propTypes = {
+  children: PropTypes.node,
+};

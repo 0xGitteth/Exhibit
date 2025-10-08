@@ -1,2 +1,11 @@
-const React = require('react');
-exports.Badge = ({ children }) => React.createElement('span', null, children);
+import React from 'react';
+import PropTypes from 'prop-types';
+
+export function Badge({ children, className }) {
+  return React.createElement('span', { className }, children);
+}
+
+Badge.propTypes = {
+  children: PropTypes.node,
+  className: PropTypes.string,
+};

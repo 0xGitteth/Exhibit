@@ -1,5 +1,28 @@
-const React = require('react');
+import React from 'react';
+import PropTypes from 'prop-types';
 
-exports.Avatar = ({ children, className }) => React.createElement('div', { className }, children);
-exports.AvatarImage = ({ src }) => React.createElement('img', { src });
-exports.AvatarFallback = ({ children }) => React.createElement('div', null, children);
+export function Avatar({ children, className }) {
+  return React.createElement('div', { className }, children);
+}
+
+Avatar.propTypes = {
+  children: PropTypes.node,
+  className: PropTypes.string,
+};
+
+export function AvatarImage({ src, alt = '' }) {
+  return React.createElement('img', { src, alt });
+}
+
+AvatarImage.propTypes = {
+  src: PropTypes.string,
+  alt: PropTypes.string,
+};
+
+export function AvatarFallback({ children }) {
+  return React.createElement('div', null, children);
+}
+
+AvatarFallback.propTypes = {
+  children: PropTypes.node,
+};
