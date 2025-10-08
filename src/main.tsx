@@ -12,6 +12,21 @@ const routerBasename = (() => {
   return baseUrl.replace(/\/+$/, '') || undefined;
 })();
 
+const searchParams = new URLSearchParams(window.location.search);
+const redirectParam = searchParams.get('redirect');
+if (redirectParam) {
+  searchParams.delete('redirect');
+  const basePath = routerBasename ?? '';
+  const normalizedRedirect = redirectParam.startsWith('/') ? redirectParam : `/${redirectParam}`;
+  const newPath = `${basePath}${normalizedRedirect}`.replace(
+    /\/+$/,
+    normalizedRedirect.endsWith('/') ? '/' : '',
+  );
+  const newSearch = searchParams.toString();
+  const newUrl = `${newPath}${newSearch ? `?${newSearch}` : ''}${window.location.hash}`;
+  window.history.replaceState(null, '', newUrl);
+}
+
 function App() {
   return (
     <BrowserRouter basename={routerBasename}>
