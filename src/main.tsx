@@ -6,9 +6,18 @@ import AnalyticsPage from '../Pages/Analytics';
 
 const routerBasename = (() => {
   const baseUrl = import.meta.env.BASE_URL || '/';
-  if (baseUrl === '/') {
-    return undefined;
+  const normalizedBase = baseUrl.replace(/\/+$/, '/');
+
+  if (normalizedBase === '/' || normalizedBase === './') {
+    const pathSegments = window.location.pathname.split('/').filter(Boolean);
+    if (pathSegments.length === 0) {
+      return undefined;
+    }
+
+    const repositoryBase = `/${pathSegments[0]}`;
+    return repositoryBase === '/' ? undefined : repositoryBase;
   }
+
   return baseUrl.replace(/\/+$/, '') || undefined;
 })();
 
