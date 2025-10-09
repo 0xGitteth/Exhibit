@@ -9,7 +9,20 @@ export default defineConfig(({ command, mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
   const repository = process.env.GITHUB_REPOSITORY?.split('/')?.pop();
   const defaultBuildBase = repository ? `/${repository}/` : './';
-  const base = env.VITE_BASE_URL || (command === 'build' ? defaultBuildBase : '/');
+
+  const explicitBase = env.VITE_BASE_URL?.trim();
+  const normalizedExplicitBase = (() => {
+    if (!explicitBase) return undefined;
+
+    const withTrailingSlash = explicitBase.endsWith('/') ? explicitBase : `${explicitBase}/`;
+    if (withTrailingSlash.startsWith('/') || withTrailingSlash.startsWith('./')) {
+      return withTrailingSlash;
+    }
+
+    return `/${withTrailingSlash}`;
+  })();
+
+  const base = normalizedExplicitBase ?? (command === 'build' ? defaultBuildBase : '/');
 
   return {
     base,
