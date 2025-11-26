@@ -1,16 +1,16 @@
-const defaultBase =
-  typeof process !== 'undefined' && process.env.VITE_API_BASE
-    ? process.env.VITE_API_BASE
-    : 'http://localhost:4000/api';
 const envBase =
   typeof import.meta !== 'undefined' && import.meta.env?.VITE_API_BASE
     ? import.meta.env.VITE_API_BASE
+    : undefined;
+const ssrBase =
+  typeof process !== 'undefined' && process.env.VITE_API_BASE
+    ? process.env.VITE_API_BASE
     : undefined;
 const useStubApi =
   (typeof process !== 'undefined' && process.env.USE_STUB_API === 'true') ||
   (typeof import.meta !== 'undefined' && import.meta.env?.VITE_USE_STUB_API === 'true');
 
-const API_BASE = envBase || defaultBase;
+const API_BASE = envBase || ssrBase || '/api';
 
 const stubState = {
   user: {
