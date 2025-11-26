@@ -29,6 +29,7 @@ Deze repository bevat een multi-stage Dockerfile die eerst de Vite-frontend bouw
 | Variabele           | Beschrijving                                                    | Standaard                    |
 | ------------------- | --------------------------------------------------------------- | ---------------------------- |
 | `VITE_API_BASE`     | API-basis-URL tijdens het bouwen van de frontend.               | `http://localhost:4000/api`  |
+| `VITE_BASE_URL`     | Basis-URL waaronder de frontend wordt gehost tijdens runtime.   | `/`                          |
 | `VITE_USE_STUB_API` | Gebruik de stub-API in de frontend (`true`/`false`).            | `false`                      |
 | `PORT`              | Poort waarop de backend luistert.                               | `4000`                       |
 | `CLIENT_ORIGIN`     | Toegestane CORS-origin (leeg laat alle origins toe).            | _leeg_                       |
@@ -36,12 +37,15 @@ Deze repository bevat een multi-stage Dockerfile die eerst de Vite-frontend bouw
 | `UPLOAD_DIR`        | Locatie op de host/container waar uploads worden opgeslagen.    | `/data/uploads`              |
 | `DATABASE_URL`      | Database connectiestring (placeholder voor toekomstige opslag). | `file:./data/exhibit.sqlite` |
 
+Laat `VITE_BASE_URL` leeg om automatisch terug te vallen op de root (`/`).
+
 ### Image bouwen en draaien
 
 1. Build de image met optionele build-args voor de frontend:
    ```bash
    docker build \
      --build-arg VITE_API_BASE="https://api.example.com" \
+     --build-arg VITE_BASE_URL="/" \
      --build-arg VITE_USE_STUB_API=false \
      -t exhibit .
    ```
@@ -68,5 +72,5 @@ Pas eventueel de waarden in een `.env`-bestand aan om `PORT`, `VITE_API_BASE`, `
 ### Deployen naar Sliplane
 
 - Wijs in Sliplane de map met deze repository aan en kies de meegeleverde `Dockerfile` als build-instructie.
-- Zet de gewenste omgeving variabelen (`PORT`, `CLIENT_ORIGIN`, `DATABASE_URL`, `VITE_API_BASE`) in het Sliplane-dashboard.
+- Zet de gewenste omgeving variabelen (`PORT`, `CLIENT_ORIGIN`, `DATABASE_URL`, `VITE_API_BASE`, `VITE_BASE_URL`) in het Sliplane-dashboard. Laat `VITE_BASE_URL` leeg of op `/` voor een root-deploy.
 - Zorg dat poort `4000` (of de ingestelde waarde) wordt blootgesteld in de Sliplane service-instellingen.
