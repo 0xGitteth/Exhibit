@@ -1,8 +1,8 @@
 
 import React, { useState, useEffect } from "react";
-import { User } from "@/entities/User";
-import { SavedPost } from "@/entities/SavedPost";
-import { Post } from "@/entities/Post";
+import { User } from "../entities/User.js";
+import { SavedPost } from "../entities/SavedPost.js";
+import { Post } from "../entities/Post.js";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -13,7 +13,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { UploadFile } from "@/integrations/Core";
+import { UploadFile } from "../src/integrations/Core";
 import { motion } from "framer-motion";
 import HouseRulesModal from "@/components/HouseRulesModal";
 import { createPageUrl } from "@/utils";

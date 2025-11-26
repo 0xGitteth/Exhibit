@@ -9,7 +9,10 @@ declare module '@/entities/User' {
   };
   export const User: {
     me: () => Promise<User>;
-    filter: (_q: any) => Promise<User[]>;
+    update: (_data: Partial<User>) => Promise<User>;
+    updateMyUserData: (_data: Partial<User>) => Promise<User>;
+    loginWithRedirect: (_redirectTo?: string) => Promise<User>;
+    logout: () => Promise<void>;
   };
   export default User;
 }
@@ -29,6 +32,7 @@ declare module '@/entities/Post' {
   };
   export const Post: {
     filter: (_q: any) => Promise<Post[]>;
+    create: (_data: Post) => Promise<Post>;
   };
   export default Post;
 }
@@ -37,8 +41,6 @@ declare module '@/entities/Like' {
   export type Like = { id: string | number; user_email: string; post_id: string | number };
   export const Like: {
     filter: (_q: any) => Promise<Like[]>;
-    create: (_data: any) => Promise<any>;
-    delete: (_id: string | number) => Promise<any>;
   };
   export default Like;
 }
@@ -47,8 +49,6 @@ declare module '@/entities/SavedPost' {
   export type SavedPost = { id: string | number; user_email: string; post_id: string | number };
   export const SavedPost: {
     filter: (_q: any) => Promise<SavedPost[]>;
-    create: (_data: any) => Promise<any>;
-    delete: (_id: string | number) => Promise<any>;
   };
   export default SavedPost;
 }

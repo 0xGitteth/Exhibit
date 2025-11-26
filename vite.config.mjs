@@ -15,8 +15,8 @@ export default defineConfig(({ mode }) => {
     plugins: [react()],
     resolve: {
       alias: [
-        { find: '@/entities', replacement: path.resolve(__dirname, 'test-stubs/entities') },
-        { find: '@/integrations', replacement: path.resolve(__dirname, 'test-stubs/integrations') },
+        { find: '@/entities', replacement: path.resolve(__dirname, 'entities') },
+        { find: '@/integrations', replacement: path.resolve(__dirname, 'src/integrations') },
         { find: '@/components/ui', replacement: path.resolve(__dirname, 'test-stubs/components/ui') },
         { find: '@/components', replacement: path.resolve(__dirname, 'Components') },
         { find: '@/pages', replacement: path.resolve(__dirname, 'Pages') },

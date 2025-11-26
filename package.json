@@ -13,8 +13,8 @@
     "prepare": "husky install",
     "prepush": "npm run typecheck",
     "lint-staged": "npx lint-staged",
-    "smoke:test": "NODE_PATH=./test-stubs node -r ts-node/register ./scripts/smoke/smoke-render.ts",
-    "smoke:test:cjs": "NODE_PATH=./test-stubs node ./scripts/smoke/smoke-render.cjs"
+    "smoke:test": "USE_STUB_API=true node -r ts-node/register/transpile-only ./scripts/smoke/smoke-render.ts",
+    "smoke:test:cjs": "USE_STUB_API=true node ./scripts/smoke/smoke-render.cjs"
   },
   "devDependencies": {
     "@types/node": "20.11.1",
@@ -44,9 +44,17 @@
       "prettier --write"
     ]
   },
+  "ts-node": {
+    "compilerOptions": {
+      "module": "CommonJS"
+    }
+  },
   "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
     "framer-motion": "10.12.16",
     "lucide-react": "0.268.0",
+    "multer": "^2.0.2",
     "prop-types": "^15.8.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
