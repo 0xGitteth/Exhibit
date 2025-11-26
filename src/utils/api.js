@@ -14,7 +14,13 @@ const isDev =
   (typeof import.meta !== 'undefined' && import.meta.env?.DEV) ||
   (typeof process !== 'undefined' && process.env.NODE_ENV === 'development');
 
-const API_BASE = envBase || ssrBase || (isDev ? 'http://localhost:4000/api' : '/api');
+// Vite's dev server doesn't proxy /api to the backend, so keep the localhost
+// default when running locally without an explicit base override.
+const isViteDevServer =
+  typeof window !== 'undefined' && ['5173', '4173'].includes(window.location?.port);
+
+const API_BASE =
+  envBase || ssrBase || (isDev || isViteDevServer ? 'http://localhost:4000/api' : '/api');
 
 const stubState = {
   user: {
