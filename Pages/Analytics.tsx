@@ -47,7 +47,7 @@ export function AnalyticsPage(): JSX.Element {
       try {
         const user = await User.me();
         const posts = await Post.filter({ created_by: user.email });
-        const postIds = posts.map((p) => p.id);
+        const postIds = posts.map((p: { id: string }) => p.id);
         let totalLikes = 0;
         let totalSaves = 0;
         if (postIds.length > 0) {
