@@ -10,6 +10,16 @@ Deze repository bevat een GitHub Actions workflow die automatisch een productieb
 2. Ga naar het tabblad **Actions** om de workflow `Deploy to GitHub Pages` te volgen.
 3. Na een geslaagde run staat de site live op `https://jouw-github-gebruikersnaam.github.io/show-app-preview/`.
 
+## Git-hooks voor ontwikkelaars
+
+Husky-hooks worden niet automatisch tijdens `npm install` geconfigureerd, zodat installaties ook zonder Git blijven werken. Wil je lokaal pre-commit- en pre-push-hooks gebruiken, voer dan na het clonen:
+
+```bash
+npm run setup:hooks
+```
+
+Het script slaat de installatie over als Git niet beschikbaar is.
+
 ## Docker
 
 Deze repository bevat een multi-stage Dockerfile die eerst de Vite-frontend bouwt en vervolgens dezelfde container gebruikt om de backend-API én de gebuilde statics te serveren.
