@@ -116,7 +116,15 @@ app.post('/api/uploads', upload.single('file'), (req, res) => {
   res.status(201).json({ file_url: fileUrl });
 });
 
-app.get(/^\/(?!api|uploads|assets).*$/, (req, res, next) => {
+app.get('*', (req, res, next) => {
+  if (
+    req.path.startsWith('/api') ||
+    req.path.startsWith('/uploads') ||
+    req.path.startsWith('/assets')
+  ) {
+    return next();
+  }
+
   const indexPath = path.join(staticDir, 'index.html');
   if (fs.existsSync(indexPath)) {
     return res.sendFile(indexPath);
