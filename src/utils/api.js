@@ -10,7 +10,11 @@ const useStubApi =
   (typeof process !== 'undefined' && process.env.USE_STUB_API === 'true') ||
   (typeof import.meta !== 'undefined' && import.meta.env?.VITE_USE_STUB_API === 'true');
 
-const API_BASE = envBase || ssrBase || '/api';
+const isDev =
+  (typeof import.meta !== 'undefined' && import.meta.env?.DEV) ||
+  (typeof process !== 'undefined' && process.env.NODE_ENV === 'development');
+
+const API_BASE = envBase || ssrBase || (isDev ? 'http://localhost:4000/api' : '/api');
 
 const stubState = {
   user: {
