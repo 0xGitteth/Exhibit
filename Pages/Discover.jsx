@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import PostCard from "../components/PostCard";
+import PostCard from "../Components/PostCard";
 
 const photographyStyles = [
   { id: "portrait", label: "Portrait", icon: "👤" }, 

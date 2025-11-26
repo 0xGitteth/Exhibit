@@ -3,12 +3,12 @@ import { Community as CommunityEntity } from "../entities/Community.js";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Users, Shield, Handshake, Camera, Award, Zap } from "lucide-react";
+import { Users, Shield, HeartHandshake, Camera, Award, Zap } from "lucide-react";
 import { motion } from "framer-motion";
 
 const communityIcons = {
   safety_consent: Shield,
-  networking: Handshake,
+  networking: HeartHandshake,
   techniques: Camera,
   equipment: Zap,
   inspiration: Award
