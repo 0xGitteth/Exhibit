@@ -130,7 +130,7 @@ app.get('*', (req, res, next) => {
     return res.sendFile(indexPath);
   }
 
-  return res.status(404).send('Not found');
+  return next();
 });
 
 app.listen(port, () => {
