@@ -44,9 +44,11 @@ export default function Layout({ children, currentPageName }) {
   };
 
   const handlePostCreated = async (newPost) => {
-    await Post.create(newPost);
-    if (location.pathname === PAGE_ROUTES.timeline) {
-      window.location.reload();
+    try {
+      const createdPost = await Post.create(newPost);
+      window.dispatchEvent(new CustomEvent('post:created', { detail: createdPost || newPost }));
+    } catch (error) {
+      console.error('Error creating post:', error);
     }
   };
 
@@ -136,7 +138,7 @@ export default function Layout({ children, currentPageName }) {
           </div>
 
           <button
-            onClick={() => setShowCreatePost(true)}
+            onClick={() => setShowCreatePost((prev) => !prev)}
             className="w-12 h-12 rounded-full shadow-lg bg-gradient-to-br from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 transition-all duration-300 hover:scale-105 active:scale-95 flex items-center justify-center"
           >
             <Plus className="w-6 h-6 text-white" />
