@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import { Card, CardContent } from '@/components/ui/card';
 import { Post } from '../entities/Post.js';
@@ -14,20 +14,30 @@ export default function Timeline() {
   const [posts, setPosts] = useState<PostSummary[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const loadPosts = useCallback(async () => {
+    try {
+      const recentPosts = await Post.filter({});
+      setPosts(recentPosts || []);
+    } catch (error) {
+      setPosts([]);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
   useEffect(() => {
-    const loadPosts = async () => {
-      try {
-        const recentPosts = await Post.filter({});
-        setPosts(recentPosts || []);
-      } catch (error) {
-        setPosts([]);
-      } finally {
-        setLoading(false);
-      }
+    loadPosts();
+  }, [loadPosts]);
+
+  useEffect(() => {
+    const handlePostCreated = () => {
+      setLoading(true);
+      loadPosts();
     };
 
-    loadPosts();
-  }, []);
+    window.addEventListener('post:created', handlePostCreated);
+    return () => window.removeEventListener('post:created', handlePostCreated);
+  }, [loadPosts]);
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-6 space-y-4">

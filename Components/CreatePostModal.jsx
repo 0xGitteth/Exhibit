@@ -250,10 +250,20 @@ export default function CreatePostModal({ open, onOpenChange, onPostCreated }) {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-4xl max-h-[95vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-bold text-blue-900 flex items-center">
-            <Camera className="w-6 h-6 mr-2" />
-            Nieuwe foto delen
-          </DialogTitle>
+          <div className="flex items-start justify-between gap-4">
+            <DialogTitle className="text-2xl font-bold text-blue-900 flex items-center">
+              <Camera className="w-6 h-6 mr-2" />
+              Nieuwe foto delen
+            </DialogTitle>
+            <button
+              type="button"
+              onClick={() => onOpenChange(false)}
+              className="text-slate-500 hover:text-slate-800 transition-colors"
+              aria-label="Sluit de modal"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
         </DialogHeader>
         <div className="space-y-6">
           {contentError && (
