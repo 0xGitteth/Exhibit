@@ -170,7 +170,10 @@ function filterSavedPosts(filter = {}) {
   return db.prepare(`SELECT * FROM saved_posts ${where}`).all(...params);
 }
 
-initializeDatabase();
+const isCli = require.main === module;
+if (!isCli) {
+  initializeDatabase();
+}
 
 module.exports = {
   db,
@@ -183,7 +186,7 @@ module.exports = {
   filterSavedPosts,
 };
 
-if (require.main === module) {
+if (isCli) {
   const command = process.argv[2];
   if (command === 'migrate') {
     applyScriptsFromDir('migrations', 'schema_migrations');
