@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Post } from "@/entities/Post";
-import { User } from "@/entities/User";
+import { Post } from "../entities/Post.js";
+import { User } from "../entities/User.js";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Search, User as UserIcon, Palette } from "lucide-react";

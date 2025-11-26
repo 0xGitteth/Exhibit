@@ -10,7 +10,10 @@
     "skipLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./*"]
+      "@/*": ["./src/*"],
+      "@/entities/*": ["./entities/*"],
+      "@/integrations/*": ["./src/integrations/*"],
+      "@/components/*": ["./test-stubs/components/*"]
     },
     "strict": true,
     "noImplicitAny": true,

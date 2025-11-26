@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { User } from '@/entities/User';
-import { Post } from '@/entities/Post';
-import { SavedPost } from '@/entities/SavedPost';
-import { Like } from '@/entities/Like';
+import { User } from '../entities/User.js';
+import { Post } from '../entities/Post.js';
+import { SavedPost } from '../entities/SavedPost.js';
+import { Like } from '../entities/Like.js';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { BarChart2, Users, Heart, Bookmark, Eye } from 'lucide-react';
 

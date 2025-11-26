@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import { User } from '@/entities/User';
+import { User } from './entities/User.js';
 import { Search, UserIcon, LayoutGrid, MessageSquare, Plus, Users } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import CreatePostModal from '@/components/CreatePostModal';
 import HouseRulesModal from '@/components/HouseRulesModal';
-import { Post } from '@/entities/Post';
+import { Post } from './entities/Post.js';
 
 const navigationItems = [
   { name: 'Gallery', icon: LayoutGrid, path: 'Timeline' },
