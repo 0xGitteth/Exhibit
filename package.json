@@ -13,8 +13,8 @@
     "setup:hooks": "command -v git >/dev/null 2>&1 && husky install || echo \"Git niet gevonden; Husky-installatie overgeslagen\"",
     "prepush": "npm run typecheck",
     "lint-staged": "npx lint-staged",
-    "smoke:test": "USE_STUB_API=true node -r ts-node/register/transpile-only ./scripts/smoke/smoke-render.ts",
-    "smoke:test:cjs": "USE_STUB_API=true node ./scripts/smoke/smoke-render.cjs"
+    "smoke:test": "node -r ts-node/register/transpile-only ./scripts/smoke/smoke-render.ts",
+    "smoke:test:cjs": "node ./scripts/smoke/smoke-render.cjs"
   },
   "devDependencies": {
     "@types/node": "20.11.1",
