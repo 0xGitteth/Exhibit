@@ -3,7 +3,7 @@ import './index.css';
 
 import React from 'react';
 import { createRoot } from 'react-dom/client';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 import Layout from '../Layout';
 import AnalyticsPage from '../Pages/Analytics';
@@ -11,7 +11,7 @@ import CommunityPage from '../Pages/Community.jsx';
 import ProfilePage from '../Pages/Profile.jsx';
 import SearchPage from '../Pages/Discover.jsx';
 import TimelinePage from '../Pages/Timeline';
-import { createPageUrl } from '@/utils';
+import { PAGE_ROUTES } from '@/utils';
 
 const routerBasename = (() => {
   const baseUrl = import.meta.env.BASE_URL || '/';
@@ -44,15 +44,11 @@ function App() {
   return (
     <BrowserRouter basename={routerBasename}>
       <Routes>
-        <Route path="/" element={<Navigate to={createPageUrl('Timeline')} replace />} />
-        <Route path={createPageUrl('Timeline')} element={renderPage('Timeline', <TimelinePage />)} />
-        <Route
-          path={createPageUrl('Community')}
-          element={renderPage('Community', <CommunityPage />)}
-        />
-        <Route path={createPageUrl('Discover')} element={renderPage('Discover', <SearchPage />)} />
-        <Route path={createPageUrl('Profile')} element={renderPage('Profile', <ProfilePage />)} />
-        <Route path="/analytics" element={renderPage('Analytics', <AnalyticsPage />)} />
+        <Route path={PAGE_ROUTES.timeline} element={renderPage('Timeline', <TimelinePage />)} />
+        <Route path={PAGE_ROUTES.community} element={renderPage('Community', <CommunityPage />)} />
+        <Route path={PAGE_ROUTES.discover} element={renderPage('Discover', <SearchPage />)} />
+        <Route path={PAGE_ROUTES.profile} element={renderPage('Profile', <ProfilePage />)} />
+        <Route path={PAGE_ROUTES.analytics} element={renderPage('Analytics', <AnalyticsPage />)} />
       </Routes>
     </BrowserRouter>
   );
