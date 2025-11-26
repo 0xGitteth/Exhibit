@@ -1,4 +1,4 @@
-import { uploadFile } from '@/utils/api';
+import { uploadFile } from '../utils/api.js';
 
 export const UploadFile = async ({ file }: { file: File }) => {
   return uploadFile(file);
