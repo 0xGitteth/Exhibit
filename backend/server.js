@@ -5,6 +5,15 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 const crypto = require('crypto');
+const {
+  initializeDatabase,
+  getCurrentUser,
+  updateCurrentUser,
+  filterPosts,
+  createPost,
+  filterLikes,
+  filterSavedPosts,
+} = require('./database');
 
 const app = express();
 const port = process.env.PORT || 4000;
@@ -43,69 +52,38 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-const db = {
-  user: {
-    email: 'user@example.com',
-    display_name: 'Demo User',
-    avatar_url: '',
-    bio: 'Fotograaf & model',
-    roles: ['model'],
-    instagram: '@demo',
-  },
-  posts: [
-    {
-      id: 'seed-1',
-      title: 'Zonsopgang',
-      caption: 'Een serene ochtendshoot',
-      image_url: '/uploads/sample-1.jpg',
-      photography_style: 'portrait',
-      tags: ['portrait'],
-      trigger_warnings: [],
-      created_by: 'user@example.com',
-    },
-  ],
-  likes: [{ id: 'like-1', post_id: 'seed-1', user_email: 'user@example.com' }],
-  savedPosts: [{ id: 'save-1', post_id: 'seed-1', user_email: 'user@example.com' }],
-};
-
-function applyFilter(items, filter = {}) {
-  return items.filter((item) =>
-    Object.entries(filter).every(([key, value]) => {
-      if (typeof value === 'object' && value !== null && '$in' in value) {
-        return value.$in.includes(item[key]);
-      }
-      return item[key] === value;
-    }),
-  );
-}
-
 app.get('/api/users/me', (_req, res) => {
-  res.json(db.user);
+  const user = getCurrentUser();
+  if (!user) return res.status(404).json({ error: 'User not found' });
+  return res.json(user);
 });
 
 app.patch('/api/users/me', (req, res) => {
-  db.user = { ...db.user, ...req.body };
-  res.json(db.user);
+  const updated = updateCurrentUser(req.body);
+  if (!updated) return res.status(404).json({ error: 'User not found' });
+  return res.json(updated);
 });
 
 app.post('/api/posts/filter', (req, res) => {
-  const filtered = applyFilter(db.posts, req.body || {});
+  const filtered = filterPosts(req.body || {});
   res.json(filtered);
 });
 
 app.post('/api/posts', (req, res) => {
-  const id = crypto.randomUUID();
-  const post = { id, ...req.body, created_by: req.body.created_by || db.user.email };
-  db.posts.unshift(post);
-  res.status(201).json(post);
+  try {
+    const post = createPost(req.body);
+    res.status(201).json(post);
+  } catch (error) {
+    res.status(400).json({ error: error.message || 'Unable to create post' });
+  }
 });
 
 app.post('/api/likes/filter', (req, res) => {
-  res.json(applyFilter(db.likes, req.body || {}));
+  res.json(filterLikes(req.body || {}));
 });
 
 app.post('/api/saved-posts/filter', (req, res) => {
-  res.json(applyFilter(db.savedPosts, req.body || {}));
+  res.json(filterSavedPosts(req.body || {}));
 });
 
 app.post('/api/uploads', upload.single('file'), (req, res) => {

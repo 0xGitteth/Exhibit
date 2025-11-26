@@ -14,7 +14,10 @@
     "prepush": "npm run typecheck",
     "lint-staged": "npx lint-staged",
     "smoke:test": "node -r ts-node/register/transpile-only ./scripts/smoke/smoke-render.ts",
-    "smoke:test:cjs": "node ./scripts/smoke/smoke-render.cjs"
+    "smoke:test:cjs": "node ./scripts/smoke/smoke-render.cjs",
+    "db:prepare": "node backend/database.js",
+    "db:migrate": "node backend/database.js migrate",
+    "db:seed": "node backend/database.js seed"
   },
   "devDependencies": {
     "@types/node": "20.11.1",
@@ -50,6 +53,7 @@
     }
   },
   "dependencies": {
+    "better-sqlite3": "^12.4.6",
     "cors": "^2.8.5",
     "express": "^5.1.0",
     "framer-motion": "10.12.16",
