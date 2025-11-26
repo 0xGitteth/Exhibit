@@ -9,6 +9,7 @@ const crypto = require('crypto');
 const app = express();
 const port = process.env.PORT || 4000;
 const staticDir = process.env.STATIC_DIR || path.join(__dirname, '..', 'dist');
+const assetsDir = path.join(staticDir, 'assets');
 const uploadDir = process.env.UPLOAD_DIR || path.join(__dirname, 'uploads');
 const clientOrigin = process.env.CLIENT_ORIGIN;
 const databaseUrl = process.env.DATABASE_URL || 'file:./data/exhibit.sqlite';
@@ -27,6 +28,9 @@ app.use(express.json({ limit: '10mb' }));
 app.use('/uploads', express.static(uploadDir));
 
 if (fs.existsSync(staticDir)) {
+  if (fs.existsSync(assetsDir)) {
+    app.use('/assets', express.static(assetsDir));
+  }
   app.use(express.static(staticDir));
 }
 
@@ -113,7 +117,11 @@ app.post('/api/uploads', upload.single('file'), (req, res) => {
 });
 
 app.get('/{*splat}', (req, res, next) => {
-  if (req.path.startsWith('/api') || req.path.startsWith('/uploads')) {
+  if (
+    req.path.startsWith('/api') ||
+    req.path.startsWith('/uploads') ||
+    req.path.startsWith('/assets')
+  ) {
     return next();
   }
 
