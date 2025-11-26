@@ -6,7 +6,7 @@ RUN npm ci
 COPY . .
 
 # Allow the API base to be configured at build-time
-ARG VITE_API_BASE=http://localhost:4000/api
+ARG VITE_API_BASE=/api
 ARG VITE_USE_STUB_API=false
 ARG VITE_BASE_URL=/
 ENV VITE_API_BASE=${VITE_API_BASE}
