@@ -6,17 +6,13 @@ import { fileURLToPath, URL } from 'node:url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig(() => {
-  // Fall back to the root when no build-time base is provided.
-  const base = process.env.VITE_BASE_URL?.trim() || '/';
-
   return {
-    base,
+    base: '/',
     plugins: [react()],
     resolve: {
       alias: [
         { find: '@/entities', replacement: path.resolve(__dirname, 'entities') },
         { find: '@/integrations', replacement: path.resolve(__dirname, 'src/integrations') },
-        { find: '@/components/ui', replacement: path.resolve(__dirname, 'test-stubs/components/ui') },
         { find: '@/components', replacement: path.resolve(__dirname, 'Components') },
         { find: '@/pages', replacement: path.resolve(__dirname, 'Pages') },
         { find: '@/utils', replacement: path.resolve(__dirname, 'utils') },
