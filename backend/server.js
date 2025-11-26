@@ -116,7 +116,7 @@ app.post('/api/uploads', upload.single('file'), (req, res) => {
   res.status(201).json({ file_url: fileUrl });
 });
 
-app.get('/{*splat}', (req, res, next) => {
+app.get('*', (req, res, next) => {
   if (
     req.path.startsWith('/api') ||
     req.path.startsWith('/uploads') ||
