@@ -6,7 +6,8 @@ import { fileURLToPath, URL } from 'node:url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig(() => {
-  const base = '/';
+  // Fall back to the root when no build-time base is provided.
+  const base = process.env.VITE_BASE_URL?.trim() || '/';
 
   return {
     base,
