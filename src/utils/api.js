@@ -7,10 +7,25 @@ const ssrBase =
     ? process.env.VITE_API_BASE
     : undefined;
 
-const API_BASE = envBase || ssrBase || '/api';
+const rawBase = envBase || ssrBase || '/api';
+
+const isAbsoluteBase = /^https?:\/\//i.test(rawBase);
+
+const originFallback =
+  (typeof window !== 'undefined' && window.location?.origin) ||
+  (typeof process !== 'undefined' && process.env.API_ORIGIN) ||
+  'http://localhost:4000';
+
+const API_BASE = isAbsoluteBase
+  ? rawBase
+  : new URL(rawBase, originFallback).toString().replace(/\/$/, '');
+
+function buildUrl(path) {
+  return new URL(path, `${API_BASE}/`).toString();
+}
 
 async function request(path, options = {}) {
-  const response = await fetch(`${API_BASE}${path}`, {
+  const response = await fetch(buildUrl(path), {
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -52,7 +67,7 @@ export async function filterSavedPosts(filter) {
 export async function uploadFile(file) {
   const formData = new FormData();
   formData.append('file', file);
-  const response = await fetch(`${API_BASE}/uploads`, { method: 'POST', body: formData });
+  const response = await fetch(buildUrl('/uploads'), { method: 'POST', body: formData });
   if (!response.ok) throw new Error('Upload failed');
   return response.json();
 }
