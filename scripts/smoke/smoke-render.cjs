@@ -2,7 +2,7 @@ const React = require('react');
 const { renderToString } = require('react-dom/server');
 
 // Use stubs by relative path
-const { Card, CardContent, CardHeader, CardTitle } = require('../../test-stubs/components/ui/card');
+const { Card, CardContent, CardHeader, CardTitle } = require('../../Components/ui/card');
 const User = require('../../test-stubs/entities/User');
 
 try {
