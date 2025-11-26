@@ -28,6 +28,7 @@ app.use('/uploads', express.static(uploadDir));
 
 if (fs.existsSync(staticDir)) {
   app.use(express.static(staticDir));
+  app.use('/show-app-preview', express.static(staticDir));
 }
 
 const storage = multer.diskStorage({
