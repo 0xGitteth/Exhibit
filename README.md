@@ -2,13 +2,13 @@
 
 Sociale media speciaal voor fotografen, modellen en andere artiesten.
 
-## Deployen naar GitHub Pages
+## Hosting en basispad
 
-Deze repository bevat een GitHub Actions workflow die automatisch een productiebuild maakt en publiceert naar GitHub Pages wanneer er wijzigingen naar de `main`-branch worden gepusht. Controleer in de repository-instellingen of GitHub Pages is ingesteld op "GitHub Actions".
+- De app wordt op Sliplane onder het root-pad `/` geserveerd. Gebruik geen subpad om dubbele padconfiguraties te voorkomen.
+- Stel `VITE_BASE_URL` (als je die toevoegt) of een andere base-configuratie in op `/` om asset- en routings-URLs correct te houden.
+- Configureer de relevante omgevingsvariabelen voor build en runtime, zoals `VITE_API_BASE`, `VITE_USE_STUB_API`, `PORT`, `CLIENT_ORIGIN` en `DATABASE_URL`, via de Sliplane-instellingen.
 
-1. Commit en push je wijzigingen naar `main`.
-2. Ga naar het tabblad **Actions** om de workflow `Deploy to GitHub Pages` te volgen.
-3. Na een geslaagde run staat de site live op `https://jouw-github-gebruikersnaam.github.io/show-app-preview/`.
+GitHub Pages wordt niet langer ondersteund, zodat er geen conflicterende basispaden meer ontstaan.
 
 ## Git-hooks voor ontwikkelaars
 
