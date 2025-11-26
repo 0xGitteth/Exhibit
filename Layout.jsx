@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { createPageUrl } from '@/utils';
+import { PAGE_ROUTES } from '@/utils';
 import { User } from './entities/User.js';
 import { Search, UserIcon, LayoutGrid, MessageSquare, Plus, Users } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -10,10 +10,10 @@ import HouseRulesModal from '@/components/HouseRulesModal';
 import { Post } from './entities/Post.js';
 
 const navigationItems = [
-  { name: 'Gallery', icon: LayoutGrid, path: 'Timeline' },
-  { name: 'Ontdekken', icon: Search, path: 'Discover' },
-  { name: 'Community', icon: Users, path: 'Community' },
-  { name: 'Profiel', icon: UserIcon, path: 'Profile', isProfile: true },
+  { name: 'Gallery', icon: LayoutGrid, path: PAGE_ROUTES.timeline },
+  { name: 'Ontdekken', icon: Search, path: PAGE_ROUTES.discover },
+  { name: 'Community', icon: Users, path: PAGE_ROUTES.community },
+  { name: 'Profiel', icon: UserIcon, path: PAGE_ROUTES.profile, isProfile: true },
 ];
 
 export default function Layout({ children, currentPageName }) {
@@ -45,7 +45,7 @@ export default function Layout({ children, currentPageName }) {
 
   const handlePostCreated = async (newPost) => {
     await Post.create(newPost);
-    if (location.pathname === createPageUrl('Timeline') || location.pathname === '/') {
+    if (location.pathname === PAGE_ROUTES.timeline) {
       window.location.reload();
     }
   };
@@ -63,14 +63,14 @@ export default function Layout({ children, currentPageName }) {
         <header className="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-slate-200/50">
           <div className="max-w-xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center h-16">
-              <Link to={createPageUrl('Timeline')} className="flex items-center gap-2">
+              <Link to={PAGE_ROUTES.timeline} className="flex items-center gap-2">
                 <img
                   src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d3a37e32ef31e2813744f9/017b1b42f_Exhibitlogohorizontaal1.png"
                   alt="Exhibit"
                   className="h-8 w-auto"
                 />
               </Link>
-              <Link to={createPageUrl('Chat')}>
+              <Link to={PAGE_ROUTES.chat}>
                 <Button variant="ghost" size="icon" className="bg-white/50 shadow-md rounded-full">
                   <MessageSquare className="w-5 h-5 text-slate-700" />
                 </Button>
@@ -95,22 +95,25 @@ export default function Layout({ children, currentPageName }) {
         <div className="flex items-center gap-3">
           <div className="flex justify-around items-center h-12 bg-white/80 backdrop-blur-xl shadow-lg rounded-full px-3 gap-x-4">
             {navigationItems.map((item) => {
-              const isActive =
-                location.pathname.includes(item.path) ||
-                (item.path === 'Timeline' && location.pathname === '/');
+              const isRootPath = item.path === PAGE_ROUTES.timeline;
+              const isActive = isRootPath
+                ? location.pathname === PAGE_ROUTES.timeline
+                : location.pathname === item.path || location.pathname.startsWith(`${item.path}/`);
               const IconComponent = item.icon;
 
               return (
                 <Link
                   key={item.name}
-                  to={createPageUrl(item.path)}
+                  to={item.path}
                   className={`flex flex-col items-center justify-center p-2 transition-all duration-200 ${
                     isActive ? 'text-blue-600' : 'text-slate-500 hover:text-blue-600'
                   }`}
                 >
                   {item.isProfile ? (
                     <div
-                      className={`p-0.5 rounded-full border transition-colors ${isActive ? 'border-blue-600' : 'border-gray-300'}`}
+                      className={`relative p-0.5 rounded-full border transition-colors ${
+                        isActive ? 'border-blue-600' : 'border-gray-300'
+                      }`}
                     >
                       <Avatar className="w-6 h-6">
                         <AvatarImage src={user?.avatar_url} />
@@ -118,6 +121,9 @@ export default function Layout({ children, currentPageName }) {
                           <UserIcon className="w-3 h-3" />
                         </AvatarFallback>
                       </Avatar>
+                      <span className="absolute -bottom-1 -right-1 w-3.5 h-3.5 rounded-full bg-blue-600 text-white flex items-center justify-center shadow-sm">
+                        <Plus className="w-2.5 h-2.5" />
+                      </span>
                     </div>
                   ) : (
                     <IconComponent
