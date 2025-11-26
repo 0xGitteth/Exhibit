@@ -1,24 +1,34 @@
-import express from 'express';
-import cors from 'cors';
-import multer from 'multer';
-import path from 'path';
-import { fileURLToPath } from 'url';
-import fs from 'fs';
-import crypto from 'crypto';
+/* eslint-disable @typescript-eslint/no-var-requires */
+const express = require('express');
+const cors = require('cors');
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
+const crypto = require('crypto');
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 const app = express();
 const port = process.env.PORT || 4000;
+const staticDir = process.env.STATIC_DIR || path.join(__dirname, '..', 'dist');
+const uploadDir = process.env.UPLOAD_DIR || path.join(__dirname, 'uploads');
+const clientOrigin = process.env.CLIENT_ORIGIN;
+const databaseUrl = process.env.DATABASE_URL || 'file:./data/exhibit.sqlite';
 
-const uploadDir = path.join(__dirname, 'uploads');
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
 
-app.use(cors());
+if (!fs.existsSync(staticDir)) {
+  // eslint-disable-next-line no-console
+  console.warn(`Static build not found at ${staticDir}, API will still run.`);
+}
+
+app.use(cors(clientOrigin ? { origin: clientOrigin } : undefined));
 app.use(express.json({ limit: '10mb' }));
 app.use('/uploads', express.static(uploadDir));
+
+if (fs.existsSync(staticDir)) {
+  app.use(express.static(staticDir));
+}
 
 const storage = multer.diskStorage({
   destination: (_req, _file, cb) => cb(null, uploadDir),
@@ -102,7 +112,22 @@ app.post('/api/uploads', upload.single('file'), (req, res) => {
   res.status(201).json({ file_url: fileUrl });
 });
 
+app.get('*', (req, res, next) => {
+  if (req.path.startsWith('/api') || req.path.startsWith('/uploads')) {
+    return next();
+  }
+
+  const indexPath = path.join(staticDir, 'index.html');
+  if (fs.existsSync(indexPath)) {
+    return res.sendFile(indexPath);
+  }
+
+  return res.status(404).send('Not found');
+});
+
 app.listen(port, () => {
   // eslint-disable-next-line no-console
   console.log(`Backend API listening on http://localhost:${port}`);
+  // eslint-disable-next-line no-console
+  console.log(`Using database connection: ${databaseUrl}`);
 });
