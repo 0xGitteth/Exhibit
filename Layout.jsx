@@ -9,18 +9,19 @@ import CreatePostModal from '@/components/CreatePostModal';
 import HouseRulesModal from '@/components/HouseRulesModal';
 import { Post } from './entities/Post.js';
 
-const navigationItems = [
-  { name: 'Gallery', icon: LayoutGrid, path: PAGE_ROUTES.timeline },
-  { name: 'Ontdekken', icon: Search, path: PAGE_ROUTES.discover },
-  { name: 'Community', icon: Users, path: PAGE_ROUTES.community },
-  { name: 'Profiel', icon: UserIcon, path: PAGE_ROUTES.profile, isProfile: true },
-];
-
 export default function Layout({ children, currentPageName }) {
   const location = useLocation();
   const [user, setUser] = useState(null);
   const [showCreatePost, setShowCreatePost] = useState(false);
   const [showHouseRules, setShowHouseRules] = useState(false);
+
+  const navigationItems = [
+    { name: 'Gallery', icon: LayoutGrid, path: PAGE_ROUTES.timeline },
+    { name: 'Ontdekken', icon: Search, path: PAGE_ROUTES.discover },
+    { name: 'Community', icon: Users, path: PAGE_ROUTES.community },
+    { name: 'Profiel', icon: UserIcon, path: PAGE_ROUTES.profile, isProfile: true },
+    { name: 'Plaatsen', icon: Plus, action: () => setShowCreatePost(true), isAction: true },
+  ];
 
   useEffect(() => {
     const hasSeenRules = localStorage.getItem('hasSeenHouseRules');
@@ -51,6 +52,14 @@ export default function Layout({ children, currentPageName }) {
       console.error('Error creating post:', error);
     }
   };
+
+  const tabItems = navigationItems.filter((item) => !item.isAction);
+  const actionItem = navigationItems.find((item) => item.isAction);
+  const ActionIcon = actionItem?.icon;
+  const profileImage =
+    user?.avatar_url ||
+    user?.avatarUrl ||
+    'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=320&q=80';
 
   return (
     <div className="min-h-screen font-sans relative">
@@ -93,56 +102,68 @@ export default function Layout({ children, currentPageName }) {
         onPostCreated={handlePostCreated}
       />
 
-      <nav className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50">
-        <div className="flex items-center gap-3">
-          <div className="flex justify-around items-center h-12 bg-white/80 backdrop-blur-xl shadow-lg rounded-full px-3 gap-x-4">
-            {navigationItems.map((item) => {
-              const isRootPath = item.path === PAGE_ROUTES.timeline;
-              const isActive = isRootPath
-                ? location.pathname === PAGE_ROUTES.timeline
-                : location.pathname === item.path || location.pathname.startsWith(`${item.path}/`);
-              const IconComponent = item.icon;
+      <nav
+        className="fixed inset-x-0 bottom-4 sm:bottom-6 z-50 pointer-events-none"
+        style={{ paddingBottom: 'calc(env(safe-area-inset-bottom, 0px))' }}
+      >
+        <div className="relative flex items-end justify-center gap-3">
+          <div className="pointer-events-auto flex items-end justify-center gap-3">
+            <div className="flex items-center justify-between gap-1 rounded-full border border-slate-200/90 bg-white/95 px-2.5 py-1.5 shadow-[0_12px_28px_rgba(15,23,42,0.18)] backdrop-blur supports-[backdrop-filter]:bg-white/80">
+              {tabItems.map((item) => {
+                const isRootPath = item.path === PAGE_ROUTES.timeline;
+                const isActive =
+                  isRootPath
+                    ? location.pathname === PAGE_ROUTES.timeline
+                    : location.pathname === item.path || location.pathname.startsWith(`${item.path}/`);
+                const IconComponent = item.icon;
 
-              return (
-                <Link
-                  key={item.name}
-                  to={item.path}
-                  className={`flex flex-col items-center justify-center p-2 transition-all duration-200 ${
-                    isActive ? 'text-blue-600' : 'text-slate-500 hover:text-blue-600'
-                  }`}
-                >
-                  {item.isProfile ? (
-                    <div
-                      className={`relative p-0.5 rounded-full border transition-colors ${
-                        isActive ? 'border-blue-600' : 'border-gray-300'
-                      }`}
-                    >
-                      <Avatar className="w-6 h-6">
-                        <AvatarImage src={user?.avatar_url} />
-                        <AvatarFallback className="text-xs">
-                          <UserIcon className="w-3 h-3" />
-                        </AvatarFallback>
-                      </Avatar>
-                      <span className="absolute -bottom-1 -right-1 w-3.5 h-3.5 rounded-full bg-blue-600 text-white flex items-center justify-center shadow-sm">
-                        <Plus className="w-2.5 h-2.5" />
-                      </span>
-                    </div>
-                  ) : (
-                    <IconComponent
-                      className={`w-6 h-6 transition-transform duration-200 ${isActive ? 'scale-110' : ''}`}
-                    />
-                  )}
-                </Link>
-              );
-            })}
+                return (
+                  <Link
+                    key={`${item.name}-${item.path}`}
+                    to={item.path}
+                    className={`group flex items-center justify-center gap-2 rounded-full px-3 py-2 text-sm font-medium transition-all duration-200 ${
+                      isActive
+                        ? 'bg-blue-600 text-white shadow-lg shadow-blue-300/40'
+                        : 'text-slate-700 hover:bg-slate-50 hover:text-blue-600'
+                    }`}
+                  >
+                    {item.isProfile ? (
+                      <div
+                        className={`p-0.5 rounded-full border transition-colors ${
+                          isActive ? 'border-white/70 bg-white/10' : 'border-blue-50 group-hover:border-blue-200'
+                        }`}
+                      >
+                        <Avatar className="w-9 h-9 border border-white/60 shadow-sm">
+                          <AvatarImage src={profileImage} className="object-cover" />
+                          <AvatarFallback className="text-sm font-semibold uppercase">
+                            {user?.display_name?.[0] || <UserIcon className="w-4 h-4" />}
+                          </AvatarFallback>
+                        </Avatar>
+                      </div>
+                    ) : (
+                      <IconComponent
+                        className={`w-5 h-5 transition-transform duration-200 ${
+                            isActive ? 'scale-110' : 'group-hover:scale-105'
+                          }`}
+                      />
+                    )}
+                    <span>{item.name}</span>
+                  </Link>
+                );
+              })}
+            </div>
+
+            {actionItem && (
+              <button
+                type="button"
+                onClick={actionItem.action}
+                aria-label={actionItem.name}
+                className="pointer-events-auto flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 text-white shadow-[0_14px_35px_rgba(59,130,246,0.35)] transition-transform duration-200 hover:scale-105 focus:scale-105 focus:outline-none focus:ring-4 focus:ring-blue-200"
+              >
+                {ActionIcon && <ActionIcon className="h-6 w-6" />}
+              </button>
+            )}
           </div>
-
-          <button
-            onClick={() => setShowCreatePost((prev) => !prev)}
-            className="w-12 h-12 rounded-full shadow-lg bg-gradient-to-br from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 transition-all duration-300 hover:scale-105 active:scale-95 flex items-center justify-center"
-          >
-            <Plus className="w-6 h-6 text-white" />
-          </button>
         </div>
       </nav>
     </div>
