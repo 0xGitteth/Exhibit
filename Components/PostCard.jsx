@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Heart, MessageCircle, BookmarkPlus, Bookmark, ImageOff } from 'lucide-react';
 import {
@@ -52,8 +51,56 @@ export default function PostCard({ post, onSaveToMoodboard }) {
   }, [post?.tags, post?.photography_style]);
 
   const comments = post?.comments_count ?? post?.comment_count ?? 0;
-  const formattedDate = post?.created_date ? new Date(post.created_date).toLocaleDateString('nl-NL') : 'Onlangs gedeeld';
   const image = post?.image_url;
+
+  const roleLabels = {
+    photographer: 'Fotograaf',
+    model: 'Model',
+    makeup_artist: 'MUA',
+    stylist: 'Stylist',
+    assistant: 'Assistent',
+    other: 'Artiest',
+  };
+
+  const formatInstagramLink = (handle) => {
+    if (!handle) return null;
+    const cleanHandle = handle.replace('@', '');
+    if (cleanHandle.startsWith('http')) return cleanHandle;
+    return `https://instagram.com/${cleanHandle}`;
+  };
+
+  const contributors = useMemo(() => {
+    const stack = [];
+
+    if (post?.photographer_name) {
+      stack.push({ role: 'Fotograaf', name: post.photographer_name });
+    }
+
+    if (Array.isArray(post?.tagged_people)) {
+      post.tagged_people.forEach((person) => {
+        if (!person?.name) return;
+        const label = roleLabels[person.role] || 'Artiest';
+        if (['Fotograaf', 'Model', 'MUA', 'Artiest'].includes(label)) {
+          stack.push({
+            role: label,
+            name: person.name,
+            link: formatInstagramLink(person.instagram),
+          });
+        }
+      });
+    }
+
+    return stack;
+  }, [post?.photographer_name, post?.tagged_people]);
+
+  const tagPalette = [
+    'from-sky-100 to-sky-300',
+    'from-cyan-100 to-cyan-300',
+    'from-blue-100 to-blue-300',
+    'from-indigo-100 to-indigo-300',
+    'from-violet-100 to-violet-300',
+    'from-purple-100 to-purple-300',
+  ];
 
   useEffect(() => {
     setImageLoaded(false);
@@ -64,37 +111,27 @@ export default function PostCard({ post, onSaveToMoodboard }) {
 
   return (
     <Card className="bg-gradient-to-b from-serenity-50/80 via-white to-serenity-100/70 dark:from-midnight-200 dark:via-midnight-300 dark:to-midnight-500 border border-serenity-200/70 dark:border-midnight-50/30 shadow-soft overflow-hidden rounded-2xl">
-      <div className="relative h-64 sm:h-72 bg-serenity-100/60 dark:bg-midnight-100/40">
+      <div className="relative bg-serenity-100/60 dark:bg-midnight-100/40 aspect-[4/5] sm:aspect-[4/3] lg:aspect-[16/10] overflow-hidden">
         {showImage ? (
           <>
             {!imageLoaded && (
               <div className="absolute inset-0 animate-pulse bg-gradient-to-br from-serenity-100 via-white to-serenity-200 dark:from-midnight-200 dark:via-midnight-300 dark:to-midnight-400" />
             )}
-            <img
-              src={image}
-              alt={post?.title || 'Post'}
-              className={`w-full h-full object-cover transition duration-500 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
-              onLoad={() => setImageLoaded(true)}
-              onError={() => setImageError(true)}
-            />
+            <div className="absolute inset-0 flex items-center justify-center p-3">
+              <img
+                src={image}
+                alt={post?.title || 'Post'}
+                className={`max-h-full w-full object-contain transition duration-500 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
+                onLoad={() => setImageLoaded(true)}
+                onError={() => setImageError(true)}
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-white/10 via-transparent to-white/30 dark:from-midnight-500/20 dark:via-midnight-400/10 dark:to-midnight-300/20" aria-hidden="true" />
+            </div>
           </>
         ) : (
           <div className="w-full h-full flex flex-col items-center justify-center text-serenity-700 dark:text-serenity-100 bg-gradient-to-br from-serenity-50 via-white to-serenity-100 dark:from-midnight-200 dark:via-midnight-300 dark:to-midnight-500 space-y-2">
             <ImageOff className="w-9 h-9" />
             <p className="text-sm font-medium">Geen afbeelding beschikbaar</p>
-          </div>
-        )}
-        {tags?.length > 0 && (
-          <div className="absolute top-3 left-3 flex flex-wrap gap-2">
-            {tags.slice(0, 3).map((tag) => (
-              <Badge
-                key={tag}
-                variant="secondary"
-                className="bg-white/90 text-serenity-700 border border-serenity-200/80 dark:bg-midnight-200/60 dark:text-serenity-50 dark:border-midnight-50/30"
-              >
-                {tag}
-              </Badge>
-            ))}
           </div>
         )}
         <div className="absolute top-3 right-3">
@@ -114,31 +151,35 @@ export default function PostCard({ post, onSaveToMoodboard }) {
         </div>
       </div>
 
-      <CardContent className="p-4 sm:p-5 space-y-3">
-        <div className="flex items-center justify-between text-xs text-slate-600 dark:text-slate-300">
-          <span>{formattedDate}</span>
-          {post?.photographer_name && (
-            <span className="font-semibold text-serenity-700 dark:text-serenity-100">door {post.photographer_name}</span>
+      <CardContent className="p-4 sm:p-5 flex flex-col gap-4 h-full">
+        <div className="grid grid-cols-1 sm:grid-cols-[minmax(0,1fr)_220px] gap-4 items-start">
+          <div className="space-y-2">
+            <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-50">{post?.title || 'Nieuwe post'}</h2>
+            {post?.description && <p className="text-slate-700 dark:text-slate-200 leading-relaxed">{post.description}</p>}
+          </div>
+
+          {contributors.length > 0 && (
+            <div className="flex flex-col items-start sm:items-end gap-3 text-xs sm:text-sm">
+              {contributors.map(({ role, name, link }) => (
+                <div key={`${role}-${name}`} className="flex flex-col items-start sm:items-end leading-tight">
+                  <span className="uppercase tracking-wide text-[11px] text-serenity-600 dark:text-serenity-100">{role}</span>
+                  {link ? (
+                    <a
+                      href={link}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="font-semibold text-midnight-800 hover:text-serenity-600 underline decoration-serenity-300 decoration-2 dark:text-serenity-50"
+                    >
+                      {name}
+                    </a>
+                  ) : (
+                    <span className="font-semibold text-midnight-800 dark:text-serenity-50">{name}</span>
+                  )}
+                </div>
+              ))}
+            </div>
           )}
         </div>
-        <div className="space-y-1">
-          <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-50">{post?.title || 'Nieuwe post'}</h2>
-          {post?.description && <p className="text-slate-700 dark:text-slate-200 leading-relaxed">{post.description}</p>}
-        </div>
-
-        {tags?.length > 3 && (
-          <div className="flex flex-wrap gap-2 pt-1">
-            {tags.slice(3, 6).map((tag) => (
-              <Badge
-                key={tag}
-                variant="outline"
-                className="border-serenity-300 text-serenity-800 dark:border-midnight-50/50 dark:text-serenity-50"
-              >
-                {tag}
-              </Badge>
-            ))}
-          </div>
-        )}
 
         <div className="flex items-center justify-between pt-2">
           <div className="flex items-center gap-3">
@@ -170,6 +211,22 @@ export default function PostCard({ post, onSaveToMoodboard }) {
             {saved ? 'Opgeslagen in moodboard' : 'Bewaar in moodboard'}
           </Button>
         </div>
+
+        {tags?.length > 0 && (
+          <div className="mt-auto flex flex-wrap gap-2 pt-2">
+            {tags.slice(0, 6).map((tag, index) => {
+              const colors = tagPalette[index % tagPalette.length];
+              return (
+                <span
+                  key={tag}
+                  className={`text-xs font-semibold text-midnight-900 dark:text-midnight-900 px-3 py-1 rounded-full bg-gradient-to-r ${colors} shadow-soft border border-white/60 dark:border-white/20`}
+                >
+                  {tag}
+                </span>
+              );
+            })}
+          </div>
+        )}
       </CardContent>
     </Card>
   );
