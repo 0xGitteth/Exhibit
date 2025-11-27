@@ -1,0 +1,153 @@
+export const samplePosts = [
+  {
+    id: 'sample-post-1',
+    title: 'Neon Nachten',
+    description: 'Een portretserie in het hart van Rotterdam tijdens het blauwe uur.',
+    created_date: '2024-05-12',
+    photography_style: 'street',
+    tags: ['street', 'portrait'],
+    image_url: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=1200&q=80',
+    photographer_name: 'Ava Visser',
+    likes: 184,
+    comments_count: 12,
+  },
+  {
+    id: 'sample-post-2',
+    title: 'Dauw in de duinen',
+    description: 'Minimalistische landschappen met zacht ochtendlicht.',
+    created_date: '2024-04-28',
+    photography_style: 'landscape',
+    tags: ['landscape', 'nature'],
+    image_url: 'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80',
+    photographer_name: 'Milan de Jong',
+    likes: 96,
+    comments_count: 7,
+  },
+  {
+    id: 'sample-post-3',
+    title: 'Studio Shapes',
+    description: 'Grafische fashion-shoot met harde schaduwen en kleuraccenten.',
+    created_date: '2024-03-15',
+    photography_style: 'fashion',
+    tags: ['fashion', 'editorial'],
+    image_url: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=1200&q=80',
+    photographer_name: 'Noor Vermeulen',
+    likes: 142,
+    comments_count: 18,
+  },
+  {
+    id: 'sample-post-4',
+    title: 'Analog Afternoon',
+    description: 'Candid momenten geschoten op 35mm film.',
+    created_date: '2024-02-02',
+    photography_style: 'candid',
+    tags: ['candid', 'travel'],
+    image_url: 'https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?auto=format&fit=crop&w=1200&q=80',
+    photographer_name: 'Samira Bakker',
+    likes: 77,
+    comments_count: 5,
+  },
+  {
+    id: 'sample-post-5',
+    title: 'Atelier Licht',
+    description: 'Fine-art portretten met zacht daglicht in een oude fabriekshal.',
+    created_date: '2024-01-20',
+    photography_style: 'fine_art',
+    tags: ['portrait', 'fine_art'],
+    image_url: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=1200&q=80',
+    photographer_name: 'Ivo Janssen',
+    likes: 131,
+    comments_count: 14,
+  },
+];
+
+export const sampleUsers = [
+  {
+    id: 'sample-user-1',
+    display_name: 'Ava Visser',
+    roles: ['photographer'],
+    styles: ['street', 'portrait'],
+    avatar_url: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=300&q=80',
+  },
+  {
+    id: 'sample-user-2',
+    display_name: 'Noor Vermeulen',
+    roles: ['model', 'artist'],
+    styles: ['fashion', 'editorial'],
+    avatar_url: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=300&q=80',
+  },
+  {
+    id: 'sample-user-3',
+    display_name: 'Milan de Jong',
+    roles: ['photographer'],
+    styles: ['landscape', 'nature'],
+    avatar_url: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=300&q=80',
+  },
+  {
+    id: 'sample-user-4',
+    display_name: 'Samira Bakker',
+    roles: ['stylist'],
+    styles: ['travel', 'candid'],
+    avatar_url: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=300&q=80',
+  },
+  {
+    id: 'sample-user-5',
+    display_name: 'Ivo Janssen',
+    roles: ['artist'],
+    styles: ['fine_art', 'portrait'],
+    avatar_url: 'https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?auto=format&fit=crop&w=300&q=80',
+  },
+];
+
+export const sampleCommunities = [
+  {
+    id: 'community-1',
+    name: 'Veiligheid & Consent',
+    description: 'Praktische tips, checklists en ervaringen rondom consent op de set.',
+    category: 'safety_consent',
+    member_count: 248,
+  },
+  {
+    id: 'community-2',
+    name: 'Netwerk & Samenwerkingen',
+    description: 'Vind creatieve duo’s en plan je volgende shoot samen.',
+    category: 'networking',
+    member_count: 512,
+  },
+  {
+    id: 'community-3',
+    name: 'Licht & Techniek',
+    description: 'Experimenteer met flits, continulicht en kleurfilters.',
+    category: 'techniques',
+    member_count: 334,
+  },
+  {
+    id: 'community-4',
+    name: 'Gear Talk NL',
+    description: 'Van vintage lenzen tot middenformaat: deel je favoriete setups.',
+    category: 'equipment',
+    member_count: 421,
+  },
+  {
+    id: 'community-5',
+    name: 'Moodboard & Inspiratie',
+    description: 'Dagelijkse drops van referenties, color palettes en poses.',
+    category: 'inspiration',
+    member_count: 603,
+  },
+];
+
+export const sampleProfile = {
+  id: 'sample-profile',
+  display_name: 'Nova Lint',
+  full_name: 'Nova Lint',
+  bio: 'Fotograaf & creative director met een liefde voor zachte kleuren en storytelling.',
+  avatar_url: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=400&q=80',
+  roles: ['photographer', 'artist'],
+  styles: ['fine_art', 'fashion', 'portrait'],
+  show_sensitive_content: false,
+  email: 'nova@example.com',
+};
+
+export const sampleProfilePosts = samplePosts.slice(0, 4);
+export const sampleMoodboardPosts = samplePosts.slice(1, 5);

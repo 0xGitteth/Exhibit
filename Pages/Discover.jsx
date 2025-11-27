@@ -10,6 +10,8 @@ import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import PostCard from "../Components/PostCard";
+import { samplePosts, sampleUsers } from "../utils/dummyData";
+import { DUMMY_DATA_ENABLED } from "../utils/featureFlags";
 
 const photographyStyles = [
   { id: "portrait", label: "Portrait", icon: "👤" }, 
@@ -67,8 +69,16 @@ const PeopleTab = ({ searchTerm }) => {
   useEffect(() => {
     const loadUsers = async () => {
       setLoading(true);
-      const allUsers = await User.list();
-      setUsers(allUsers);
+      try {
+        const apiUsers = typeof User.list === "function" ? await User.list() : [];
+        if (DUMMY_DATA_ENABLED && (!apiUsers || apiUsers.length === 0)) {
+          setUsers(sampleUsers);
+        } else {
+          setUsers(apiUsers || []);
+        }
+      } catch (error) {
+        setUsers(DUMMY_DATA_ENABLED ? sampleUsers : []);
+      }
       setLoading(false);
     };
     loadUsers();
@@ -138,8 +148,16 @@ const StylesTab = ({ searchTerm }) => {
   useEffect(() => {
     const loadPosts = async () => {
       setLoading(true);
-      const allPosts = await Post.list("-created_date", 100);
-      setPosts(allPosts);
+      try {
+        const allPosts = typeof Post.list === "function" ? await Post.list("-created_date", 100) : [];
+        if (DUMMY_DATA_ENABLED && (!allPosts || allPosts.length === 0)) {
+          setPosts(samplePosts);
+        } else {
+          setPosts(allPosts || []);
+        }
+      } catch (error) {
+        setPosts(DUMMY_DATA_ENABLED ? samplePosts : []);
+      }
       setLoading(false);
     };
     loadPosts();
