@@ -131,27 +131,30 @@ export default function PostCard({ post, onSaveToMoodboard }) {
         ) : (
           <div className="w-full h-full flex flex-col items-center justify-center text-serenity-700 dark:text-serenity-100 bg-gradient-to-br from-serenity-50 via-white to-serenity-100 dark:from-midnight-200 dark:via-midnight-300 dark:to-midnight-500 space-y-2">
             <ImageOff className="w-9 h-9" />
-            <p className="text-sm font-medium">Geen afbeelding beschikbaar</p>
-          </div>
+              <p className="text-sm font-medium">Geen afbeelding beschikbaar</p>
+            </div>
         )}
-        <div className="absolute top-3 right-3">
+      </div>
+
+      <CardContent className="p-4 sm:p-5 flex flex-col gap-4 h-full">
+        <div className="flex justify-end">
           <Button
             size="icon"
-            variant="secondary"
-            className="rounded-full bg-white/95 text-serenity-700 hover:bg-white shadow-soft dark:bg-midnight-200/70 dark:hover:bg-midnight-100/60"
+            variant="outline"
+            className={`rounded-full border-serenity-200/70 shadow-soft text-serenity-800 hover:bg-serenity-100/70 dark:border-midnight-50/40 dark:text-serenity-50 dark:hover:bg-midnight-100/40 ${
+              saved ? 'bg-serenity-50/80 dark:bg-midnight-200/40' : 'bg-white/80 dark:bg-midnight-200/30'
+            }`}
             onClick={handleMoodboard}
             title={saved ? 'Verwijder uit moodboard' : 'Toevoegen aan moodboard'}
+            aria-label={saved ? 'Verwijder uit moodboard' : 'Toevoegen aan moodboard'}
           >
             {saved ? (
-              <Bookmark className="w-4 h-4 text-serenity-700" />
+              <Bookmark className="w-4 h-4 text-serenity-700 dark:text-serenity-50" />
             ) : (
               <BookmarkPlus className="w-4 h-4 text-midnight-800 dark:text-serenity-100" />
             )}
           </Button>
         </div>
-      </div>
-
-      <CardContent className="p-4 sm:p-5 flex flex-col gap-4 h-full">
         <div className="grid grid-cols-1 sm:grid-cols-[minmax(0,1fr)_220px] gap-4 items-start">
           <div className="space-y-2">
             <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-50">{post?.title || 'Nieuwe post'}</h2>
@@ -181,7 +184,7 @@ export default function PostCard({ post, onSaveToMoodboard }) {
           )}
         </div>
 
-        <div className="flex items-center justify-between pt-2">
+        <div className="flex items-center gap-3 pt-2">
           <div className="flex items-center gap-3">
             <Button
               variant={liked ? 'default' : 'ghost'}
@@ -201,15 +204,6 @@ export default function PostCard({ post, onSaveToMoodboard }) {
               <span>{comments}</span>
             </div>
           </div>
-
-          <Button
-            variant="outline"
-            size="sm"
-            className="border-serenity-300 text-serenity-800 hover:bg-serenity-100/70 rounded-full shadow-soft dark:border-midnight-50/50 dark:text-serenity-50 dark:hover:bg-midnight-100/40"
-            onClick={handleMoodboard}
-          >
-            {saved ? 'Opgeslagen in moodboard' : 'Bewaar in moodboard'}
-          </Button>
         </div>
 
         {tags?.length > 0 && (
