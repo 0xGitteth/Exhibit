@@ -56,3 +56,7 @@ export async function uploadFile(file) {
   if (!response.ok) throw new Error('Upload failed');
   return response.json();
 }
+
+export async function fetchCommunities() {
+  return request('/communities');
+}

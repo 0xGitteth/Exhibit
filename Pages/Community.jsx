@@ -3,10 +3,8 @@ import { Community as CommunityEntity } from "../entities/Community.js";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Users, Shield, HeartHandshake, Camera, Award, Zap } from "lucide-react";
+import { Users, Shield, HeartHandshake, Camera, Award, Zap, RefreshCcw } from "lucide-react";
 import { motion } from "framer-motion";
-import { sampleCommunities } from "../utils/dummyData";
-import { DUMMY_DATA_ENABLED } from "../utils/featureFlags";
 
 const communityIcons = {
   safety_consent: Shield,
@@ -27,6 +25,7 @@ const communityColors = {
 export default function Community() {
   const [communities, setCommunities] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     loadCommunities();
@@ -34,15 +33,13 @@ export default function Community() {
 
   const loadCommunities = async () => {
     setLoading(true);
+    setError(null);
     try {
-      const apiCommunities = typeof CommunityEntity.list === "function" ? await CommunityEntity.list() : [];
-      if (DUMMY_DATA_ENABLED && (!apiCommunities || apiCommunities.length === 0)) {
-        setCommunities(sampleCommunities);
-      } else {
-        setCommunities(apiCommunities || []);
-      }
+      const apiCommunities = await CommunityEntity.list();
+      setCommunities(apiCommunities || []);
     } catch (error) {
-      setCommunities(DUMMY_DATA_ENABLED ? sampleCommunities : []);
+      setError("We konden de communities niet laden. Probeer het later opnieuw.");
+      setCommunities([]);
     }
     setLoading(false);
   };
@@ -65,9 +62,23 @@ export default function Community() {
         </div>
       ) : communities.length === 0 ? (
         <div className="text-center py-16">
-          <Users className="w-16 h-16 mx-auto mb-4 text-slate-300" />
-          <h3 className="text-lg font-medium text-slate-900 mb-2">Communities komen binnenkort</h3>
-          <p className="text-slate-600">We werken hard aan het opzetten van inspirerende community spaces</p>
+          {error ? (
+            <>
+              <Users className="w-16 h-16 mx-auto mb-4 text-red-200" />
+              <h3 className="text-lg font-medium text-slate-900 mb-2">Er ging iets mis</h3>
+              <p className="text-slate-600 mb-4">{error}</p>
+              <Button variant="outline" onClick={loadCommunities} className="inline-flex items-center gap-2">
+                <RefreshCcw className="w-4 h-4" />
+                Opnieuw proberen
+              </Button>
+            </>
+          ) : (
+            <>
+              <Users className="w-16 h-16 mx-auto mb-4 text-slate-300" />
+              <h3 className="text-lg font-medium text-slate-900 mb-2">Communities komen binnenkort</h3>
+              <p className="text-slate-600">We werken hard aan het opzetten van inspirerende community spaces</p>
+            </>
+          )}
         </div>
       ) : (
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
