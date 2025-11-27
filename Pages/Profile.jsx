@@ -264,11 +264,11 @@ export default function Profile() {
     return (
       <div className="max-w-4xl mx-auto px-4">
         <div className="animate-pulse space-y-8">
-          <div className="bg-white/50 h-40 rounded-2xl shadow-lg"></div>
-          <div className="bg-white/50 h-12 rounded-2xl shadow-lg"></div>
+          <div className="bg-serenity-100/70 h-40 rounded-2xl shadow-soft"></div>
+          <div className="bg-serenity-100/70 h-12 rounded-2xl shadow-soft"></div>
           <div className="grid grid-cols-3 gap-4">
             {Array(6).fill(0).map((_, i) => (
-              <div key={i} className="bg-white/50 aspect-square rounded-2xl shadow-lg"></div>
+              <div key={i} className="bg-serenity-100/70 aspect-square rounded-2xl shadow-soft"></div>
             ))}
           </div>
         </div>
@@ -279,12 +279,12 @@ export default function Profile() {
   if (!user) return null;
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-2">
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-2 space-y-6">
       <HouseRulesModal open={showHouseRules} onOpenChange={setShowHouseRules} />
       <EditProfileDialog open={showEditProfile} onOpenChange={setShowEditProfile} user={user} onProfileUpdate={handleProfileUpdate} />
 
       {/* Profile Header */}
-      <Card className="mb-8 bg-white/60 backdrop-blur-md border-slate-200/50 shadow-xl rounded-2xl">
+      <Card className="glass-panel shadow-floating">
         <CardContent className="p-6">
           <div className="flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-6">
             <Avatar className="w-24 h-24 ring-4 ring-white shadow-lg">
@@ -292,16 +292,16 @@ export default function Profile() {
               <AvatarFallback>{user.display_name?.[0]}</AvatarFallback>
             </Avatar>
             <div className="flex-1 text-center md:text-left">
-              <h1 className="text-3xl font-bold text-slate-900">{user.display_name || user.full_name}</h1>
-              <p className="text-slate-600 mt-2">{user.bio || "Deel je verhaal en inspireer anderen..."}</p>
-               <div className="flex flex-wrap gap-2 mt-4 justify-center md:justify-start">
+              <h1 className="text-3xl font-bold text-midnight-900 dark:text-white">{user.display_name || user.full_name}</h1>
+              <p className="text-slate-700 dark:text-slate-200 mt-2">{user.bio || "Deel je verhaal en inspireer anderen..."}</p>
+              <div className="flex flex-wrap gap-2 mt-4 justify-center md:justify-start">
                 {user.roles?.map(roleId => {
                     const roleInfo = userRoles.find(r => r.id === roleId);
-                    return <Badge key={roleId} variant="secondary">{roleInfo?.label}</Badge>
+                    return <Badge key={roleId} variant="secondary" className="bg-serenity-100 text-serenity-800 border-serenity-200">{roleInfo?.label}</Badge>
                 })}
                 {user.styles?.slice(0, 3).map(styleId => {
                     const styleInfo = photographyStyles.find(s => s.id === styleId);
-                    return <Badge key={styleId} variant="outline">{styleInfo?.label}</Badge>
+                    return <Badge key={styleId} variant="outline" className="border-serenity-300 text-serenity-800 dark:text-serenity-100">{styleInfo?.label}</Badge>
                 })}
               </div>
             </div>
@@ -310,57 +310,57 @@ export default function Profile() {
       </Card>
 
       {/* Stats and Settings */}
-      <Card className="mb-8 bg-white/60 backdrop-blur-md border-slate-200/50 shadow-xl rounded-2xl">
+      <Card className="glass-panel shadow-floating">
         <CardContent className="p-4 flex justify-around items-center flex-wrap gap-4">
             <div className="text-center">
-              <div className="text-2xl font-bold text-slate-900">{userPosts.length}</div>
-              <div className="text-sm text-slate-600 uppercase">Posts</div>
+              <div className="text-2xl font-bold text-midnight-900 dark:text-white">{userPosts.length}</div>
+              <div className="text-sm text-slate-600 dark:text-slate-300 uppercase">Posts</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-slate-900">{savedPosts.length}</div>
-              <div className="text-sm text-slate-600 uppercase">Opgeslagen</div>
+              <div className="text-2xl font-bold text-midnight-900 dark:text-white">{savedPosts.length}</div>
+              <div className="text-sm text-slate-600 dark:text-slate-300 uppercase">Opgeslagen</div>
             </div>
             <div className="flex items-center space-x-2">
-                <Button variant="ghost" size="icon" onClick={() => setShowEditProfile(true)} title="Profiel bewerken"><Edit className="w-5 h-5" /></Button>
+                <Button variant="ghost" size="icon" className="rounded-full bg-serenity-100 dark:bg-midnight-100/40" onClick={() => setShowEditProfile(true)} title="Profiel bewerken"><Edit className="w-5 h-5" /></Button>
                 <Link to={createPageUrl("Analytics")}>
-                  <Button variant="ghost" size="icon" title="Statistieken"><BarChart2 className="w-5 h-5" /></Button>
+                  <Button variant="ghost" size="icon" className="rounded-full bg-serenity-100 dark:bg-midnight-100/40" title="Statistieken"><BarChart2 className="w-5 h-5" /></Button>
                 </Link>
-                <Button variant="ghost" size="icon" onClick={toggleSensitiveContent} title={user.show_sensitive_content ? "Gevoelige content verbergen" : "Gevoelige content tonen"}>
+                <Button variant="ghost" size="icon" className="rounded-full bg-serenity-100 dark:bg-midnight-100/40" onClick={toggleSensitiveContent} title={user.show_sensitive_content ? "Gevoelige content verbergen" : "Gevoelige content tonen"}>
                   {user.show_sensitive_content ? <Eye className="w-5 h-5" /> : <EyeOff className="w-5 h-5" />}
                 </Button>
-                <Button variant="ghost" size="icon" onClick={() => setShowHouseRules(true)} title="Huisregels"><Shield className="w-5 h-5" /></Button>
-                <Button variant="ghost" size="icon" onClick={handleLogout} title="Uitloggen"><LogOut className="w-5 h-5 text-red-500" /></Button>
+                <Button variant="ghost" size="icon" className="rounded-full bg-serenity-100 dark:bg-midnight-100/40" onClick={() => setShowHouseRules(true)} title="Huisregels"><Shield className="w-5 h-5" /></Button>
+                <Button variant="ghost" size="icon" className="rounded-full bg-serenity-100 dark:bg-midnight-100/40" onClick={handleLogout} title="Uitloggen"><LogOut className="w-5 h-5 text-red-500" /></Button>
             </div>
         </CardContent>
       </Card>
       
       {/* Content Tabs */}
-      <Tabs defaultValue="posts" className="w-full">
-        <TabsList className="grid w-full grid-cols-2 mb-6 bg-white/50 backdrop-blur-sm rounded-xl">
-          <TabsTrigger value="posts" className="flex items-center space-x-2"><Grid className="w-4 h-4" /><span>Mijn Posts</span></TabsTrigger>
-          <TabsTrigger value="saved" className="flex items-center space-x-2"><Bookmark className="w-4 h-4" /><span>Moodboard</span></TabsTrigger>
-        </TabsList>
+        <Tabs defaultValue="posts" className="w-full">
+          <TabsList className="grid w-full grid-cols-2 mb-6 bg-white/70 dark:bg-midnight-100/60 backdrop-blur-sm rounded-2xl border border-serenity-200/70 dark:border-midnight-50/30 shadow-soft">
+            <TabsTrigger value="posts" className="flex items-center space-x-2 data-[state=active]:bg-serenity-600 data-[state=active]:text-white rounded-xl"><Grid className="w-4 h-4" /><span>Mijn Posts</span></TabsTrigger>
+            <TabsTrigger value="saved" className="flex items-center space-x-2 data-[state=active]:bg-serenity-600 data-[state=active]:text-white rounded-xl"><Bookmark className="w-4 h-4" /><span>Moodboard</span></TabsTrigger>
+          </TabsList>
 
         <TabsContent value="posts">
-          {userPosts.length === 0 ? (
-            <div className="text-center py-16 bg-white/60 backdrop-blur-md rounded-2xl border border-slate-200/50 shadow-lg">
-              <Camera className="w-16 h-16 mx-auto mb-4 text-slate-300" />
-              <h3 className="text-lg font-medium text-slate-900 mb-2">Nog geen posts gedeeld</h3>
-              <p className="text-slate-600">Begin met het delen van je werk om je portfolio op te bouwen</p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-              {userPosts.map((post, index) => (
-                <motion.div
-                  key={post.id}
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: index * 0.05 }}
-                  className="aspect-square relative rounded-xl overflow-hidden group cursor-pointer shadow-lg"
-                >
-                  <img src={post.image_url} alt={post.title} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
-                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all duration-300 flex items-end p-4">
-                    <h4 className="text-white font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300">{post.title}</h4>
+            {userPosts.length === 0 ? (
+              <div className="text-center py-16 glass-panel shadow-floating">
+                <Camera className="w-16 h-16 mx-auto mb-4 text-serenity-500" />
+                <h3 className="text-lg font-medium text-midnight-900 dark:text-white mb-2">Nog geen posts gedeeld</h3>
+                <p className="text-slate-700 dark:text-slate-200">Begin met het delen van je werk om je portfolio op te bouwen</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                {userPosts.map((post, index) => (
+                  <motion.div
+                    key={post.id}
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: index * 0.05 }}
+                    className="aspect-square relative rounded-xl overflow-hidden group cursor-pointer shadow-soft"
+                  >
+                    <img src={post.image_url} alt={post.title} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all duration-300 flex items-end p-4">
+                      <h4 className="text-white font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300">{post.title}</h4>
                   </div>
                 </motion.div>
               ))}
@@ -369,25 +369,25 @@ export default function Profile() {
         </TabsContent>
 
         <TabsContent value="saved">
-          {savedPosts.length === 0 ? (
-            <div className="text-center py-16 bg-white/60 backdrop-blur-md rounded-2xl border border-slate-200/50 shadow-lg">
-              <Bookmark className="w-16 h-16 mx-auto mb-4 text-slate-300" />
-              <h3 className="text-lg font-medium text-slate-900 mb-2">Nog geen foto's opgeslagen</h3>
-              <p className="text-slate-600">Sla inspirerende foto's op om je persoonlijke moodboard te maken</p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-              {savedPosts.map((post, index) => (
-                <motion.div
-                  key={post.id}
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: index * 0.05 }}
-                  className="aspect-square relative rounded-xl overflow-hidden group cursor-pointer shadow-lg"
-                >
-                  <img src={post.image_url} alt={post.title} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
-                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all duration-300 flex items-end p-4">
-                    <div className="text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            {savedPosts.length === 0 ? (
+              <div className="text-center py-16 glass-panel shadow-floating">
+                <Bookmark className="w-16 h-16 mx-auto mb-4 text-serenity-500" />
+                <h3 className="text-lg font-medium text-midnight-900 dark:text-white mb-2">Nog geen foto's opgeslagen</h3>
+                <p className="text-slate-700 dark:text-slate-200">Sla inspirerende foto's op om je persoonlijke moodboard te maken</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                {savedPosts.map((post, index) => (
+                  <motion.div
+                    key={post.id}
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: index * 0.05 }}
+                    className="aspect-square relative rounded-xl overflow-hidden group cursor-pointer shadow-soft"
+                  >
+                    <img src={post.image_url} alt={post.title} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all duration-300 flex items-end p-4">
+                      <div className="text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                         <h4 className="font-medium">{post.title}</h4>
                         <p className="text-sm opacity-80">door {post.photographer_name}</p>
                     </div>

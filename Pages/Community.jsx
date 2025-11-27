@@ -45,17 +45,17 @@ export default function Community() {
   };
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-2">
+    <div className="max-w-6xl mx-auto px-4 py-2 space-y-6">
       {loading ? (
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {Array(6).fill(0).map((_, i) => (
-            <Card key={i} className="animate-pulse">
+            <Card key={i} className="animate-pulse glass-panel">
               <CardHeader>
-                <div className="bg-slate-200 h-6 rounded mb-2"></div>
-                <div className="bg-slate-200 h-4 rounded w-2/3"></div>
+                <div className="bg-serenity-100 h-6 rounded mb-2"></div>
+                <div className="bg-serenity-100 h-4 rounded w-2/3"></div>
               </CardHeader>
               <CardContent>
-                <div className="bg-slate-200 h-16 rounded"></div>
+                <div className="bg-serenity-100 h-16 rounded"></div>
               </CardContent>
             </Card>
           ))}
@@ -64,19 +64,23 @@ export default function Community() {
         <div className="text-center py-16">
           {error ? (
             <>
-              <Users className="w-16 h-16 mx-auto mb-4 text-red-200" />
-              <h3 className="text-lg font-medium text-slate-900 mb-2">Er ging iets mis</h3>
-              <p className="text-slate-600 mb-4">{error}</p>
-              <Button variant="outline" onClick={loadCommunities} className="inline-flex items-center gap-2">
+              <Users className="w-16 h-16 mx-auto mb-4 text-serenity-400" />
+              <h3 className="text-lg font-medium text-midnight-900 dark:text-white mb-2">Er ging iets mis</h3>
+              <p className="text-slate-600 dark:text-slate-200 mb-4">{error}</p>
+              <Button
+                variant="outline"
+                onClick={loadCommunities}
+                className="inline-flex items-center gap-2 rounded-full border-serenity-300 text-serenity-800 hover:bg-serenity-100/70 shadow-soft"
+              >
                 <RefreshCcw className="w-4 h-4" />
                 Opnieuw proberen
               </Button>
             </>
           ) : (
             <>
-              <Users className="w-16 h-16 mx-auto mb-4 text-slate-300" />
-              <h3 className="text-lg font-medium text-slate-900 mb-2">Communities komen binnenkort</h3>
-              <p className="text-slate-600">We werken hard aan het opzetten van inspirerende community spaces</p>
+              <Users className="w-16 h-16 mx-auto mb-4 text-serenity-400" />
+              <h3 className="text-lg font-medium text-midnight-900 dark:text-white mb-2">Communities komen binnenkort</h3>
+              <p className="text-slate-600 dark:text-slate-200">We werken hard aan het opzetten van inspirerende community spaces</p>
             </>
           )}
         </div>
@@ -93,7 +97,7 @@ export default function Community() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
               >
-                <Card className="hover:shadow-lg transition-all duration-300 border-slate-200 h-full bg-white/80 backdrop-blur-sm">
+                <Card className="hover:shadow-floating transition-all duration-300 glass-panel h-full">
                   <CardHeader>
                     <div className="flex items-start justify-between">
                       <div className="flex items-center space-x-3">
@@ -101,7 +105,7 @@ export default function Community() {
                           <IconComponent className="w-5 h-5" />
                         </div>
                         <div>
-                          <CardTitle className="text-lg text-slate-900">{community.name}</CardTitle>
+                          <CardTitle className="text-lg text-midnight-900 dark:text-white">{community.name}</CardTitle>
                           <Badge variant="outline" className={`mt-1 ${colorClass} border text-xs`}>
                             {community.member_count} leden
                           </Badge>
@@ -110,10 +114,10 @@ export default function Community() {
                     </div>
                   </CardHeader>
                   <CardContent className="pt-0">
-                    <p className="text-slate-600 text-sm leading-relaxed mb-4">
+                    <p className="text-slate-700 dark:text-slate-200 text-sm leading-relaxed mb-4">
                       {community.description}
                     </p>
-                    <Button variant="outline" className="w-full">
+                    <Button variant="outline" className="w-full rounded-full border-serenity-300 text-serenity-800 hover:bg-serenity-100/70 shadow-soft">
                       Bekijk community
                     </Button>
                   </CardContent>

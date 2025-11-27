@@ -53,11 +53,15 @@ export default function Timeline() {
   }, [loadPosts]);
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-6 space-y-4">
-      <div className="space-y-2">
-        <p className="text-xs uppercase tracking-wide text-blue-600 font-semibold">Exhibit</p>
-        <h1 className="text-2xl sm:text-3xl font-bold text-slate-900">Tijdlijn</h1>
-        <p className="text-slate-600">De nieuwste creaties uit de community op een rij.</p>
+    <div className="max-w-2xl mx-auto px-4 py-6 space-y-6">
+      <div className="space-y-3 glass-panel p-5">
+        <p className="text-xs uppercase tracking-[0.2em] text-serenity-600 font-semibold">Exhibit</p>
+        <div className="flex items-start justify-between gap-4">
+          <div className="space-y-2">
+            <h1 className="text-3xl font-bold text-midnight-900 dark:text-white">Tijdlijn</h1>
+            <p className="text-slate-700 dark:text-slate-200">De nieuwste creaties uit de community op een rij.</p>
+          </div>
+        </div>
       </div>
 
       {loading ? (
@@ -67,9 +71,9 @@ export default function Timeline() {
           ))}
         </div>
       ) : posts.length === 0 ? (
-        <div className="bg-white/80 backdrop-blur-sm border border-slate-200 shadow-sm rounded-2xl p-6 text-center space-y-2">
-          <p className="text-lg font-semibold text-slate-900">Nog geen posts</p>
-          <p className="text-slate-600">Plaats een nieuw werk om de tijdlijn te vullen.</p>
+        <div className="glass-panel p-6 text-center space-y-2">
+          <p className="text-lg font-semibold text-midnight-900 dark:text-white">Nog geen posts</p>
+          <p className="text-slate-600 dark:text-slate-200">Plaats een nieuw werk om de tijdlijn te vullen.</p>
         </div>
       ) : (
         <div className="space-y-6">

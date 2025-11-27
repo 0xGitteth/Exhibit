@@ -63,12 +63,12 @@ export default function PostCard({ post, onSaveToMoodboard }) {
   const showImage = image && !imageError;
 
   return (
-    <Card className="bg-gradient-to-b from-indigo-50/70 via-white to-emerald-50/60 dark:from-slate-900 dark:via-slate-950 dark:to-slate-950 border border-indigo-100/60 dark:border-slate-800 shadow-lg overflow-hidden">
-      <div className="relative h-64 sm:h-72 bg-slate-100 dark:bg-slate-800">
+    <Card className="bg-gradient-to-b from-serenity-50/80 via-white to-serenity-100/70 dark:from-midnight-200 dark:via-midnight-300 dark:to-midnight-500 border border-serenity-200/70 dark:border-midnight-50/30 shadow-soft overflow-hidden rounded-2xl">
+      <div className="relative h-64 sm:h-72 bg-serenity-100/60 dark:bg-midnight-100/40">
         {showImage ? (
           <>
             {!imageLoaded && (
-              <div className="absolute inset-0 animate-pulse bg-gradient-to-br from-indigo-100 via-white to-emerald-100 dark:from-slate-800 dark:via-slate-900 dark:to-slate-800" />
+              <div className="absolute inset-0 animate-pulse bg-gradient-to-br from-serenity-100 via-white to-serenity-200 dark:from-midnight-200 dark:via-midnight-300 dark:to-midnight-400" />
             )}
             <img
               src={image}
@@ -79,7 +79,7 @@ export default function PostCard({ post, onSaveToMoodboard }) {
             />
           </>
         ) : (
-          <div className="w-full h-full flex flex-col items-center justify-center text-indigo-700 dark:text-indigo-200 bg-gradient-to-br from-indigo-50 via-white to-emerald-50 dark:from-slate-800 dark:via-slate-900 dark:to-slate-800 space-y-2">
+          <div className="w-full h-full flex flex-col items-center justify-center text-serenity-700 dark:text-serenity-100 bg-gradient-to-br from-serenity-50 via-white to-serenity-100 dark:from-midnight-200 dark:via-midnight-300 dark:to-midnight-500 space-y-2">
             <ImageOff className="w-9 h-9" />
             <p className="text-sm font-medium">Geen afbeelding beschikbaar</p>
           </div>
@@ -90,7 +90,7 @@ export default function PostCard({ post, onSaveToMoodboard }) {
               <Badge
                 key={tag}
                 variant="secondary"
-                className="bg-white/90 text-indigo-700 border border-indigo-100 dark:bg-slate-800/80 dark:text-indigo-100 dark:border-slate-700"
+                className="bg-white/90 text-serenity-700 border border-serenity-200/80 dark:bg-midnight-200/60 dark:text-serenity-50 dark:border-midnight-50/30"
               >
                 {tag}
               </Badge>
@@ -101,11 +101,15 @@ export default function PostCard({ post, onSaveToMoodboard }) {
           <Button
             size="icon"
             variant="secondary"
-            className="rounded-full bg-white/95 text-indigo-700 hover:bg-white dark:bg-slate-900/80 dark:hover:bg-slate-800"
+            className="rounded-full bg-white/95 text-serenity-700 hover:bg-white shadow-soft dark:bg-midnight-200/70 dark:hover:bg-midnight-100/60"
             onClick={handleMoodboard}
             title={saved ? 'Verwijder uit moodboard' : 'Toevoegen aan moodboard'}
           >
-            {saved ? <Bookmark className="w-4 h-4 text-indigo-700" /> : <BookmarkPlus className="w-4 h-4 text-slate-700 dark:text-indigo-100" />}
+            {saved ? (
+              <Bookmark className="w-4 h-4 text-serenity-700" />
+            ) : (
+              <BookmarkPlus className="w-4 h-4 text-midnight-800 dark:text-serenity-100" />
+            )}
           </Button>
         </div>
       </div>
@@ -113,7 +117,9 @@ export default function PostCard({ post, onSaveToMoodboard }) {
       <CardContent className="p-4 sm:p-5 space-y-3">
         <div className="flex items-center justify-between text-xs text-slate-600 dark:text-slate-300">
           <span>{formattedDate}</span>
-          {post?.photographer_name && <span className="font-medium text-indigo-700 dark:text-indigo-200">door {post.photographer_name}</span>}
+          {post?.photographer_name && (
+            <span className="font-semibold text-serenity-700 dark:text-serenity-100">door {post.photographer_name}</span>
+          )}
         </div>
         <div className="space-y-1">
           <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-50">{post?.title || 'Nieuwe post'}</h2>
@@ -126,7 +132,7 @@ export default function PostCard({ post, onSaveToMoodboard }) {
               <Badge
                 key={tag}
                 variant="outline"
-                className="border-indigo-200 text-indigo-800 dark:border-slate-700 dark:text-indigo-100"
+                className="border-serenity-300 text-serenity-800 dark:border-midnight-50/50 dark:text-serenity-50"
               >
                 {tag}
               </Badge>
@@ -139,7 +145,11 @@ export default function PostCard({ post, onSaveToMoodboard }) {
             <Button
               variant={liked ? 'default' : 'ghost'}
               size="sm"
-              className={`flex items-center gap-2 ${liked ? 'bg-indigo-600 text-white hover:bg-indigo-600/90' : 'text-indigo-700 dark:text-indigo-200'}`}
+              className={`flex items-center gap-2 rounded-full shadow-soft ${
+                liked
+                  ? 'bg-serenity-600 text-white hover:bg-serenity-600/90'
+                  : 'text-serenity-700 dark:text-serenity-100 hover:bg-serenity-100/60 dark:hover:bg-midnight-100/40'
+              }`}
               onClick={handleLike}
             >
               <Heart className={`w-4 h-4 ${liked ? 'fill-white' : ''}`} />
@@ -154,7 +164,7 @@ export default function PostCard({ post, onSaveToMoodboard }) {
           <Button
             variant="outline"
             size="sm"
-            className="border-indigo-200 text-indigo-800 hover:bg-indigo-50 dark:border-slate-700 dark:text-indigo-100 dark:hover:bg-slate-800"
+            className="border-serenity-300 text-serenity-800 hover:bg-serenity-100/70 rounded-full shadow-soft dark:border-midnight-50/50 dark:text-serenity-50 dark:hover:bg-midnight-100/40"
             onClick={handleMoodboard}
           >
             {saved ? 'Opgeslagen in moodboard' : 'Bewaar in moodboard'}

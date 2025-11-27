@@ -12,6 +12,7 @@ import ProfilePage from '../Pages/Profile.jsx';
 import SearchPage from '../Pages/Discover.jsx';
 import TimelinePage from '../Pages/Timeline';
 import { PAGE_ROUTES } from '@/utils';
+import { ThemeProvider } from '@/context/ThemeContext';
 
 const routerBasename = (() => {
   const baseUrl = import.meta.env.BASE_URL || '/';
@@ -42,15 +43,17 @@ const renderPage = (pageName: string, element: React.ReactNode) => (
 
 function App() {
   return (
-    <BrowserRouter basename={routerBasename}>
-      <Routes>
-        <Route path={PAGE_ROUTES.timeline} element={renderPage('Timeline', <TimelinePage />)} />
-        <Route path={PAGE_ROUTES.community} element={renderPage('Community', <CommunityPage />)} />
-        <Route path={PAGE_ROUTES.discover} element={renderPage('Discover', <SearchPage />)} />
-        <Route path={PAGE_ROUTES.profile} element={renderPage('Profile', <ProfilePage />)} />
-        <Route path={PAGE_ROUTES.analytics} element={renderPage('Analytics', <AnalyticsPage />)} />
-      </Routes>
-    </BrowserRouter>
+    <ThemeProvider>
+      <BrowserRouter basename={routerBasename}>
+        <Routes>
+          <Route path={PAGE_ROUTES.timeline} element={renderPage('Timeline', <TimelinePage />)} />
+          <Route path={PAGE_ROUTES.community} element={renderPage('Community', <CommunityPage />)} />
+          <Route path={PAGE_ROUTES.discover} element={renderPage('Discover', <SearchPage />)} />
+          <Route path={PAGE_ROUTES.profile} element={renderPage('Profile', <ProfilePage />)} />
+          <Route path={PAGE_ROUTES.analytics} element={renderPage('Analytics', <AnalyticsPage />)} />
+        </Routes>
+      </BrowserRouter>
+    </ThemeProvider>
   );
 }
 
