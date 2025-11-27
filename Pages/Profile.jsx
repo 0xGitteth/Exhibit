@@ -18,6 +18,9 @@ import { motion } from "framer-motion";
 import HouseRulesModal from "@/components/HouseRulesModal";
 import { createPageUrl } from "@/utils";
 import { Link } from "react-router-dom";
+import { DUMMY_DATA_ENABLED } from "../utils/featureFlags";
+import { sampleMoodboardPosts, sampleProfile, sampleProfilePosts } from "../utils/dummyData";
+import { getMoodboardPosts } from "../utils/moodboardStorage";
 
 const photographyStyles = [
   { id: "portrait", label: "Portrait" }, { id: "fashion", label: "Fashion" }, { id: "boudoir", label: "Boudoir" },
@@ -164,29 +167,82 @@ export default function Profile() {
   const [showEditProfile, setShowEditProfile] = useState(false);
   const [showHouseRules, setShowHouseRules] = useState(false);
 
+  const mergeMoodboardPosts = (posts = [], local = []) => {
+    const byId = new Map();
+    [...local, ...posts].forEach((item) => {
+      if (!item?.id) return;
+      byId.set(item.id, item);
+    });
+    return Array.from(byId.values());
+  };
+
   const loadUserData = async () => {
     setLoading(true);
     try {
       const userData = await User.me();
-      setUser(userData);
-      
-      const posts = await Post.filter({ created_by: userData.email }, "-created_date");
-      setUserPosts(posts);
+      const resolvedUser = userData || (DUMMY_DATA_ENABLED ? sampleProfile : null);
 
-      const saved = await SavedPost.filter({ user_email: userData.email });
-      const savedPostIds = saved.map(s => s.post_id);
-      if (savedPostIds.length > 0) {
-        const savedPostsData = await Post.filter({ id: { "$in": savedPostIds }});
-        setSavedPosts(savedPostsData);
+      if (!resolvedUser) {
+        throw new Error("No user data");
+      }
+
+      setUser(resolvedUser);
+
+      try {
+        const posts = resolvedUser.email
+          ? await Post.filter({ created_by: resolvedUser.email }, "-created_date")
+          : [];
+        if (DUMMY_DATA_ENABLED && (!posts || posts.length === 0)) {
+          setUserPosts(sampleProfilePosts);
+        } else {
+          setUserPosts(posts || []);
+        }
+      } catch (error) {
+        setUserPosts(DUMMY_DATA_ENABLED ? sampleProfilePosts : []);
+      }
+
+      try {
+        const localMoodboard = getMoodboardPosts();
+        if (resolvedUser.email) {
+          const saved = await SavedPost.filter({ user_email: resolvedUser.email });
+          const savedPostIds = saved.map(s => s.post_id);
+          if (savedPostIds.length > 0) {
+            const savedPostsData = await Post.filter({ id: { "$in": savedPostIds }});
+            setSavedPosts(mergeMoodboardPosts(savedPostsData, localMoodboard));
+          } else if (DUMMY_DATA_ENABLED || localMoodboard.length > 0) {
+            setSavedPosts(mergeMoodboardPosts(sampleMoodboardPosts, localMoodboard));
+          }
+        } else if (DUMMY_DATA_ENABLED || localMoodboard.length > 0) {
+          setSavedPosts(mergeMoodboardPosts(sampleMoodboardPosts, localMoodboard));
+        }
+      } catch (error) {
+        const localMoodboard = getMoodboardPosts();
+        setSavedPosts(mergeMoodboardPosts(DUMMY_DATA_ENABLED ? sampleMoodboardPosts : [], localMoodboard));
       }
     } catch (error) {
-      await User.loginWithRedirect(window.location.href);
+      if (DUMMY_DATA_ENABLED) {
+        setUser(sampleProfile);
+        setUserPosts(sampleProfilePosts);
+        setSavedPosts(mergeMoodboardPosts(sampleMoodboardPosts, getMoodboardPosts()));
+      } else {
+        await User.loginWithRedirect(window.location.href);
+      }
     }
     setLoading(false);
   };
 
   useEffect(() => {
     loadUserData();
+  }, []);
+
+  useEffect(() => {
+    const handleMoodboardUpdate = (event) => {
+      const updated = event?.detail?.posts || getMoodboardPosts();
+      setSavedPosts((prev) => mergeMoodboardPosts(prev, updated));
+    };
+
+    window.addEventListener('moodboard:updated', handleMoodboardUpdate);
+    return () => window.removeEventListener('moodboard:updated', handleMoodboardUpdate);
   }, []);
 
   const handleProfileUpdate = (updatedUser) => {

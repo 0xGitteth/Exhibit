@@ -1,13 +1,22 @@
 import React, { useCallback, useEffect, useState } from 'react';
 
-import { Card, CardContent } from '@/components/ui/card';
 import { Post } from '../entities/Post.js';
+import { DUMMY_DATA_ENABLED } from '../utils/featureFlags';
+import { samplePosts } from '../utils/dummyData';
+import PostCard from '../Components/PostCard';
 
 interface PostSummary {
   id: string;
   title?: string;
   description?: string;
   created_date?: string;
+  photography_style?: string;
+  tags?: string[];
+  image_url?: string;
+  photographer_name?: string;
+  likes?: number;
+  comments_count?: number;
+  comment_count?: number;
 }
 
 export default function Timeline() {
@@ -17,9 +26,13 @@ export default function Timeline() {
   const loadPosts = useCallback(async () => {
     try {
       const recentPosts = await Post.filter({});
-      setPosts(recentPosts || []);
+      if (DUMMY_DATA_ENABLED && (!recentPosts || recentPosts.length === 0)) {
+        setPosts(samplePosts);
+      } else {
+        setPosts(recentPosts || []);
+      }
     } catch (error) {
-      setPosts([]);
+      setPosts(DUMMY_DATA_ENABLED ? samplePosts : []);
     } finally {
       setLoading(false);
     }
@@ -50,32 +63,26 @@ export default function Timeline() {
       {loading ? (
         <div className="space-y-4">
           {[...Array(3)].map((_, index) => (
-            <Card key={index} className="animate-pulse bg-white/60 backdrop-blur-sm border-slate-200">
-              <CardContent className="p-4 space-y-3">
-                <div className="h-4 bg-slate-200 rounded w-1/3" />
-                <div className="h-3 bg-slate-200 rounded w-2/3" />
-                <div className="h-40 bg-slate-200 rounded" />
-              </CardContent>
-            </Card>
+            <div key={index} className="h-80 rounded-2xl bg-gradient-to-r from-slate-100 to-slate-200 animate-pulse" />
           ))}
         </div>
       ) : posts.length === 0 ? (
-        <Card className="bg-white/80 backdrop-blur-sm border-slate-200 shadow-sm">
-          <CardContent className="p-6 text-center space-y-2">
-            <p className="text-lg font-semibold text-slate-900">Nog geen posts</p>
-            <p className="text-slate-600">Plaats een nieuw werk om de tijdlijn te vullen.</p>
-          </CardContent>
-        </Card>
+        <div className="bg-white/80 backdrop-blur-sm border border-slate-200 shadow-sm rounded-2xl p-6 text-center space-y-2">
+          <p className="text-lg font-semibold text-slate-900">Nog geen posts</p>
+          <p className="text-slate-600">Plaats een nieuw werk om de tijdlijn te vullen.</p>
+        </div>
       ) : (
         <div className="space-y-6">
           {posts.map((post) => (
-            <Card key={post.id} className="bg-white/80 backdrop-blur-sm border-slate-200 shadow-sm">
-              <CardContent className="p-4 space-y-2">
-                <p className="text-xs text-slate-500">{post.created_date}</p>
-                <h2 className="text-xl font-semibold text-slate-900">{post.title || 'Nieuwe post'}</h2>
-                {post.description && <p className="text-slate-700">{post.description}</p>}
-              </CardContent>
-            </Card>
+            <PostCard
+              key={post.id}
+              post={{
+                ...post,
+                image_url: post.image_url || 'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80',
+                photographer_name: post.photographer_name || 'Onbekende maker',
+                tags: post.tags || (post.photography_style ? [post.photography_style] : []),
+              }}
+            />
           ))}
         </div>
       )}

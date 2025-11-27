@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Users, Shield, HeartHandshake, Camera, Award, Zap } from "lucide-react";
 import { motion } from "framer-motion";
+import { sampleCommunities } from "../utils/dummyData";
+import { DUMMY_DATA_ENABLED } from "../utils/featureFlags";
 
 const communityIcons = {
   safety_consent: Shield,
@@ -32,8 +34,16 @@ export default function Community() {
 
   const loadCommunities = async () => {
     setLoading(true);
-    const allCommunities = await CommunityEntity.list();
-    setCommunities(allCommunities);
+    try {
+      const apiCommunities = typeof CommunityEntity.list === "function" ? await CommunityEntity.list() : [];
+      if (DUMMY_DATA_ENABLED && (!apiCommunities || apiCommunities.length === 0)) {
+        setCommunities(sampleCommunities);
+      } else {
+        setCommunities(apiCommunities || []);
+      }
+    } catch (error) {
+      setCommunities(DUMMY_DATA_ENABLED ? sampleCommunities : []);
+    }
     setLoading(false);
   };
 
