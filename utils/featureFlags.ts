@@ -8,4 +8,7 @@ const getEnvValue = (key: string) => {
   return undefined;
 };
 
-export const DUMMY_DATA_ENABLED = (getEnvValue('VITE_ENABLE_DUMMY_DATA') || '').toString().toLowerCase() === 'true';
+const envDummySetting = getEnvValue('VITE_ENABLE_DUMMY_DATA');
+const isDummyFlagSet = (envDummySetting || '').toString().toLowerCase();
+
+export const DUMMY_DATA_ENABLED = envDummySetting === undefined ? true : isDummyFlagSet === 'true';
