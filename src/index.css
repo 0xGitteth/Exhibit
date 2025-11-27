@@ -2,3 +2,48 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: light;
+  }
+
+  .dark {
+    color-scheme: dark;
+  }
+
+  body {
+    @apply min-h-screen bg-gradient-to-br from-serenity-50 via-white to-serenity-100 text-slate-900 antialiased transition-colors duration-300;
+  }
+
+  .dark body {
+    @apply bg-gradient-to-br from-midnight-600 via-midnight-500 to-midnight-600 text-slate-100;
+  }
+
+  ::selection {
+    @apply bg-serenity-200 text-midnight-900;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-semibold text-midnight-900 dark:text-white tracking-tight;
+  }
+
+  p {
+    @apply text-slate-700 dark:text-slate-200 leading-relaxed;
+  }
+}
+
+@layer components {
+  .glass-panel {
+    @apply bg-white/70 dark:bg-midnight-100/60 backdrop-blur-lg border border-serenity-200/70 dark:border-midnight-50/30 shadow-soft rounded-2xl;
+  }
+
+  .pill-button {
+    @apply inline-flex items-center gap-2 rounded-full px-4 py-2 font-medium transition-all duration-200 shadow-soft bg-serenity-500 text-white hover:bg-serenity-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-serenity-300 dark:focus-visible:ring-midnight-50/50;
+  }
+}

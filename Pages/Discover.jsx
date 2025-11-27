@@ -100,11 +100,15 @@ const PeopleTab = ({ searchTerm }) => {
       {/* Role Filter Pills */}
       <div className="flex space-x-2 mb-6 overflow-x-auto pb-2">
         {userRoles.map(role => (
-          <Button 
-            key={role.id} 
-            variant={activeRole === role.id ? 'default' : 'outline'} 
-            onClick={() => setActiveRole(role.id)} 
-            className="shrink-0 bg-white/80"
+          <Button
+            key={role.id}
+            variant={activeRole === role.id ? 'default' : 'outline'}
+            onClick={() => setActiveRole(role.id)}
+            className={`shrink-0 ${
+              activeRole === role.id
+                ? 'bg-serenity-600 text-white shadow-soft'
+                : 'bg-white/80 text-midnight-900 dark:text-serenity-50 border-serenity-200/70'
+            } rounded-full px-4 py-2`}
           >
             {role.label}
           </Button>
@@ -118,7 +122,7 @@ const PeopleTab = ({ searchTerm }) => {
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
           {filteredUsers.map(user => (
             <motion.div key={user.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-              <Card className="text-center shadow-lg bg-white/70 backdrop-blur-sm rounded-2xl overflow-hidden hover:shadow-xl transition-all">
+              <Card className="text-center glass-panel overflow-hidden hover:shadow-floating transition-all">
                 <Avatar className="w-full h-32 sm:h-40 rounded-none">
                   <AvatarImage src={user.avatar_url} className="object-cover" />
                   <AvatarFallback className="rounded-none">
@@ -126,8 +130,8 @@ const PeopleTab = ({ searchTerm }) => {
                   </AvatarFallback>
                 </Avatar>
                 <CardContent className="p-3">
-                  <h4 className="font-semibold truncate text-slate-800">{user.display_name || "Gebruiker"}</h4>
-                  <p className="text-xs text-slate-500 truncate">{user.roles?.join(', ') || "Creatief"}</p>
+                  <h4 className="font-semibold truncate text-midnight-900 dark:text-white">{user.display_name || "Gebruiker"}</h4>
+                  <p className="text-xs text-slate-600 dark:text-slate-200 truncate">{user.roles?.join(', ') || "Creatief"}</p>
                 </CardContent>
               </Card>
             </motion.div>
@@ -180,29 +184,37 @@ const StylesTab = ({ searchTerm }) => {
     <div className="px-4">
       {/* Style Filter Pills */}
       <div className="flex flex-wrap gap-3 mb-6">
-        <Button 
-          variant={!selectedStyle ? 'default' : 'outline'} 
+        <Button
+          variant={!selectedStyle ? 'default' : 'outline'}
           onClick={() => setSelectedStyle(null)}
-          className="bg-white/80"
+          className={`rounded-full px-4 py-2 ${
+            !selectedStyle
+              ? 'bg-serenity-600 text-white shadow-soft'
+              : 'bg-white/80 text-midnight-900 dark:text-serenity-50 border-serenity-200/70'
+          }`}
         >
           Alles
         </Button>
         {visibleStyles.map(style => (
-          <Button 
-            key={style.id} 
-            variant={selectedStyle === style.id ? 'default' : 'outline'} 
+          <Button
+            key={style.id}
+            variant={selectedStyle === style.id ? 'default' : 'outline'}
             onClick={() => setSelectedStyle(style.id)}
-            className="bg-white/80"
+            className={`rounded-full px-4 py-2 ${
+              selectedStyle === style.id
+                ? 'bg-serenity-600 text-white shadow-soft'
+                : 'bg-white/80 text-midnight-900 dark:text-serenity-50 border-serenity-200/70'
+            }`}
           >
             <span className="mr-1">{style.icon}</span>
             {style.label}
           </Button>
         ))}
         {!showAllStyles && photographyStyles.length > 5 && (
-          <Button 
-            variant="outline" 
+          <Button
+            variant="outline"
             onClick={() => setShowAllStyles(true)}
-            className="bg-white/80 text-blue-600 border-blue-300"
+            className="rounded-full bg-white/80 text-serenity-700 border-serenity-300 hover:bg-serenity-100 shadow-soft"
           >
             Toon meer...
           </Button>
@@ -227,26 +239,30 @@ export default function Discover() {
   const [searchTerm, setSearchTerm] = useState("");
 
   return (
-    <div className="max-w-6xl mx-auto px-2 pt-2">
+    <div className="max-w-6xl mx-auto px-3 pt-4 space-y-6">
       {/* Search Bar - direct starten */}
-      <div className="relative mb-6 px-4">
-        <Search className="absolute left-7 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
-        <Input
-          placeholder="Zoek naar mensen, stijlen, of titels..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="pl-12 py-3 text-lg bg-white/70 backdrop-blur-md rounded-full shadow-lg border-slate-200/50"
-        />
+      <div className="relative px-4">
+        <div className="glass-panel rounded-2xl shadow-floating p-1">
+          <div className="relative">
+            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-serenity-500 dark:text-serenity-200 w-5 h-5" />
+            <Input
+              placeholder="Zoek naar mensen, stijlen, of titels..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-11 pr-4 py-3 text-lg bg-transparent border-none focus-visible:ring-0"
+            />
+          </div>
+        </div>
       </div>
 
       {/* Tabs */}
       <Tabs defaultValue="people" className="w-full">
-        <TabsList className="grid w-full grid-cols-2 mb-6 bg-white/50 backdrop-blur-sm rounded-xl mx-4">
-          <TabsTrigger value="people" className="flex items-center space-x-2">
+        <TabsList className="grid w-full grid-cols-2 mb-6 bg-white/70 dark:bg-midnight-100/60 backdrop-blur-sm rounded-2xl mx-4 border border-serenity-200/70 dark:border-midnight-50/30 shadow-soft">
+          <TabsTrigger value="people" className="flex items-center space-x-2 data-[state=active]:bg-serenity-600 data-[state=active]:text-white rounded-xl">
             <UserIcon className="w-4 h-4" />
             <span>Mensen</span>
           </TabsTrigger>
-          <TabsTrigger value="styles" className="flex items-center space-x-2">
+          <TabsTrigger value="styles" className="flex items-center space-x-2 data-[state=active]:bg-serenity-600 data-[state=active]:text-white rounded-xl">
             <Palette className="w-4 h-4" />
             <span>Stijlen</span>
           </TabsTrigger>

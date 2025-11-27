@@ -2,15 +2,26 @@ import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { PAGE_ROUTES } from '@/utils';
 import { User } from './entities/User.js';
-import { Search, UserIcon, LayoutGrid, MessageSquare, Plus, Users } from 'lucide-react';
+import {
+  Search,
+  UserIcon,
+  LayoutGrid,
+  MessageSquare,
+  Plus,
+  Users,
+  SunMedium,
+  Moon,
+} from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import CreatePostModal from '@/components/CreatePostModal';
 import HouseRulesModal from '@/components/HouseRulesModal';
 import { Post } from './entities/Post.js';
+import { useTheme } from '@/context/ThemeContext';
 
 export default function Layout({ children, currentPageName }) {
   const location = useLocation();
+  const { theme, toggleTheme } = useTheme();
   const [user, setUser] = useState(null);
   const [showCreatePost, setShowCreatePost] = useState(false);
   const [showHouseRules, setShowHouseRules] = useState(false);
@@ -62,38 +73,50 @@ export default function Layout({ children, currentPageName }) {
     'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=320&q=80';
 
   return (
-    <div className="min-h-screen font-sans relative">
-      <div
-        className="fixed inset-0 w-full h-screen pointer-events-none z-0"
-        style={{
-          background: 'linear-gradient(to bottom, #E3F2FD 0%, #F8F9FA 50%, #FFFFFF 100%)',
-        }}
-      />
+    <div className="min-h-screen font-sans relative text-slate-900 dark:text-slate-100">
+      <div className="fixed inset-0 w-full h-screen pointer-events-none z-0">
+        <div className="absolute inset-0 bg-gradient-to-br from-serenity-100 via-white to-serenity-50 dark:from-midnight-500 dark:via-midnight-400 dark:to-midnight-600" />
+        <div className="absolute inset-0 opacity-50 bg-[radial-gradient(circle_at_20%_20%,rgba(70,99,172,0.18),transparent_25%),radial-gradient(circle_at_80%_0%,rgba(161,185,226,0.2),transparent_20%),radial-gradient(circle_at_50%_80%,rgba(70,99,172,0.12),transparent_30%)]" />
+      </div>
 
-      {currentPageName === 'Timeline' && (
-        <header className="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-slate-200/50">
-          <div className="max-w-xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex justify-between items-center h-16">
-              <Link to={PAGE_ROUTES.timeline} className="flex items-center gap-2">
-                <img
-                  src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d3a37e32ef31e2813744f9/017b1b42f_Exhibitlogohorizontaal1.png"
-                  alt="Exhibit"
-                  className="h-8 w-auto"
-                />
-              </Link>
+      <header className="sticky top-0 z-40 backdrop-blur-xl bg-white/80 dark:bg-midnight-100/60 border-b border-serenity-200/60 dark:border-midnight-50/30 shadow-soft">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16 gap-3">
+            <Link to={PAGE_ROUTES.timeline} className="flex items-center gap-3">
+              <div className="h-10 w-10 rounded-2xl bg-gradient-to-br from-serenity-500 to-serenity-600 text-white flex items-center justify-center shadow-floating">
+                <LayoutGrid className="w-5 h-5" />
+              </div>
+              <div>
+                <p className="text-xs uppercase tracking-[0.2em] text-serenity-600 dark:text-serenity-200">Exhibit</p>
+                <p className="font-semibold text-lg text-midnight-900 dark:text-white">Creatieve community</p>
+              </div>
+            </Link>
+
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={toggleTheme}
+                className="inline-flex items-center gap-2 rounded-full px-3 py-2 bg-serenity-100 dark:bg-midnight-50/20 border border-serenity-200/70 dark:border-midnight-50/30 text-midnight-900 dark:text-white shadow-soft hover:-translate-y-[1px] transition"
+                aria-label="Schakel thema"
+              >
+                {theme === 'light' ? <SunMedium className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+                <span className="hidden sm:inline text-sm font-semibold">{theme === 'light' ? 'Licht' : 'Donker'}</span>
+              </button>
               <Link to={PAGE_ROUTES.chat}>
-                <Button variant="ghost" size="icon" className="bg-white/50 shadow-md rounded-full">
-                  <MessageSquare className="w-5 h-5 text-slate-700" />
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="bg-serenity-500 text-white hover:bg-serenity-600 rounded-full shadow-floating h-10 w-10"
+                >
+                  <MessageSquare className="w-5 h-5" />
                 </Button>
               </Link>
             </div>
           </div>
-        </header>
-      )}
+        </div>
+      </header>
 
-      <main className={`pb-32 ${currentPageName === 'Timeline' ? 'pt-0' : 'pt-4'} relative z-10`}>
-        {children}
-      </main>
+      <main className={`pb-32 ${currentPageName === 'Timeline' ? 'pt-4' : 'pt-8'} relative z-10`}>{children}</main>
 
       <HouseRulesModal open={showHouseRules} onOpenChange={handleCloseRules} />
       <CreatePostModal
@@ -108,7 +131,7 @@ export default function Layout({ children, currentPageName }) {
       >
         <div className="relative flex items-end justify-center gap-3">
           <div className="pointer-events-auto flex items-end justify-center gap-3">
-            <div className="flex items-center justify-between gap-1 rounded-full border border-slate-200/90 bg-white/95 px-2.5 py-1.5 shadow-[0_12px_28px_rgba(15,23,42,0.18)] backdrop-blur supports-[backdrop-filter]:bg-white/80">
+            <div className="flex items-center justify-between gap-1 rounded-full border border-serenity-200/80 dark:border-midnight-50/30 bg-white/90 dark:bg-midnight-100/70 px-2.5 py-1.5 shadow-floating backdrop-blur supports-[backdrop-filter]:bg-white/80">
               {tabItems.map((item) => {
                 const isRootPath = item.path === PAGE_ROUTES.timeline;
                 const isActive =
@@ -121,16 +144,18 @@ export default function Layout({ children, currentPageName }) {
                   <Link
                     key={`${item.name}-${item.path}`}
                     to={item.path}
-                    className={`group flex items-center justify-center gap-2 rounded-full px-3 py-2 text-sm font-medium transition-all duration-200 ${
+                    className={`group flex items-center justify-center gap-2 rounded-full px-3 py-2 text-sm font-semibold transition-all duration-200 ${
                       isActive
-                        ? 'bg-blue-600 text-white shadow-lg shadow-blue-300/40'
-                        : 'text-slate-700 hover:bg-slate-50 hover:text-blue-600'
+                        ? 'bg-serenity-600 text-white shadow-floating'
+                        : 'text-midnight-800 dark:text-slate-200 hover:bg-serenity-100/90 dark:hover:bg-midnight-50/30'
                     }`}
                   >
                     {item.isProfile ? (
                       <div
                         className={`p-0.5 rounded-full border transition-colors ${
-                          isActive ? 'border-white/70 bg-white/10' : 'border-blue-50 group-hover:border-blue-200'
+                          isActive
+                            ? 'border-white/70 bg-white/10'
+                            : 'border-serenity-100 dark:border-midnight-50/40 group-hover:border-serenity-200'
                         }`}
                       >
                         <Avatar className="w-9 h-9 border border-white/60 shadow-sm">
@@ -143,8 +168,8 @@ export default function Layout({ children, currentPageName }) {
                     ) : (
                       <IconComponent
                         className={`w-5 h-5 transition-transform duration-200 ${
-                            isActive ? 'scale-110' : 'group-hover:scale-105'
-                          }`}
+                          isActive ? 'scale-110' : 'group-hover:scale-105'
+                        }`}
                       />
                     )}
                     <span>{item.name}</span>
@@ -158,7 +183,7 @@ export default function Layout({ children, currentPageName }) {
                 type="button"
                 onClick={actionItem.action}
                 aria-label={actionItem.name}
-                className="pointer-events-auto flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 text-white shadow-[0_14px_35px_rgba(59,130,246,0.35)] transition-transform duration-200 hover:scale-105 focus:scale-105 focus:outline-none focus:ring-4 focus:ring-blue-200"
+                className="pointer-events-auto flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-serenity-500 to-serenity-700 text-white shadow-floating transition-transform duration-200 hover:scale-105 focus:scale-105 focus:outline-none focus:ring-4 focus:ring-serenity-200"
               >
                 {ActionIcon && <ActionIcon className="h-6 w-6" />}
               </button>
