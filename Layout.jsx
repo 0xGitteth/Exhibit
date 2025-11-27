@@ -126,12 +126,18 @@ export default function Layout({ children, currentPageName }) {
       />
 
       <nav
-        className="fixed inset-x-0 bottom-4 sm:bottom-6 z-50 pointer-events-none"
-        style={{ paddingBottom: 'calc(env(safe-area-inset-bottom, 0px))' }}
+        aria-label="Hoofdnavigatie"
+        className="fixed inset-x-0 z-[60] flex justify-center px-4"
+        style={{
+          paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 0.5rem)',
+          bottom: 'calc(env(safe-area-inset-bottom, 0px) + 1rem)',
+          top: 'auto',
+        }}
       >
-        <div className="relative flex items-end justify-center gap-3">
-          <div className="pointer-events-auto flex items-end justify-center gap-3">
-            <div className="flex items-center justify-between gap-1 rounded-full border border-serenity-200/80 dark:border-midnight-50/30 bg-white/90 dark:bg-midnight-100/70 px-2.5 py-1.5 shadow-floating backdrop-blur supports-[backdrop-filter]:bg-white/80">
+        <div className="relative mx-auto max-w-3xl flex items-end justify-center w-full">
+          <div className="absolute inset-x-8 -bottom-6 h-16 rounded-full bg-serenity-400/25 blur-3xl dark:bg-serenity-300/20" aria-hidden />
+          <div className="relative flex items-end justify-center gap-3 rounded-full border-2 border-white/90 dark:border-midnight-50/60 bg-gradient-to-br from-white/98 via-white/95 to-serenity-50/95 dark:from-midnight-50/90 dark:via-midnight-100/85 dark:to-midnight-50/80 px-3 py-2 shadow-[0_20px_70px_rgba(15,23,42,0.25)] ring-1 ring-serenity-200/70 dark:ring-midnight-50/40 backdrop-blur-2xl supports-[backdrop-filter]:bg-white/92">
+            <div className="flex items-center justify-between gap-1">
               {tabItems.map((item) => {
                 const isRootPath = item.path === PAGE_ROUTES.timeline;
                 const isActive =
@@ -183,7 +189,7 @@ export default function Layout({ children, currentPageName }) {
                 type="button"
                 onClick={actionItem.action}
                 aria-label={actionItem.name}
-                className="pointer-events-auto flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-serenity-500 to-serenity-700 text-white shadow-floating transition-transform duration-200 hover:scale-105 focus:scale-105 focus:outline-none focus:ring-4 focus:ring-serenity-200"
+                className="ml-2 pointer-events-auto flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-serenity-500 to-serenity-700 text-white shadow-floating transition-transform duration-200 hover:scale-105 focus:scale-105 focus:outline-none focus:ring-4 focus:ring-serenity-200"
               >
                 {ActionIcon && <ActionIcon className="h-6 w-6" />}
               </button>
