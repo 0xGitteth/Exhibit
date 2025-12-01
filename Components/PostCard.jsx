@@ -7,6 +7,7 @@ import {
   isPostInMoodboard,
   removePostFromMoodboard,
 } from '../utils/moodboardStorage';
+import { getStyleTone, photographyStyles } from '../utils/photographyStyles';
 
 export default function PostCard({ post, onSaveToMoodboard }) {
   const [liked, setLiked] = useState(false);
@@ -49,6 +50,14 @@ export default function PostCard({ post, onSaveToMoodboard }) {
     if (post?.photography_style) return [post.photography_style];
     return [];
   }, [post?.tags, post?.photography_style]);
+
+  const styleLabelMap = useMemo(() => {
+    const map = {};
+    photographyStyles.forEach((style) => {
+      map[style.id] = style.label;
+    });
+    return map;
+  }, []);
 
   const comments = post?.comments_count ?? post?.comment_count ?? 0;
   const image = post?.image_url;
@@ -95,15 +104,6 @@ export default function PostCard({ post, onSaveToMoodboard }) {
 
     return stack;
   }, [post?.photographer_name, post?.tagged_people, roleLabels]);
-
-  const tagPalette = [
-    'from-sky-100 to-sky-300',
-    'from-cyan-100 to-cyan-300',
-    'from-blue-100 to-blue-300',
-    'from-indigo-100 to-indigo-300',
-    'from-violet-100 to-violet-300',
-    'from-purple-100 to-purple-300',
-  ];
 
   useEffect(() => {
     setImageLoaded(false);
@@ -182,33 +182,20 @@ export default function PostCard({ post, onSaveToMoodboard }) {
             </Button>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-[minmax(0,1fr)_220px] gap-4 items-start">
-            <div className="space-y-2">
-              <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-50">{post?.title || 'Nieuwe post'}</h2>
-              {post?.description && <p className="text-slate-700 dark:text-slate-200 leading-relaxed">{post.description}</p>}
-            </div>
-
-            {contributors.length > 0 && (
-              <div className="flex flex-col items-start sm:items-end gap-3 text-xs sm:text-sm">
-                {contributors.map(({ role, name, link }) => (
-                  <div key={`${role}-${name}`} className="flex flex-col items-start sm:items-end leading-tight">
-                    <span className="uppercase tracking-wide text-[11px] text-serenity-600 dark:text-serenity-100">{role}</span>
-                    {link ? (
-                      <a
-                        href={link}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="font-semibold text-midnight-800 hover:text-serenity-600 underline decoration-serenity-300 decoration-2 dark:text-serenity-50"
-                      >
-                        {name}
-                      </a>
-                    ) : (
-                      <span className="font-semibold text-midnight-800 dark:text-serenity-50">{name}</span>
-                    )}
-                  </div>
-                ))}
-              </div>
-            )}
+        {tags?.length > 0 && (
+          <div className="mt-auto flex flex-wrap gap-2 pt-2">
+            {tags.slice(0, 6).map((tag) => {
+              const tone = getStyleTone(tag);
+              const label = styleLabelMap[tag] || tag;
+              return (
+                <span
+                  key={tag}
+                  className={`text-xs font-semibold px-3 py-1 rounded-full bg-gradient-to-r ${tone.gradient} ${tone.text} shadow-soft border ${tone.border} ring-1 ring-white/70`}
+                >
+                  {label}
+                </span>
+              );
+            })}
           </div>
 
           {tags?.length > 0 && (
