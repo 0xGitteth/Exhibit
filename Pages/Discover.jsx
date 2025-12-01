@@ -12,45 +12,46 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import PostCard from "../Components/PostCard";
 import { samplePosts, sampleUsers } from "../utils/dummyData";
 import { DUMMY_DATA_ENABLED } from "../utils/featureFlags";
+import { getStylePillClasses, photographyStyles } from "../utils/photographyStyles";
 
-const photographyStyles = [
-  { id: "portrait", label: "Portrait", icon: "👤" }, 
-  { id: "fashion", label: "Fashion", icon: "👗" },
-  { id: "boudoir", label: "Boudoir", icon: "🌹" }, 
-  { id: "art_nude", label: "Art Nude", icon: "🎨" },
-  { id: "street", label: "Street", icon: "🏙️" }, 
-  { id: "landscape", label: "Landscape", icon: "🏔️" },
-  { id: "nature", label: "Nature", icon: "🌿" }, 
-  { id: "conceptual", label: "Conceptual", icon: "💡" },
-  { id: "editorial", label: "Editorial", icon: "📰" }, 
-  { id: "fine_art", label: "Fine Art", icon: "🎨" },
-  { id: "wedding", label: "Wedding", icon: "💒" }, 
-  { id: "sport", label: "Sport", icon: "⚽" },
-  { id: "advertising", label: "Advertising", icon: "📢" }, 
-  { id: "beauty", label: "Beauty", icon: "💄" },
-  { id: "lifestyle", label: "Lifestyle", icon: "☀️" }, 
-  { id: "documentary", label: "Documentary", icon: "📹" },
-  { id: "travel", label: "Travel", icon: "✈️" }, 
-  { id: "architecture", label: "Architecture", icon: "🏛️" },
-  { id: "macro", label: "Macro", icon: "🔬" }, 
-  { id: "wildlife", label: "Wildlife", icon: "🦁" },
-  { id: "food", label: "Food", icon: "🍽️" }, 
-  { id: "product", label: "Product", icon: "📦" },
-  { id: "automotive", label: "Automotive", icon: "🚗" }, 
-  { id: "event", label: "Event", icon: "🎉" },
-  { id: "corporate", label: "Corporate", icon: "💼" }, 
-  { id: "maternity", label: "Maternity", icon: "🤱" },
-  { id: "family", label: "Family", icon: "👨‍👩‍👧‍👦" }, 
-  { id: "children", label: "Children", icon: "👶" },
-  { id: "pet", label: "Pet", icon: "🐕" }, 
-  { id: "black_white", label: "Black & White", icon: "⚫" },
-  { id: "abstract", label: "Abstract", icon: "🌀" }, 
-  { id: "surreal", label: "Surreal", icon: "🌙" },
-  { id: "vintage", label: "Vintage", icon: "📷" }, 
-  { id: "minimalist", label: "Minimalist", icon: "⭕" },
-  { id: "candid", label: "Candid", icon: "📸" }, 
-  { id: "glamour", label: "Glamour", icon: "💎" }
-];
+const styleIcons = {
+  portrait: "👤",
+  fashion: "👗",
+  boudoir: "🌹",
+  art_nude: "🎨",
+  street: "🏙️",
+  landscape: "🏔️",
+  nature: "🌿",
+  conceptual: "💡",
+  editorial: "📰",
+  fine_art: "🎨",
+  wedding: "💒",
+  sport: "⚽",
+  advertising: "📢",
+  beauty: "💄",
+  lifestyle: "☀️",
+  documentary: "📹",
+  travel: "✈️",
+  architecture: "🏛️",
+  macro: "🔬",
+  wildlife: "🦁",
+  food: "🍽️",
+  product: "📦",
+  automotive: "🚗",
+  event: "🎉",
+  corporate: "💼",
+  maternity: "🤱",
+  family: "👨‍👩‍👧‍👦",
+  children: "👶",
+  pet: "🐕",
+  black_white: "⚫",
+  abstract: "🌀",
+  surreal: "🌙",
+  vintage: "📷",
+  minimalist: "⭕",
+  candid: "📸",
+  glamour: "💎",
+};
 
 const userRoles = [
   { id: "all", label: "Alle" }, 
@@ -183,11 +184,11 @@ const StylesTab = ({ searchTerm }) => {
   return (
     <div className="px-4">
       {/* Style Filter Pills */}
-      <div className="flex flex-wrap gap-3 mb-6">
+      <div className="flex flex-wrap gap-3 mb-6 overflow-x-auto pb-2">
         <Button
           variant={!selectedStyle ? 'default' : 'outline'}
           onClick={() => setSelectedStyle(null)}
-          className={`rounded-full px-4 py-2 ${
+          className={`rounded-full px-4 py-2 shrink-0 ${
             !selectedStyle
               ? 'bg-serenity-600 text-white shadow-soft'
               : 'bg-white/80 text-midnight-900 dark:text-serenity-50 border-serenity-200/70'
@@ -196,19 +197,17 @@ const StylesTab = ({ searchTerm }) => {
           Alles
         </Button>
         {visibleStyles.map(style => (
-          <Button
+          <button
             key={style.id}
-            variant={selectedStyle === style.id ? 'default' : 'outline'}
+            type="button"
             onClick={() => setSelectedStyle(style.id)}
-            className={`rounded-full px-4 py-2 ${
-              selectedStyle === style.id
-                ? 'bg-serenity-600 text-white shadow-soft'
-                : 'bg-white/80 text-midnight-900 dark:text-serenity-50 border-serenity-200/70'
-            }`}
+            className={`shrink-0 flex items-center gap-2 px-4 py-2 text-sm font-semibold ${getStylePillClasses(style.id, {
+              active: selectedStyle === style.id,
+            })}`}
           >
-            <span className="mr-1">{style.icon}</span>
+            <span className="mr-1">{styleIcons[style.id]}</span>
             {style.label}
-          </Button>
+          </button>
         ))}
         {!showAllStyles && photographyStyles.length > 5 && (
           <Button
