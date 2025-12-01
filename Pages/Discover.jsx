@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
+import PropTypes from "prop-types";
 import { Post } from "../entities/Post.js";
 import { User } from "../entities/User.js";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Search, User as UserIcon, Palette } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Badge } from "@/components/ui/badge";
 import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -277,3 +277,11 @@ export default function Discover() {
     </div>
   );
 }
+
+PeopleTab.propTypes = {
+  searchTerm: PropTypes.string,
+};
+
+StylesTab.propTypes = {
+  searchTerm: PropTypes.string,
+};
