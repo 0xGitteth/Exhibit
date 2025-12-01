@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import PropTypes from 'prop-types';
 
 export const Dialog = ({ open, onOpenChange, children }) => {
   if (!open) return null;
@@ -16,6 +17,12 @@ export const Dialog = ({ open, onOpenChange, children }) => {
   );
 };
 
+Dialog.propTypes = {
+  open: PropTypes.bool,
+  onOpenChange: PropTypes.func,
+  children: PropTypes.node,
+};
+
 export const DialogContent = ({ children, className }) => (
   <div
     className={`relative bg-white rounded-2xl shadow-2xl border border-slate-200 max-h-[calc(100vh-4rem)] overflow-y-auto ${className || ''}`}
@@ -24,8 +31,22 @@ export const DialogContent = ({ children, className }) => (
   </div>
 );
 
+DialogContent.propTypes = {
+  children: PropTypes.node,
+  className: PropTypes.string,
+};
+
 export const DialogHeader = ({ children }) => <div className="px-6 pt-6">{children}</div>;
+
+DialogHeader.propTypes = {
+  children: PropTypes.node,
+};
 
 export const DialogTitle = ({ children, className }) => (
   <h3 className={`text-lg font-semibold text-slate-900 ${className || ''}`}>{children}</h3>
 );
+
+DialogTitle.propTypes = {
+  children: PropTypes.node,
+  className: PropTypes.string,
+};

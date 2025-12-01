@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars, @typescript-eslint/no-unused-vars */
 export const UploadFile = async ({ file }) => {
   // return a fake file_url for build/runtime in test environment
   return { file_url: "/static/stub-image.jpg" };

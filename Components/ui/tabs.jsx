@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 
 const TabsContext = createContext(null);
@@ -20,16 +20,16 @@ export function Tabs({ defaultValue, value, onValueChange, children, className }
     }
   }, [value]);
 
-  const handleChange = (next) => {
+  const handleChange = useCallback((next) => {
     if (value === undefined) {
       setInternalValue(next);
     }
     onValueChange?.(next);
-  };
+  }, [onValueChange, value]);
 
   const contextValue = useMemo(
     () => ({ value: internalValue, onChange: handleChange }),
-    [internalValue]
+    [internalValue, handleChange]
   );
 
   return (

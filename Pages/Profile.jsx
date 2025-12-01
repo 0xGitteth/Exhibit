@@ -1,14 +1,15 @@
 
-import React, { useState, useEffect } from "react";
+import React, { useCallback, useEffect, useState } from "react";
+import PropTypes from "prop-types";
 import { User } from "../entities/User.js";
 import { SavedPost } from "../entities/SavedPost.js";
 import { Post } from "../entities/Post.js";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Edit, Settings, Bookmark, Camera, Grid, LogOut, Eye, EyeOff, Shield, BarChart2 } from "lucide-react";
+import { Edit, Bookmark, Camera, Grid, LogOut, Eye, EyeOff, Shield, BarChart2 } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -158,6 +159,22 @@ const EditProfileDialog = ({ open, onOpenChange, user, onProfileUpdate }) => {
   );
 };
 
+EditProfileDialog.propTypes = {
+  open: PropTypes.bool,
+  onOpenChange: PropTypes.func,
+  user: PropTypes.shape({
+    avatar_url: PropTypes.string,
+    display_name: PropTypes.string,
+    bio: PropTypes.string,
+    website: PropTypes.string,
+    roles: PropTypes.arrayOf(PropTypes.string),
+    styles: PropTypes.arrayOf(PropTypes.string),
+    email: PropTypes.string,
+    show_sensitive_content: PropTypes.bool,
+  }),
+  onProfileUpdate: PropTypes.func,
+};
+
 
 export default function Profile() {
   const [user, setUser] = useState(null);
@@ -176,7 +193,7 @@ export default function Profile() {
     return Array.from(byId.values());
   };
 
-  const loadUserData = async () => {
+  const loadUserData = useCallback(async () => {
     setLoading(true);
     try {
       const userData = await User.me();
@@ -229,11 +246,11 @@ export default function Profile() {
       }
     }
     setLoading(false);
-  };
+  }, []);
 
   useEffect(() => {
     loadUserData();
-  }, []);
+  }, [loadUserData]);
 
   useEffect(() => {
     const handleMoodboardUpdate = (event) => {
@@ -372,8 +389,8 @@ export default function Profile() {
             {savedPosts.length === 0 ? (
               <div className="text-center py-16 glass-panel shadow-floating">
                 <Bookmark className="w-16 h-16 mx-auto mb-4 text-serenity-500" />
-                <h3 className="text-lg font-medium text-midnight-900 dark:text-white mb-2">Nog geen foto's opgeslagen</h3>
-                <p className="text-slate-700 dark:text-slate-200">Sla inspirerende foto's op om je persoonlijke moodboard te maken</p>
+                <h3 className="text-lg font-medium text-midnight-900 dark:text-white mb-2">Nog geen foto&apos;s opgeslagen</h3>
+                <p className="text-slate-700 dark:text-slate-200">Sla inspirerende foto&apos;s op om je persoonlijke moodboard te maken</p>
               </div>
             ) : (
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">

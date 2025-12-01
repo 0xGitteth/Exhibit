@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import PropTypes from 'prop-types';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Heart, MessageCircle, BookmarkPlus, Bookmark, ImageOff } from 'lucide-react';
@@ -53,14 +54,17 @@ export default function PostCard({ post, onSaveToMoodboard }) {
   const comments = post?.comments_count ?? post?.comment_count ?? 0;
   const image = post?.image_url;
 
-  const roleLabels = {
-    photographer: 'Fotograaf',
-    model: 'Model',
-    makeup_artist: 'MUA',
-    stylist: 'Stylist',
-    assistant: 'Assistent',
-    other: 'Artiest',
-  };
+  const roleLabels = useMemo(
+    () => ({
+      photographer: 'Fotograaf',
+      model: 'Model',
+      makeup_artist: 'MUA',
+      stylist: 'Stylist',
+      assistant: 'Assistent',
+      other: 'Artiest',
+    }),
+    []
+  );
 
   const formatInstagramLink = (handle) => {
     if (!handle) return null;
@@ -91,7 +95,7 @@ export default function PostCard({ post, onSaveToMoodboard }) {
     }
 
     return stack;
-  }, [post?.photographer_name, post?.tagged_people]);
+  }, [post?.photographer_name, post?.tagged_people, roleLabels]);
 
   const tagPalette = [
     'from-sky-100 to-sky-300',
@@ -225,3 +229,26 @@ export default function PostCard({ post, onSaveToMoodboard }) {
     </Card>
   );
 }
+
+PostCard.propTypes = {
+  post: PropTypes.shape({
+    id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    title: PropTypes.string,
+    description: PropTypes.string,
+    likes: PropTypes.number,
+    tags: PropTypes.arrayOf(PropTypes.string),
+    photography_style: PropTypes.string,
+    comments_count: PropTypes.number,
+    comment_count: PropTypes.number,
+    image_url: PropTypes.string,
+    photographer_name: PropTypes.string,
+    tagged_people: PropTypes.arrayOf(
+      PropTypes.shape({
+        role: PropTypes.string,
+        name: PropTypes.string,
+        instagram: PropTypes.string,
+      })
+    ),
+  }),
+  onSaveToMoodboard: PropTypes.func,
+};
