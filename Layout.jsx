@@ -134,9 +134,9 @@ export default function Layout({ children, currentPageName }) {
           top: 'auto',
         }}
       >
-        <div className="relative mx-auto flex items-end justify-center px-4 pointer-events-auto w-[min(calc(100vw-1.5rem),960px)]">
+        <div className="relative mx-auto flex items-end justify-center px-4 w-[min(calc(100vw-1.5rem),960px)]">
           <div
-            className="absolute left-1/2 -translate-x-1/2 -bottom-6 h-16 w-[min(calc(100vw-1.5rem),960px)] rounded-full bg-serenity-400/25 blur-3xl dark:bg-serenity-300/20"
+            className="absolute left-1/2 -translate-x-1/2 -bottom-6 h-16 w-[min(calc(100vw-1.5rem),960px)] rounded-full bg-serenity-400/25 blur-3xl dark:bg-serenity-300/20 pointer-events-none"
             aria-hidden
           />
           <div className="relative flex items-end justify-center gap-3 rounded-full border-2 border-white/90 dark:border-midnight-50/60 bg-gradient-to-br from-white/98 via-white/95 to-serenity-50/95 dark:from-midnight-50/90 dark:via-midnight-100/85 dark:to-midnight-50/80 px-3 py-2 shadow-[0_20px_70px_rgba(15,23,42,0.25)] ring-1 ring-serenity-200/70 dark:ring-midnight-50/40 backdrop-blur-2xl supports-[backdrop-filter]:bg-white/92">
