@@ -182,32 +182,17 @@ export default function PostCard({ post, onSaveToMoodboard }) {
             </Button>
           </div>
 
-        {tags?.length > 0 && (
-          <div className="mt-auto flex flex-wrap gap-2 pt-2">
-            {tags.slice(0, 6).map((tag) => {
-              const tone = getStyleTone(tag);
-              const label = styleLabelMap[tag] || tag;
-              return (
-                <span
-                  key={tag}
-                  className={`text-xs font-semibold px-3 py-1 rounded-full bg-gradient-to-r ${tone.gradient} ${tone.text} shadow-soft border ${tone.border} ring-1 ring-white/70`}
-                >
-                  {label}
-                </span>
-              );
-            })}
-          </div>
-
           {tags?.length > 0 && (
             <div className="mt-auto flex flex-wrap gap-2 pt-2">
-              {tags.slice(0, 6).map((tag, index) => {
-                const colors = tagPalette[index % tagPalette.length];
+              {tags.slice(0, 6).map((tag) => {
+                const tone = getStyleTone(tag);
+                const label = styleLabelMap[tag] || tag;
                 return (
                   <span
                     key={tag}
-                    className={`text-xs font-semibold text-midnight-900 dark:text-midnight-900 px-3 py-1 rounded-full bg-gradient-to-r ${colors} shadow-soft border border-white/60 dark:border-white/20`}
+                    className={`text-xs font-semibold px-3 py-1 rounded-full bg-gradient-to-r ${tone.gradient} ${tone.text} shadow-soft border ${tone.border} ring-1 ring-white/70`}
                   >
-                    {tag}
+                    {label}
                   </span>
                 );
               })}
