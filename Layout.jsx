@@ -44,12 +44,8 @@ export default function Layout({ children, currentPageName }) {
   };
 
   const handlePostCreated = async (newPost) => {
-    try {
-      const createdPost = await Post.create(newPost);
-      window.dispatchEvent(new CustomEvent('post:created', { detail: createdPost || newPost }));
-    } catch (error) {
-      console.error('Error creating post:', error);
-    }
+    const createdPost = await Post.create(newPost);
+    window.dispatchEvent(new CustomEvent('post:created', { detail: createdPost || newPost }));
   };
 
   return (
