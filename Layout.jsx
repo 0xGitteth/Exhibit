@@ -127,7 +127,7 @@ export default function Layout({ children, currentPageName }) {
 
       <nav
         aria-label="Hoofdnavigatie"
-        className="pointer-events-none fixed left-1/2 -translate-x-1/2 z-[120] flex justify-center"
+        className="pointer-events-auto fixed left-1/2 -translate-x-1/2 z-[120] flex justify-center"
         style={{
           paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 0.5rem)',
           bottom: 'calc(env(safe-area-inset-bottom, 0px) + 1rem)',
