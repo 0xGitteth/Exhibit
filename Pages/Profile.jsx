@@ -88,7 +88,7 @@ const EditProfileDialog = ({ open, onOpenChange, user, onProfileUpdate }) => {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
+      <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto p-6">
         <DialogHeader>
           <DialogTitle>Profielinstellingen</DialogTitle>
         </DialogHeader>
@@ -114,7 +114,7 @@ const EditProfileDialog = ({ open, onOpenChange, user, onProfileUpdate }) => {
               <Label htmlFor="bio">Biografie</Label>
               <Textarea id="bio" value={editData.bio || ""} onChange={(e) => setEditData(prev => ({ ...prev, bio: e.target.value }))} placeholder="Vertel iets over jezelf..." />
             </div>
-             <div>
+            <div>
               <Label htmlFor="website">Website / Shop</Label>
               <Input id="website" value={editData.website || ""} onChange={(e) => setEditData(prev => ({ ...prev, website: e.target.value }))} placeholder="https://..." />
             </div>
@@ -124,15 +124,15 @@ const EditProfileDialog = ({ open, onOpenChange, user, onProfileUpdate }) => {
             <h3 className="font-semibold text-lg">Badges</h3>
             <div>
               <Label>Rollen</Label>
-              <div className="flex flex-wrap gap-2 mt-2">
+              <div className="mt-2 flex flex-wrap gap-2">
                 {userRoles.map(role => (
                   <Badge key={role.id} onClick={() => toggleBadge('roles', role.id)} variant={editData.roles?.includes(role.id) ? 'default' : 'outline'} className="cursor-pointer transition-all hover:bg-slate-100 py-1 px-3 text-sm">{role.label}</Badge>
                 ))}
               </div>
             </div>
-             <div>
+            <div>
               <Label>Stijlen</Label>
-              <div className="flex flex-wrap gap-2 mt-2">
+              <div className="mt-2 flex flex-wrap gap-2">
                 {photographyStyles.map(style => (
                   <Badge key={style.id} onClick={() => toggleBadge('styles', style.id)} variant={editData.styles?.includes(style.id) ? 'default' : 'outline'} className="cursor-pointer transition-all hover:bg-slate-100 py-1 px-3 text-sm">{style.label}</Badge>
                 ))}
