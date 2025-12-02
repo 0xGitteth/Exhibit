@@ -53,7 +53,7 @@ export default function Timeline() {
   }, [loadPosts]);
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-6 space-y-6">
+    <div className="max-w-2xl mx-auto px-4 py-6 pb-32 space-y-6">
       <div className="space-y-3 glass-panel p-5">
         <p className="text-xs uppercase tracking-[0.2em] text-serenity-600 font-semibold">Exhibit</p>
         <div className="flex items-start justify-between gap-4">
