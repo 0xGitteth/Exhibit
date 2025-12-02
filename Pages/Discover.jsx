@@ -123,16 +123,18 @@ const PeopleTab = ({ searchTerm }) => {
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
           {filteredUsers.map(user => (
             <motion.div key={user.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-              <Card className="text-center glass-panel overflow-hidden hover:shadow-floating transition-all">
-                <Avatar className="w-full h-32 sm:h-40 rounded-none">
+              <Card className="text-center glass-panel overflow-hidden hover:shadow-floating transition-all flex flex-col bg-white/80 dark:bg-midnight-900/80">
+                <Avatar className="w-full h-32 sm:h-40 rounded-none shrink-0">
                   <AvatarImage src={user.avatar_url} className="object-cover" />
                   <AvatarFallback className="rounded-none">
                     {user.display_name?.[0] || <UserIcon className="w-8 h-8" />}
                   </AvatarFallback>
                 </Avatar>
-                <CardContent className="p-3">
-                  <h4 className="font-semibold truncate text-midnight-900 dark:text-white">{user.display_name || "Gebruiker"}</h4>
-                  <p className="text-xs text-slate-600 dark:text-slate-200 truncate">{user.roles?.join(', ') || "Creatief"}</p>
+                <CardContent className="p-3 bg-white/90 dark:bg-midnight-950/80 text-midnight-900 dark:text-serenity-50">
+                  <h4 className="font-semibold truncate">{user.display_name || "Gebruiker"}</h4>
+                </CardContent>
+                <CardContent className="pt-0 pb-3 px-3 bg-white/95 dark:bg-midnight-950/80 text-midnight-800 dark:text-slate-200 overflow-hidden">
+                  <p className="text-xs truncate">{user.roles?.join(', ') || "Creatief"}</p>
                 </CardContent>
               </Card>
             </motion.div>
