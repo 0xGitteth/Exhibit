@@ -134,7 +134,7 @@ export default function Layout({ children, currentPageName }) {
           top: 'auto',
         }}
       >
-        <div className="relative mx-auto flex items-end justify-center px-4 pointer-events-auto w-[min(calc(100vw-1.5rem),960px)]">
+        <div className="relative mx-auto flex items-end justify-center px-4 w-[min(calc(100vw-1.5rem),960px)]">
           <div
             className="pointer-events-none absolute left-1/2 -translate-x-1/2 -bottom-6 h-16 w-[min(calc(100vw-1.5rem),960px)] rounded-full bg-serenity-400/25 blur-3xl dark:bg-serenity-300/20"
             aria-hidden
