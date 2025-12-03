@@ -17,6 +17,8 @@ const roleOptions = [
   { id: 'stylist', label: 'Stylist', description: 'Styling, set design en sourcing.' },
   { id: 'makeup_artist', label: 'MUA', description: 'Make-up en hair voor shoots.' },
   { id: 'assistant', label: 'Assistent', description: 'Productie, licht en logistiek.' },
+  { id: 'agency', label: 'Agency', description: 'Representeer talent en coördineer bookings.' },
+  { id: 'company', label: 'Company', description: 'Organiseer producties namens je organisatie.' },
 ];
 
 const startPages = [
