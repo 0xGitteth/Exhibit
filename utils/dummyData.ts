@@ -148,6 +148,20 @@ export const sampleUsers = [
     styles: ['fashion', 'candid'],
     avatar_url: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=320&q=80',
   },
+  {
+    id: 'sample-user-8',
+    display_name: 'Studio Aurora',
+    roles: ['agency'],
+    styles: ['fashion', 'editorial'],
+    avatar_url: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=320&q=80',
+  },
+  {
+    id: 'sample-user-9',
+    display_name: 'Northwind Media',
+    roles: ['company'],
+    styles: ['corporate', 'product'],
+    avatar_url: 'https://images.unsplash.com/photo-1450101215322-bf5cd27642fc?auto=format&fit=crop&w=320&q=80',
+  },
 ];
 
 export const sampleCommunities = [
@@ -194,7 +208,7 @@ export const sampleProfile = {
   full_name: 'Nova Lint',
   bio: 'Fotograaf & creative director met een liefde voor zachte kleuren en storytelling.',
   avatar_url: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=400&q=80',
-  roles: ['photographer', 'artist'],
+  roles: ['photographer', 'artist', 'agency'],
   primary_role: 'photographer',
   styles: ['fine_art', 'fashion', 'portrait'],
   show_sensitive_content: false,

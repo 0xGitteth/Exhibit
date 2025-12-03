@@ -37,6 +37,8 @@ const roleLabels = {
   assistant: 'Assistent',
   other: 'Overig',
   artist: 'Artist',
+  agency: 'Agency',
+  company: 'Bedrijf',
 };
 
 export default function CreatePostModal({ open, onOpenChange, onPostCreated }) {
@@ -481,6 +483,8 @@ export default function CreatePostModal({ open, onOpenChange, onPostCreated }) {
                     <SelectItem value="makeup_artist">MUA</SelectItem>
                     <SelectItem value="stylist">Stylist</SelectItem>
                     <SelectItem value="assistant">Assistent</SelectItem>
+                    <SelectItem value="agency">Agency</SelectItem>
+                    <SelectItem value="company">Bedrijf</SelectItem>
                     <SelectItem value="other">Overig</SelectItem>
                   </SelectContent>
                 </Select>

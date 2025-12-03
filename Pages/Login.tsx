@@ -17,6 +17,8 @@ const roleLabels: Record<string, string> = {
   stylist: 'Stylist',
   makeup_artist: 'MUA',
   assistant: 'Assistent',
+  agency: 'Agency',
+  company: 'Bedrijf',
 };
 
 const LoginPage: React.FC = () => {

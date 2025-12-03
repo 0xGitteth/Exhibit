@@ -41,8 +41,15 @@ const photographyStyles = [
 ];
 
 const userRoles = [
-  { id: "photographer", label: "Fotograaf" }, { id: "model", label: "Model" }, { id: "makeup_artist", label: "Make-up Artist" },
-  { id: "stylist", label: "Stylist" }, { id: "artist", label: "Artist" }, { id: "assistant", label: "Assistent" }, { id: "other", label: "Overig" }
+  { id: "photographer", label: "Fotograaf" },
+  { id: "model", label: "Model" },
+  { id: "makeup_artist", label: "Make-up Artist" },
+  { id: "stylist", label: "Stylist" },
+  { id: "artist", label: "Artist" },
+  { id: "assistant", label: "Assistent" },
+  { id: "agency", label: "Agency" },
+  { id: "company", label: "Bedrijf" },
+  { id: "other", label: "Overig" }
 ];
 
 
