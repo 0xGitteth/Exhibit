@@ -24,7 +24,7 @@ const LoginPage: React.FC = () => {
   const [submitting, setSubmitting] = useState(false);
   const [searchParams] = useSearchParams();
   const location = useLocation();
-  const [form, setForm] = useState({ email: '', password: '' });
+  const [form, setForm] = useState({ username: '', password: '' });
 
   const redirectTarget = useMemo(() => searchParams.get('redirect'), [searchParams]);
 
@@ -33,7 +33,7 @@ const LoginPage: React.FC = () => {
     setSubmitting(true);
     setError(null);
     try {
-      await login(form.email, form.password, redirectTarget);
+      await login(form.username, form.password, redirectTarget);
     } catch (err: any) {
       setError(err?.message || 'Inloggen is mislukt.');
     } finally {
@@ -73,7 +73,7 @@ const LoginPage: React.FC = () => {
                 </CardHeader>
                 <CardContent className="space-y-2 text-sm">
                   <div className="flex items-center gap-2">
-                    <Badge variant="secondary">E-mail</Badge>
+                    <Badge variant="secondary">Inlognaam</Badge>
                     <span className="font-mono text-xs">{account.email}</span>
                   </div>
                   <div className="flex items-center gap-2">
@@ -103,13 +103,15 @@ const LoginPage: React.FC = () => {
           <CardContent>
             <form className="space-y-4" onSubmit={handleSubmit}>
               <div className="space-y-2">
-                <label className="text-sm font-semibold text-midnight-900 dark:text-white" htmlFor="email">E-mail</label>
+                <label className="text-sm font-semibold text-midnight-900 dark:text-white" htmlFor="username">
+                  Gebruikersnaam
+                </label>
                 <Input
-                  id="email"
-                  type="email"
-                  placeholder="demo@example.com"
-                  value={form.email}
-                  onChange={(e) => setForm((prev) => ({ ...prev, email: e.target.value }))}
+                  id="username"
+                  type="text"
+                  placeholder="Demo"
+                  value={form.username}
+                  onChange={(e) => setForm((prev) => ({ ...prev, username: e.target.value }))}
                   required
                 />
               </div>
