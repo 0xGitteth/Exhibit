@@ -147,10 +147,10 @@ export default function Layout({ children, currentPageName }) {
                   <Link
                     key={`${item.name}-${item.path}`}
                     to={item.path}
-                    className={`group flex items-center justify-center gap-2 rounded-full px-3 py-2 text-sm font-semibold transition-all duration-200 ${
+                    className={`group inline-flex items-center gap-2 rounded-full px-3 sm:px-4 py-2 text-sm font-semibold transition-all duration-200 border ${
                       isActive
-                        ? 'bg-serenity-600 text-white shadow-floating'
-                        : 'text-midnight-800 dark:text-slate-200 hover:bg-serenity-100/90 dark:hover:bg-midnight-50/30'
+                        ? 'bg-serenity-600 text-white border-serenity-600 shadow-floating'
+                        : 'bg-white/70 dark:bg-midnight-50/30 border-serenity-200/80 dark:border-midnight-50/40 text-midnight-900 dark:text-slate-100 hover:-translate-y-[1px] hover:shadow-soft'
                     }`}
                   >
                     {item.isProfile ? (
@@ -161,16 +161,16 @@ export default function Layout({ children, currentPageName }) {
                             : 'border-serenity-100 dark:border-midnight-50/40 group-hover:border-serenity-200'
                         }`}
                       >
-                        <Avatar className="w-9 h-9 border border-white/60 shadow-sm">
+                        <Avatar className="w-8 h-8 border border-white/60 shadow-sm">
                           <AvatarImage src={profileImage} className="object-cover" />
-                          <AvatarFallback className="text-sm font-semibold uppercase">
+                          <AvatarFallback className="text-xs font-semibold uppercase">
                             {user?.display_name?.[0] || <UserIcon className="w-4 h-4" />}
                           </AvatarFallback>
                         </Avatar>
                       </div>
                     ) : (
                       <IconComponent
-                        className={`w-5 h-5 transition-transform duration-200 ${
+                        className={`w-4 h-4 transition-transform duration-200 ${
                           isActive ? 'scale-110' : 'group-hover:scale-105'
                         }`}
                       />
@@ -179,18 +179,19 @@ export default function Layout({ children, currentPageName }) {
                   </Link>
                 );
               })}
-            </div>
 
-            {actionItem && (
-              <button
-                type="button"
-                onClick={actionItem.action}
-                aria-label={actionItem.name}
-                className="ml-2 pointer-events-auto flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-serenity-500 to-serenity-700 text-white shadow-floating transition-transform duration-200 hover:scale-105 focus:scale-105 focus:outline-none focus:ring-4 focus:ring-serenity-200"
-              >
-                {ActionIcon && <ActionIcon className="h-6 w-6" />}
-              </button>
-            )}
+              {actionItem && (
+                <button
+                  type="button"
+                  onClick={actionItem.action}
+                  aria-label={actionItem.name}
+                  className="inline-flex items-center gap-2 rounded-full bg-gradient-to-br from-serenity-500 to-serenity-700 text-white px-4 sm:px-5 py-2.5 font-semibold shadow-floating transition-transform duration-200 hover:scale-105 focus-visible:scale-105 focus:outline-none focus-visible:ring-4 focus-visible:ring-serenity-200"
+                >
+                  {ActionIcon && <ActionIcon className="h-5 w-5" />}
+                  <span>Upload foto</span>
+                </button>
+              )}
+            </div>
           </div>
         </div>
       </nav>
