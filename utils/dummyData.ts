@@ -195,6 +195,7 @@ export const sampleProfile = {
   bio: 'Fotograaf & creative director met een liefde voor zachte kleuren en storytelling.',
   avatar_url: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=400&q=80',
   roles: ['photographer', 'artist'],
+  primary_role: 'photographer',
   styles: ['fine_art', 'fashion', 'portrait'],
   show_sensitive_content: false,
   onboarding_complete: true,

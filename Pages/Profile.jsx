@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Edit, Bookmark, Camera, Grid, LogOut, Eye, EyeOff, Shield, BarChart2, SunMedium, Moon } from "lucide-react";
+import { Edit, Bookmark, Camera, Grid, LogOut, Eye, EyeOff, Shield, BarChart2, SunMedium, Moon, Star } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -170,6 +170,7 @@ EditProfileDialog.propTypes = {
     bio: PropTypes.string,
     website: PropTypes.string,
     roles: PropTypes.arrayOf(PropTypes.string),
+    primary_role: PropTypes.string,
     styles: PropTypes.arrayOf(PropTypes.string),
     email: PropTypes.string,
     show_sensitive_content: PropTypes.bool,
@@ -182,11 +183,14 @@ export default function Profile() {
   const { user: authUser, loading: authLoading, logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const [user, setUser] = useState(null);
+  const [activeRole, setActiveRole] = useState(null);
+  const [primaryRole, setPrimaryRole] = useState(null);
   const [userPosts, setUserPosts] = useState([]);
   const [savedPosts, setSavedPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showEditProfile, setShowEditProfile] = useState(false);
   const [showHouseRules, setShowHouseRules] = useState(false);
+  const [savingPrimaryRole, setSavingPrimaryRole] = useState(false);
 
   const mergeMoodboardPosts = (posts = [], local = []) => {
     const byId = new Map();
@@ -268,7 +272,50 @@ export default function Profile() {
   }, []);
 
   const handleProfileUpdate = (updatedUser) => {
-    setUser(updatedUser);
+    const resolvedPrimary =
+      updatedUser?.primary_role && updatedUser.roles?.includes(updatedUser.primary_role)
+        ? updatedUser.primary_role
+        : updatedUser?.roles?.[0] || null;
+
+    setUser({ ...updatedUser, primary_role: resolvedPrimary });
+    setPrimaryRole(resolvedPrimary);
+    setActiveRole((prev) => {
+      if (prev && updatedUser?.roles?.includes(prev)) return prev;
+      return resolvedPrimary;
+    });
+  };
+
+  useEffect(() => {
+    if (user?.roles?.length) {
+      const resolvedPrimary =
+        user.primary_role && user.roles.includes(user.primary_role)
+          ? user.primary_role
+          : user.roles[0];
+
+      setPrimaryRole((prev) => (prev === resolvedPrimary ? prev : resolvedPrimary));
+      setActiveRole((prev) => {
+        if (prev && user.roles.includes(prev)) return prev;
+        return resolvedPrimary;
+      });
+    } else {
+      setPrimaryRole(null);
+      setActiveRole(null);
+    }
+  }, [user]);
+
+  const handlePrimaryRoleChange = async (roleId) => {
+    if (!roleId || roleId === primaryRole) return;
+
+    setSavingPrimaryRole(true);
+    try {
+      await User.updateMyUserData({ primary_role: roleId });
+      setUser((prev) => (prev ? { ...prev, primary_role: roleId } : prev));
+      setPrimaryRole(roleId);
+      setActiveRole(roleId);
+    } catch (error) {
+      console.error("Primary role update error:", error);
+    }
+    setSavingPrimaryRole(false);
   };
 
   const toggleSensitiveContent = async () => {
@@ -316,10 +363,22 @@ export default function Profile() {
               <h1 className="text-3xl font-bold text-midnight-900 dark:text-white">{user.display_name || user.full_name}</h1>
               <p className="text-slate-700 dark:text-slate-200 mt-2">{user.bio || "Deel je verhaal en inspireer anderen..."}</p>
               <div className="flex flex-wrap gap-2 mt-4 justify-center md:justify-start">
-                {user.roles?.map(roleId => {
+                {[...(user.roles || [])]
+                  .sort((a, b) => (a === primaryRole ? -1 : b === primaryRole ? 1 : 0))
+                  .map(roleId => {
                     const roleInfo = userRoles.find(r => r.id === roleId);
-                    return <Badge key={roleId} variant="secondary" className="bg-serenity-100 text-serenity-800 border-serenity-200">{roleInfo?.label}</Badge>
-                })}
+                    const isPrimary = roleId === primaryRole;
+                    return (
+                      <Badge
+                        key={roleId}
+                        variant="secondary"
+                        className="bg-serenity-100 text-serenity-800 border-serenity-200 flex items-center gap-1"
+                      >
+                        {roleInfo?.label}
+                        {isPrimary && <span className="text-[11px] font-semibold text-amber-700">Primair</span>}
+                      </Badge>
+                    );
+                  })}
                 {user.styles?.slice(0, 3).map(styleId => {
                     const styleInfo = photographyStyles.find(s => s.id === styleId);
                     return <Badge key={styleId} variant="outline" className="border-serenity-300 text-serenity-800 dark:text-serenity-100">{styleInfo?.label}</Badge>
@@ -329,6 +388,78 @@ export default function Profile() {
           </div>
         </CardContent>
       </Card>
+
+      {user.roles?.length > 1 && (
+        <Card className="glass-panel shadow-floating">
+          <CardContent className="p-4 space-y-4">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <h3 className="text-lg font-semibold text-midnight-900 dark:text-white">Rolprofielen</h3>
+                <p className="text-sm text-slate-600 dark:text-slate-300">Kies welke rol je nu bekijkt en welke rol als eerste zichtbaar is voor bezoekers.</p>
+              </div>
+              {primaryRole && (
+                <div className="flex items-center gap-2 text-amber-700 dark:text-amber-400 text-sm font-medium bg-amber-50 dark:bg-amber-950/40 px-3 py-1.5 rounded-full">
+                  <Star className="w-4 h-4" />
+                  Primair: {userRoles.find(r => r.id === primaryRole)?.label}
+                </div>
+              )}
+            </div>
+
+            <Tabs value={activeRole || primaryRole} onValueChange={setActiveRole} className="w-full">
+              <TabsList className="flex flex-wrap gap-2 bg-white/70 dark:bg-midnight-100/60 backdrop-blur-sm rounded-2xl border border-serenity-200/70 dark:border-midnight-50/30 shadow-soft p-1">
+                {[...(user.roles || [])]
+                  .sort((a, b) => (a === primaryRole ? -1 : b === primaryRole ? 1 : 0))
+                  .map(roleId => {
+                    const roleInfo = userRoles.find(r => r.id === roleId);
+                    const isPrimary = roleId === primaryRole;
+                    return (
+                      <TabsTrigger
+                        key={roleId}
+                        value={roleId}
+                        className="data-[state=active]:bg-serenity-600 data-[state=active]:text-white rounded-xl px-3 py-2 flex items-center gap-2"
+                      >
+                        <span>{roleInfo?.label}</span>
+                        {isPrimary && <Star className="w-4 h-4" />}
+                      </TabsTrigger>
+                    );
+                  })}
+              </TabsList>
+
+              {[...(user.roles || [])].map(roleId => {
+                const roleInfo = userRoles.find(r => r.id === roleId);
+                const isPrimary = roleId === primaryRole;
+                return (
+                  <TabsContent key={roleId} value={roleId} className="mt-3">
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 bg-serenity-50/60 dark:bg-midnight-100/40 rounded-2xl border border-serenity-100 dark:border-midnight-100/40 p-4">
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-2">
+                          <Badge variant="secondary" className="bg-white text-serenity-800 border-serenity-200 shadow-soft">
+                            {roleInfo?.label}
+                          </Badge>
+                          {isPrimary && <Badge variant="outline" className="border-amber-300 text-amber-700">Primair</Badge>}
+                        </div>
+                        <p className="text-sm text-slate-700 dark:text-slate-200 max-w-2xl">
+                          Deze rol wordt gebruikt om je profielervaring te personaliseren. Je primaire rol komt als eerste in je badges en is leidend op je openbare profiel.
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Button
+                          variant={isPrimary ? "secondary" : "default"}
+                          className="whitespace-nowrap"
+                          disabled={isPrimary || savingPrimaryRole}
+                          onClick={() => handlePrimaryRoleChange(roleId)}
+                        >
+                          {isPrimary ? "Primair geselecteerd" : savingPrimaryRole ? "Opslaan..." : "Maak deze rol primair"}
+                        </Button>
+                      </div>
+                    </div>
+                  </TabsContent>
+                );
+              })}
+            </Tabs>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Stats and Settings */}
       <Card className="glass-panel shadow-floating">
