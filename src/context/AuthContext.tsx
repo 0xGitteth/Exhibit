@@ -9,6 +9,7 @@ interface AuthContextType {
   user: any;
   loading: boolean;
   login: (email: string, password: string, redirectTo?: string | null) => Promise<any>;
+  register: (payload: any, redirectTo?: string | null) => Promise<any>;
   logout: () => Promise<void>;
   refreshUser: () => Promise<void>;
 }
@@ -58,11 +59,26 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setStoredUser(match.user);
       setUser(match.user);
 
-      const target = redirectTo || (location.state as any)?.from || createPageUrl('Timeline');
+      const target = match.user?.onboarding_complete
+        ? redirectTo || (location.state as any)?.from || createPageUrl('Timeline')
+        : createPageUrl('Onboarding');
       navigate(target, { replace: true });
       return match.user;
     },
     [location.state, navigate],
+  );
+
+  const register = useCallback(
+    async (payload: any, redirectTo?: string | null) => {
+      const created = await User.create(payload);
+      setStoredUser(created);
+      setUser(created);
+
+      const target = redirectTo || createPageUrl(payload.start_page || 'Timeline');
+      navigate(target, { replace: true });
+      return created;
+    },
+    [navigate],
   );
 
   const logout = useCallback(async () => {
@@ -81,10 +97,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       user,
       loading,
       login,
+      register,
       logout,
       refreshUser,
     }),
-    [user, loading, login, logout, refreshUser],
+    [user, loading, login, register, logout, refreshUser],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

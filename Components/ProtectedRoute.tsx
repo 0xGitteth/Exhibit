@@ -31,6 +31,15 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
     );
   }
 
+  if (!user.onboarding_complete) {
+    return (
+      <Navigate
+        to={`${PAGE_ROUTES.onboarding}?redirect=${encodeURIComponent(location.pathname + location.search + location.hash)}`}
+        replace
+      />
+    );
+  }
+
   return <>{children}</>;
 };
 
