@@ -17,8 +17,8 @@ const toAccountUser = (
 
 export const dummyAccounts = [
   {
-    email: baseUser.email,
-    password: 'welcome123',
+    email: 'Demo',
+    password: 'test1',
     user: baseUser,
     label: 'Creatieve fotograaf',
   },
