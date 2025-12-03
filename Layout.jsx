@@ -129,20 +129,20 @@ export default function Layout({ children, currentPageName }) {
         aria-label="Hoofdnavigatie"
         className="pointer-events-auto fixed inset-x-0 bottom-0 z-[120] flex justify-center"
         style={{
-          paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 0.75rem)',
+          paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 0.85rem)',
           top: 'auto',
         }}
       >
         <div
-          className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-white/85 via-white/80 to-transparent dark:from-midnight-100/70 dark:via-midnight-100/60 dark:to-transparent backdrop-blur-2xl border-t border-serenity-200/60 dark:border-midnight-50/30 shadow-[0_-18px_50px_rgba(15,23,42,0.25)]"
+          className="pointer-events-none absolute inset-x-0 bottom-0 h-[7.5rem] bg-gradient-to-t from-white/95 via-white/85 to-white/60 dark:from-midnight-100/85 dark:via-midnight-100/70 dark:to-midnight-100/55 backdrop-blur-xl border-t border-serenity-200/60 dark:border-midnight-50/30 shadow-[0_-18px_50px_rgba(15,23,42,0.25)]"
           aria-hidden
         />
-        <div className="pointer-events-auto relative w-full max-w-[960px] px-4 pb-2">
+        <div className="pointer-events-auto relative w-full max-w-[960px] px-4 pb-3 pt-2">
           <div
-            className="absolute inset-x-4 -bottom-5 h-16 rounded-full bg-serenity-400/25 blur-3xl dark:bg-serenity-300/20 pointer-events-none"
+            className="absolute inset-x-3 -bottom-6 h-16 rounded-full bg-serenity-400/25 blur-3xl dark:bg-serenity-300/25 pointer-events-none"
             aria-hidden
           />
-          <div className="relative mx-auto flex items-end justify-center gap-3 rounded-full border-2 border-white/90 dark:border-midnight-50/60 bg-gradient-to-br from-white/98 via-white/95 to-serenity-50/95 dark:from-midnight-50/90 dark:via-midnight-100/85 dark:to-midnight-50/80 px-3 py-2 shadow-[0_20px_70px_rgba(15,23,42,0.25)] ring-1 ring-serenity-200/70 dark:ring-midnight-50/40 backdrop-blur-2xl supports-[backdrop-filter]:bg-white/92">
+          <div className="relative mx-auto flex items-end justify-center gap-3 rounded-full border-2 border-white/95 dark:border-midnight-50/60 bg-gradient-to-br from-white/98 via-white/95 to-serenity-50/95 dark:from-midnight-50/90 dark:via-midnight-100/85 dark:to-midnight-50/80 px-3 py-2.5 shadow-[0_20px_70px_rgba(15,23,42,0.25)] ring-1 ring-serenity-200/70 dark:ring-midnight-50/40 backdrop-blur-2xl supports-[backdrop-filter]:bg-white/92">
             <div className="flex items-center justify-between gap-1">
               {tabItems.map((item) => {
                 const isRootPath = item.path === PAGE_ROUTES.timeline;
