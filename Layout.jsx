@@ -7,17 +7,32 @@ import HouseRulesModal from '@/components/HouseRulesModal';
 import PropTypes from 'prop-types';
 import CreatePostModal from './Components/CreatePostModal.jsx';
 import { Post } from './entities/Post.js';
+import { User } from './entities/User.js';
 
 export default function Layout({ children, currentPageName }) {
   const [showHouseRules, setShowHouseRules] = useState(false);
   const [showCreatePost, setShowCreatePost] = useState(false);
   const [creatingPost, setCreatingPost] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
 
   useEffect(() => {
     const hasSeenRules = localStorage.getItem('hasSeenHouseRules');
     if (!hasSeenRules) {
       setShowHouseRules(true);
     }
+  }, []);
+
+  useEffect(() => {
+    const loadUser = async () => {
+      try {
+        const user = await User.me();
+        setCurrentUser(user);
+      } catch (error) {
+        console.error('Kon gebruiker niet ophalen:', error);
+      }
+    };
+
+    loadUser();
   }, []);
 
   const handleCloseRules = () => {
@@ -36,6 +51,17 @@ export default function Layout({ children, currentPageName }) {
       setCreatingPost(false);
     }
   };
+
+  const isFanOnly =
+    Array.isArray(currentUser?.roles) &&
+    currentUser.roles.length > 0 &&
+    currentUser.roles.every((role) => role === 'fan');
+
+  useEffect(() => {
+    if (isFanOnly && showCreatePost) {
+      setShowCreatePost(false);
+    }
+  }, [isFanOnly, showCreatePost]);
 
   return (
     <div className="min-h-screen font-sans relative text-slate-900 dark:text-slate-100">
@@ -99,17 +125,19 @@ export default function Layout({ children, currentPageName }) {
 
       <main className={`pb-16 ${currentPageName === 'Timeline' ? 'pt-4' : 'pt-8'} relative z-10`}>{children}</main>
 
-      <div className="fixed bottom-6 right-4 sm:bottom-8 sm:right-8 z-50">
-        <Button
-          onClick={() => setShowCreatePost(true)}
-          className="rounded-full bg-gradient-to-br from-serenity-500 via-serenity-500 to-serenity-600 text-white shadow-floating hover:from-serenity-600 hover:to-serenity-700 transition-all px-5 sm:px-6 py-3 h-auto flex items-center gap-2"
-          size="lg"
-          disabled={creatingPost}
-        >
-          <Camera className="w-5 h-5" />
-          <span className="font-semibold">Foto plaatsen</span>
-        </Button>
-      </div>
+      {!isFanOnly && (
+        <div className="fixed bottom-6 right-4 sm:bottom-8 sm:right-8 z-50">
+          <Button
+            onClick={() => setShowCreatePost(true)}
+            className="rounded-full bg-gradient-to-br from-serenity-500 via-serenity-500 to-serenity-600 text-white shadow-floating hover:from-serenity-600 hover:to-serenity-700 transition-all px-5 sm:px-6 py-3 h-auto flex items-center gap-2"
+            size="lg"
+            disabled={creatingPost}
+          >
+            <Camera className="w-5 h-5" />
+            <span className="font-semibold">Foto plaatsen</span>
+          </Button>
+        </div>
+      )}
 
       <HouseRulesModal open={showHouseRules} onOpenChange={handleCloseRules} />
       <CreatePostModal

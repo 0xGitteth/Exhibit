@@ -108,6 +108,12 @@ function getCurrentUser() {
   return mapUser(userRow);
 }
 
+function getUserByEmail(email) {
+  if (!email) return null;
+  const userRow = db.prepare('SELECT * FROM users WHERE email = ?').get(email);
+  return mapUser(userRow);
+}
+
 function createUser(payload) {
   const exists = db.prepare('SELECT email FROM users WHERE email = ?').get(payload.email);
   if (exists) {
@@ -162,9 +168,18 @@ function filterPosts(filter = {}) {
 
 function createPost(payload) {
   const id = payload.id || crypto.randomUUID();
-  const createdBy = payload.created_by || getCurrentUser()?.email;
-  if (!createdBy) {
+  const currentUser = getCurrentUser();
+  const createdBy = payload.created_by || currentUser?.email;
+  const creator = createdBy ? getUserByEmail(createdBy) : null;
+  if (!creator) {
     throw new Error('Missing post creator');
+  }
+
+  const roles = Array.isArray(creator.roles) ? creator.roles : [];
+  const isFanOnly = roles.length > 0 && roles.every((role) => role === 'fan');
+
+  if (isFanOnly) {
+    throw new Error('Alleen makers mogen posts plaatsen. Fan-accounts kunnen geen posts delen.');
   }
   const tags = serializeJson(payload.tags);
   const triggers = serializeJson(payload.trigger_warnings);
@@ -180,7 +195,7 @@ function createPost(payload) {
     photography_style: payload.photography_style,
     tags,
     trigger_warnings: triggers,
-    created_by: createdBy,
+    created_by: creator.email,
   });
 
   const row = db.prepare('SELECT * FROM posts WHERE id = ?').get(id);
