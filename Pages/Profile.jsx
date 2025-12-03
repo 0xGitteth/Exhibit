@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Edit, Bookmark, Camera, Grid, LogOut, Eye, EyeOff, Shield, BarChart2 } from "lucide-react";
+import { Edit, Bookmark, Camera, Grid, LogOut, Eye, EyeOff, Shield, BarChart2, SunMedium, Moon } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -23,6 +23,7 @@ import { DUMMY_DATA_ENABLED } from "../utils/featureFlags";
 import { sampleMoodboardPosts, sampleProfile, sampleProfilePosts } from "../utils/dummyData";
 import { getMoodboardPosts } from "../utils/moodboardStorage";
 import { useAuth } from "@/context/AuthContext";
+import { useTheme } from "@/context/ThemeContext";
 
 const photographyStyles = [
   { id: "portrait", label: "Portrait" }, { id: "fashion", label: "Fashion" }, { id: "boudoir", label: "Boudoir" },
@@ -179,6 +180,7 @@ EditProfileDialog.propTypes = {
 
 export default function Profile() {
   const { user: authUser, loading: authLoading, logout } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const [user, setUser] = useState(null);
   const [userPosts, setUserPosts] = useState([]);
   const [savedPosts, setSavedPosts] = useState([]);
@@ -344,6 +346,15 @@ export default function Profile() {
                 <Link to={createPageUrl("Analytics")}>
                   <Button variant="ghost" size="icon" className="rounded-full bg-serenity-100 dark:bg-midnight-100/40" title="Statistieken"><BarChart2 className="w-5 h-5" /></Button>
                 </Link>
+                <Button
+                  variant="ghost"
+                  className="rounded-full bg-serenity-100 dark:bg-midnight-100/40 px-4 py-2 flex items-center gap-2"
+                  onClick={toggleTheme}
+                  title="Schakel thema"
+                >
+                  {theme === 'light' ? <SunMedium className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+                  <span className="text-sm font-semibold">Thema: {theme === 'light' ? 'Licht' : 'Donker'}</span>
+                </Button>
                 <Button variant="ghost" size="icon" className="rounded-full bg-serenity-100 dark:bg-midnight-100/40" onClick={toggleSensitiveContent} title={user.show_sensitive_content ? "Gevoelige content verbergen" : "Gevoelige content tonen"}>
                   {user.show_sensitive_content ? <Eye className="w-5 h-5" /> : <EyeOff className="w-5 h-5" />}
                 </Button>

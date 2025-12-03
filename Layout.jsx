@@ -1,14 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { PAGE_ROUTES } from '@/utils';
-import { LayoutGrid, SunMedium, Moon } from 'lucide-react';
+import { LayoutGrid } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import HouseRulesModal from '@/components/HouseRulesModal';
-import { useTheme } from '@/context/ThemeContext';
 import PropTypes from 'prop-types';
 
 export default function Layout({ children, currentPageName }) {
-  const { theme, toggleTheme } = useTheme();
   const [showHouseRules, setShowHouseRules] = useState(false);
 
   useEffect(() => {
@@ -78,18 +76,6 @@ export default function Layout({ children, currentPageName }) {
                   </Button>
                 </Link>
               </nav>
-            </div>
-
-            <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
-              <button
-                type="button"
-                onClick={toggleTheme}
-                className="inline-flex items-center gap-2 rounded-full px-3 py-2 bg-serenity-100 dark:bg-midnight-50/20 border border-serenity-200/70 dark:border-midnight-50/30 text-midnight-900 dark:text-white shadow-soft hover:-translate-y-[1px] transition"
-                aria-label="Schakel thema"
-              >
-                {theme === 'light' ? <SunMedium className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-                <span className="hidden sm:inline text-sm font-semibold">{theme === 'light' ? 'Licht' : 'Donker'}</span>
-              </button>
             </div>
           </div>
         </div>
