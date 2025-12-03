@@ -5,6 +5,7 @@ export const PAGE_ROUTES = {
   profile: '/profile',
   chat: '/chat',
   analytics: '/analytics',
+  login: '/login',
   idVerification: '/id-verification',
 } as const;
 
@@ -15,6 +16,7 @@ const pageRouteMap: Record<string, string> = {
   Profile: PAGE_ROUTES.profile,
   Chat: PAGE_ROUTES.chat,
   Analytics: PAGE_ROUTES.analytics,
+  Login: PAGE_ROUTES.login,
   IDVerification: PAGE_ROUTES.idVerification,
 };
 

@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { PAGE_ROUTES } from '@/utils';
-import { User } from './entities/User.js';
 import {
   Search,
   UserIcon,
@@ -18,11 +17,12 @@ import CreatePostModal from '@/components/CreatePostModal';
 import HouseRulesModal from '@/components/HouseRulesModal';
 import { Post } from './entities/Post.js';
 import { useTheme } from '@/context/ThemeContext';
+import { useAuth } from '@/context/AuthContext';
 
 export default function Layout({ children, currentPageName }) {
   const location = useLocation();
   const { theme, toggleTheme } = useTheme();
-  const [user, setUser] = useState(null);
+  const { user } = useAuth();
   const [showCreatePost, setShowCreatePost] = useState(false);
   const [showHouseRules, setShowHouseRules] = useState(false);
 
@@ -39,15 +39,6 @@ export default function Layout({ children, currentPageName }) {
     if (!hasSeenRules) {
       setShowHouseRules(true);
     }
-    const fetchUser = async () => {
-      try {
-        const userData = await User.me();
-        setUser(userData);
-      } catch (e) {
-        setUser(null);
-      }
-    };
-    fetchUser();
   }, []);
 
   const handleCloseRules = () => {
@@ -127,22 +118,23 @@ export default function Layout({ children, currentPageName }) {
 
       <nav
         aria-label="Hoofdnavigatie"
-        className="fixed inset-x-0 bottom-0 z-[120] backdrop-blur-xl bg-white/90 dark:bg-midnight-100/70 border-t border-serenity-200/60 dark:border-midnight-50/30 shadow-[0_-10px_40px_rgba(15,23,42,0.25)]"
-        style={{ paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 0.75rem)' }}
+        className="pointer-events-auto fixed inset-x-0 bottom-0 z-[120] flex justify-center"
+        style={{
+          paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 0.85rem)',
+          top: 'auto',
+        }}
       >
-        <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between gap-4 py-3">
-            <Link to={PAGE_ROUTES.timeline} className="flex items-center gap-3">
-              <div className="h-10 w-10 rounded-2xl bg-gradient-to-br from-serenity-500 to-serenity-600 text-white flex items-center justify-center shadow-floating">
-                <LayoutGrid className="w-5 h-5" />
-              </div>
-              <div>
-                <p className="text-xs uppercase tracking-[0.2em] text-serenity-600 dark:text-serenity-200">Exhibit</p>
-                <p className="font-semibold text-lg text-midnight-900 dark:text-white">Creatieve community</p>
-              </div>
-            </Link>
-
-            <div className="flex flex-wrap justify-end items-center gap-2 sm:gap-3">
+        <div
+          className="pointer-events-none absolute inset-x-0 bottom-0 h-[7.5rem] bg-gradient-to-t from-white/95 via-white/85 to-white/60 dark:from-midnight-100/85 dark:via-midnight-100/70 dark:to-midnight-100/55 backdrop-blur-xl border-t border-serenity-200/60 dark:border-midnight-50/30 shadow-[0_-18px_50px_rgba(15,23,42,0.25)]"
+          aria-hidden
+        />
+        <div className="pointer-events-auto relative w-full max-w-[960px] px-4 pb-3 pt-2">
+          <div
+            className="absolute inset-x-3 -bottom-6 h-16 rounded-full bg-serenity-400/25 blur-3xl dark:bg-serenity-300/25 pointer-events-none"
+            aria-hidden
+          />
+          <div className="relative mx-auto flex items-end justify-center gap-3 rounded-full border-2 border-white/95 dark:border-midnight-50/60 bg-gradient-to-br from-white/98 via-white/95 to-serenity-50/95 dark:from-midnight-50/90 dark:via-midnight-100/85 dark:to-midnight-50/80 px-3 py-2.5 shadow-[0_20px_70px_rgba(15,23,42,0.25)] ring-1 ring-serenity-200/70 dark:ring-midnight-50/40 backdrop-blur-2xl supports-[backdrop-filter]:bg-white/92">
+            <div className="flex items-center justify-between gap-1">
               {tabItems.map((item) => {
                 const isRootPath = item.path === PAGE_ROUTES.timeline;
                 const isActive =

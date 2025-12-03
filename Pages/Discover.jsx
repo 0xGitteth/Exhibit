@@ -54,11 +54,13 @@ const styleIcons = {
 };
 
 const userRoles = [
-  { id: "all", label: "Alle" }, 
-  { id: "photographer", label: "Fotografen" }, 
+  { id: "all", label: "Alle" },
+  { id: "photographer", label: "Fotografen" },
   { id: "model", label: "Modellen" },
-  { id: "artist", label: "Artists" }, 
-  { id: "stylist", label: "Stylisten" }
+  { id: "artist", label: "Artists" },
+  { id: "makeup_artist", label: "MUA" },
+  { id: "stylist", label: "Stylisten" },
+  { id: "assistant", label: "Assistenten" }
 ];
 
 const PeopleTab = ({ searchTerm }) => {
