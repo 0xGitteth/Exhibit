@@ -67,4 +67,26 @@ export const dummyAccounts = [
     }),
     label: 'Fashion & set-assist',
   },
+  {
+    email: 'studio.aurora@example.com',
+    password: 'agencyflow',
+    user: toAccountUser(sampleUsers[7], {
+      email: 'studio.aurora@example.com',
+      full_name: 'Studio Aurora Agency',
+      bio: 'Agency die creative teams matcht met nieuwe gezichten.',
+      onboarding_complete: true,
+    }),
+    label: 'Agency - castings',
+  },
+  {
+    email: 'northwind.media@example.com',
+    password: 'teamwork',
+    user: toAccountUser(sampleUsers[8], {
+      email: 'northwind.media@example.com',
+      full_name: 'Northwind Media',
+      bio: 'Bedrijf dat merkcampagnes en producties coördineert.',
+      onboarding_complete: true,
+    }),
+    label: 'Bedrijf - campagnes',
+  },
 ];

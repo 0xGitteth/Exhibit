@@ -69,6 +69,8 @@ export default function PostCard({ post, onSaveToMoodboard }) {
       makeup_artist: 'MUA',
       stylist: 'Stylist',
       assistant: 'Assistent',
+      agency: 'Agency',
+      company: 'Bedrijf',
       other: 'Artiest',
     }),
     []
@@ -92,7 +94,7 @@ export default function PostCard({ post, onSaveToMoodboard }) {
       post.tagged_people.forEach((person) => {
         if (!person?.name) return;
         const label = roleLabels[person.role] || 'Artiest';
-        if (['Fotograaf', 'Model', 'MUA', 'Artiest'].includes(label)) {
+        if (['Fotograaf', 'Model', 'MUA', 'Artiest', 'Agency', 'Bedrijf'].includes(label)) {
           stack.push({
             role: label,
             name: person.name,
