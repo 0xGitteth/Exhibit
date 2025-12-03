@@ -13,46 +13,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import PostCard from "../Components/PostCard";
 import { samplePosts, sampleUsers } from "../utils/dummyData";
 import { DUMMY_DATA_ENABLED } from "../utils/featureFlags";
-import { getStylePillClasses, photographyStyles } from "../utils/photographyStyles";
-
-const styleIcons = {
-  portrait: "👤",
-  fashion: "👗",
-  boudoir: "🌹",
-  art_nude: "🎨",
-  street: "🏙️",
-  landscape: "🏔️",
-  nature: "🌿",
-  conceptual: "💡",
-  editorial: "📰",
-  fine_art: "🎨",
-  wedding: "💒",
-  sport: "⚽",
-  advertising: "📢",
-  beauty: "💄",
-  lifestyle: "☀️",
-  documentary: "📹",
-  travel: "✈️",
-  architecture: "🏛️",
-  macro: "🔬",
-  wildlife: "🦁",
-  food: "🍽️",
-  product: "📦",
-  automotive: "🚗",
-  event: "🎉",
-  corporate: "💼",
-  maternity: "🤱",
-  family: "👨‍👩‍👧‍👦",
-  children: "👶",
-  pet: "🐕",
-  black_white: "⚫",
-  abstract: "🌀",
-  surreal: "🌙",
-  vintage: "📷",
-  minimalist: "⭕",
-  candid: "📸",
-  glamour: "💎",
-};
+import { getStylePillClasses, getStyleTone, photographyStyles } from "../utils/photographyStyles";
 
 const userRoles = [
   { id: "all", label: "Alle" },
@@ -207,19 +168,26 @@ const StylesTab = ({ searchTerm }) => {
         >
           Alles
         </Button>
-        {visibleStyles.map(style => (
-          <button
-            key={style.id}
-            type="button"
-            onClick={() => setSelectedStyle(style.id)}
-            className={`shrink-0 flex items-center gap-2 px-4 py-2 text-sm font-semibold ${getStylePillClasses(style.id, {
-              active: selectedStyle === style.id,
-            })}`}
-          >
-            <span className="mr-1">{styleIcons[style.id]}</span>
-            {style.label}
-          </button>
-        ))}
+        {visibleStyles.map(style => {
+          const tone = getStyleTone(style.id);
+
+          return (
+            <button
+              key={style.id}
+              type="button"
+              onClick={() => setSelectedStyle(style.id)}
+              className={`shrink-0 flex items-center gap-2 px-4 py-2 text-sm font-semibold ${getStylePillClasses(style.id, {
+                active: selectedStyle === style.id,
+              })}`}
+            >
+              <span
+                className={`h-2.5 w-2.5 rounded-full bg-gradient-to-r ${tone.gradient} border ${tone.border} shadow-sm`}
+                aria-hidden="true"
+              />
+              {style.label}
+            </button>
+          );
+        })}
         {!showAllStyles && photographyStyles.length > 5 && (
           <Button
             variant="outline"
