@@ -115,13 +115,36 @@ function getUserByEmail(email) {
 }
 
 function createUser(payload) {
-  const exists = db.prepare('SELECT email FROM users WHERE email = ?').get(payload.email);
-  if (exists) {
-    throw new Error('User already exists');
-  }
+  const existing = db.prepare('SELECT * FROM users WHERE email = ?').get(payload.email);
+  const roles = Array.isArray(payload.roles)
+    ? payload.roles
+    : existing
+      ? parseJson(existing.roles)
+      : [];
+  const onboardingComplete = payload.onboarding_complete
+    ? 1
+    : existing?.onboarding_complete
+      ? 1
+      : 0;
 
-  const roles = Array.isArray(payload.roles) ? payload.roles : [];
-  const onboardingComplete = payload.onboarding_complete ? 1 : 0;
+  if (existing) {
+    db.prepare(
+      `UPDATE users
+       SET display_name = ?, avatar_url = ?, bio = ?, roles = ?, instagram = ?, onboarding_complete = ?
+       WHERE email = ?`,
+    ).run(
+      payload.display_name || existing.display_name,
+      payload.avatar_url || existing.avatar_url,
+      payload.bio || existing.bio,
+      serializeJson(roles),
+      payload.instagram || existing.instagram,
+      onboardingComplete,
+      existing.email,
+    );
+
+    const row = db.prepare('SELECT * FROM users WHERE email = ?').get(existing.email);
+    return mapUser(row);
+  }
 
   db.prepare(
     `INSERT INTO users (email, display_name, avatar_url, bio, roles, instagram, onboarding_complete)
