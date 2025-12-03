@@ -97,44 +97,44 @@ const PeopleTab = ({ searchTerm }) => {
   }, [users, activeRole, searchTerm]);
 
   return (
-    <div className="px-4">
+    <div className="px-4 sm:px-6 space-y-6">
       {/* Role Filter Pills */}
-      <div className="flex space-x-2 mb-6 overflow-x-auto pb-2">
+      <div className="flex space-x-3 mb-2 overflow-x-auto pb-3 no-scrollbar">
         {userRoles.map(role => (
           <Button
             key={role.id}
-            variant={activeRole === role.id ? 'default' : 'outline'}
+            variant="outline"
             onClick={() => setActiveRole(role.id)}
-            className={`shrink-0 ${
+            className={`shrink-0 rounded-full px-5 py-2.5 text-sm font-semibold border-serenity-200/70 dark:border-midnight-200/50 shadow-soft transition-all ${
               activeRole === role.id
-                ? 'bg-serenity-600 text-white shadow-soft'
-                : 'bg-white/80 text-midnight-900 dark:text-serenity-50 border-serenity-200/70'
-            } rounded-full px-4 py-2`}
+                ? 'bg-gradient-to-r from-serenity-600 to-serenity-500 text-white'
+                : 'bg-white/70 dark:bg-midnight-700/60 text-midnight-900 dark:text-serenity-50 hover:bg-serenity-100/60'
+            }`}
           >
             {role.label}
           </Button>
         ))}
       </div>
-      
+
       {/* Users Grid */}
       {loading ? (
-        <p className="text-center text-slate-600">Gebruikers laden...</p>
+        <div className="glass-panel p-6 text-center shadow-floating">
+          <p className="text-slate-600 dark:text-slate-200">Gebruikers laden...</p>
+        </div>
       ) : (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-5">
           {filteredUsers.map(user => (
             <motion.div key={user.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-              <Card className="text-center glass-panel overflow-hidden hover:shadow-floating transition-all flex flex-col bg-white/80 dark:bg-midnight-900/80">
+              <Card className="text-center glass-panel overflow-hidden hover:shadow-floating transition-all flex flex-col">
                 <Avatar className="w-full h-32 sm:h-40 rounded-none shrink-0">
                   <AvatarImage src={user.avatar_url} className="object-cover" />
                   <AvatarFallback className="rounded-none">
                     {user.display_name?.[0] || <UserIcon className="w-8 h-8" />}
                   </AvatarFallback>
                 </Avatar>
-                <CardContent className="p-3 bg-white/90 dark:bg-midnight-950/80 text-midnight-900 dark:text-serenity-50">
+                <CardContent className="p-4 pb-2 text-midnight-900 dark:text-serenity-50">
                   <h4 className="font-semibold truncate">{user.display_name || "Gebruiker"}</h4>
-                </CardContent>
-                <CardContent className="pt-0 pb-3 px-3 bg-white/95 dark:bg-midnight-950/80 text-midnight-800 dark:text-slate-200 overflow-hidden">
-                  <p className="text-xs truncate">{user.roles?.join(', ') || "Creatief"}</p>
+                  <p className="text-xs truncate text-slate-600 dark:text-slate-200 mt-1">{user.roles?.join(', ') || "Creatief"}</p>
                 </CardContent>
               </Card>
             </motion.div>
@@ -184,16 +184,16 @@ const StylesTab = ({ searchTerm }) => {
   const visibleStyles = showAllStyles ? photographyStyles : photographyStyles.slice(0, 5);
 
   return (
-    <div className="px-4">
+    <div className="px-4 sm:px-6 space-y-6">
       {/* Style Filter Pills */}
-      <div className="flex flex-wrap gap-3 mb-6 overflow-x-auto pb-2">
+      <div className="flex flex-wrap gap-3 mb-2 overflow-x-auto pb-3 no-scrollbar">
         <Button
-          variant={!selectedStyle ? 'default' : 'outline'}
+          variant="outline"
           onClick={() => setSelectedStyle(null)}
-          className={`rounded-full px-4 py-2 shrink-0 ${
+          className={`rounded-full px-5 py-2.5 shrink-0 font-semibold border-serenity-200/70 dark:border-midnight-200/50 shadow-soft ${
             !selectedStyle
-              ? 'bg-serenity-600 text-white shadow-soft'
-              : 'bg-white/80 text-midnight-900 dark:text-serenity-50 border-serenity-200/70'
+              ? 'bg-gradient-to-r from-serenity-600 to-serenity-500 text-white'
+              : 'bg-white/70 dark:bg-midnight-700/60 text-midnight-900 dark:text-serenity-50 hover:bg-serenity-100/60'
           }`}
         >
           Alles
@@ -203,7 +203,7 @@ const StylesTab = ({ searchTerm }) => {
             key={style.id}
             type="button"
             onClick={() => setSelectedStyle(style.id)}
-            className={`shrink-0 flex items-center gap-2 px-4 py-2 text-sm font-semibold ${getStylePillClasses(style.id, {
+            className={`shrink-0 flex items-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-full border border-serenity-200/70 dark:border-midnight-200/40 shadow-soft ${getStylePillClasses(style.id, {
               active: selectedStyle === style.id,
             })}`}
           >
@@ -215,7 +215,7 @@ const StylesTab = ({ searchTerm }) => {
           <Button
             variant="outline"
             onClick={() => setShowAllStyles(true)}
-            className="rounded-full bg-white/80 text-serenity-700 border-serenity-300 hover:bg-serenity-100 shadow-soft"
+            className="rounded-full px-5 py-2.5 bg-white/70 dark:bg-midnight-700/60 text-midnight-900 dark:text-serenity-50 border-serenity-300/80 dark:border-midnight-200/60 hover:bg-serenity-100 shadow-soft"
           >
             Toon meer...
           </Button>
@@ -224,7 +224,7 @@ const StylesTab = ({ searchTerm }) => {
       
       {/* Posts Grid */}
       {loading ? (
-        <p className="text-center text-slate-600">Posts laden...</p>
+        <p className="text-center text-slate-600 dark:text-slate-200">Posts laden...</p>
       ) : (
         <div className="space-y-6">
           {filteredPosts.map((post) => (
@@ -240,17 +240,17 @@ export default function Discover() {
   const [searchTerm, setSearchTerm] = useState("");
 
   return (
-    <div className="max-w-6xl mx-auto px-3 pt-4 space-y-6">
+    <div className="max-w-6xl mx-auto px-3 pt-6 space-y-8">
       {/* Search Bar - direct starten */}
       <div className="relative px-4">
-        <div className="glass-panel rounded-2xl shadow-floating p-1">
+        <div className="glass-panel rounded-full shadow-floating p-1.5">
           <div className="relative">
-            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-serenity-500 dark:text-serenity-200 w-5 h-5" />
+            <Search className="absolute left-5 top-1/2 transform -translate-y-1/2 text-serenity-600 dark:text-serenity-200 w-5 h-5" />
             <Input
               placeholder="Zoek naar mensen, stijlen, of titels..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-11 pr-4 py-3 text-lg bg-transparent border-none focus-visible:ring-0"
+              className="pl-12 pr-5 py-3 text-lg bg-transparent border-none focus-visible:ring-0"
             />
           </div>
         </div>
@@ -258,12 +258,12 @@ export default function Discover() {
 
       {/* Tabs */}
       <Tabs defaultValue="people" className="w-full">
-        <TabsList className="grid w-full grid-cols-2 mb-6 bg-white/70 dark:bg-midnight-100/60 backdrop-blur-sm rounded-2xl mx-4 border border-serenity-200/70 dark:border-midnight-50/30 shadow-soft">
-          <TabsTrigger value="people" className="flex items-center space-x-2 data-[state=active]:bg-serenity-600 data-[state=active]:text-white rounded-xl">
+        <TabsList className="grid w-full grid-cols-2 mb-6 bg-white/60 dark:bg-midnight-800/50 backdrop-blur-lg rounded-full mx-4 border border-serenity-200/60 dark:border-midnight-200/50 shadow-floating p-1">
+          <TabsTrigger value="people" className="flex items-center justify-center gap-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-serenity-600 data-[state=active]:to-serenity-500 data-[state=active]:text-white rounded-full py-3 px-4 text-midnight-800 dark:text-serenity-100">
             <UserIcon className="w-4 h-4" />
             <span>Mensen</span>
           </TabsTrigger>
-          <TabsTrigger value="styles" className="flex items-center space-x-2 data-[state=active]:bg-serenity-600 data-[state=active]:text-white rounded-xl">
+          <TabsTrigger value="styles" className="flex items-center justify-center gap-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-serenity-600 data-[state=active]:to-serenity-500 data-[state=active]:text-white rounded-full py-3 px-4 text-midnight-800 dark:text-serenity-100">
             <Palette className="w-4 h-4" />
             <span>Stijlen</span>
           </TabsTrigger>

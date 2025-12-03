@@ -126,7 +126,18 @@ const EditProfileDialog = ({ open, onOpenChange, user, onProfileUpdate }) => {
               <Label>Rollen</Label>
               <div className="mt-2 flex flex-wrap gap-2">
                 {userRoles.map(role => (
-                  <Badge key={role.id} onClick={() => toggleBadge('roles', role.id)} variant={editData.roles?.includes(role.id) ? 'default' : 'outline'} className="cursor-pointer transition-all hover:bg-slate-100 py-1 px-3 text-sm">{role.label}</Badge>
+                  <Badge
+                    key={role.id}
+                    onClick={() => toggleBadge('roles', role.id)}
+                    variant={editData.roles?.includes(role.id) ? 'default' : 'outline'}
+                    className={`cursor-pointer transition-all rounded-full px-4 py-1.5 text-sm border-serenity-200/70 dark:border-midnight-200/60 ${
+                      editData.roles?.includes(role.id)
+                        ? 'bg-gradient-to-r from-serenity-500 to-serenity-600 text-white shadow-soft'
+                        : 'bg-white/70 dark:bg-midnight-800/70 text-midnight-900 dark:text-serenity-50 hover:bg-serenity-100/70'
+                    }`}
+                  >
+                    {role.label}
+                  </Badge>
                 ))}
               </div>
             </div>
@@ -134,7 +145,18 @@ const EditProfileDialog = ({ open, onOpenChange, user, onProfileUpdate }) => {
               <Label>Stijlen</Label>
               <div className="mt-2 flex flex-wrap gap-2">
                 {photographyStyles.map(style => (
-                  <Badge key={style.id} onClick={() => toggleBadge('styles', style.id)} variant={editData.styles?.includes(style.id) ? 'default' : 'outline'} className="cursor-pointer transition-all hover:bg-slate-100 py-1 px-3 text-sm">{style.label}</Badge>
+                  <Badge
+                    key={style.id}
+                    onClick={() => toggleBadge('styles', style.id)}
+                    variant={editData.styles?.includes(style.id) ? 'default' : 'outline'}
+                    className={`cursor-pointer transition-all rounded-full px-4 py-1.5 text-sm border-serenity-200/70 dark:border-midnight-200/60 ${
+                      editData.styles?.includes(style.id)
+                        ? 'bg-gradient-to-r from-serenity-500 to-serenity-600 text-white shadow-soft'
+                        : 'bg-white/70 dark:bg-midnight-800/70 text-midnight-900 dark:text-serenity-50 hover:bg-serenity-100/70'
+                    }`}
+                  >
+                    {style.label}
+                  </Badge>
                 ))}
               </div>
             </div>
@@ -150,8 +172,12 @@ const EditProfileDialog = ({ open, onOpenChange, user, onProfileUpdate }) => {
           </div>
 
           <div className="flex justify-end space-x-3 pt-4 border-t">
-            <Button variant="outline" onClick={() => onOpenChange(false)}>Annuleren</Button>
-            <Button onClick={handleSaveProfile} className="bg-blue-800 hover:bg-blue-900">Profiel Opslaan</Button>
+            <Button variant="outline" onClick={() => onOpenChange(false)} className="rounded-full px-5 py-2.5 border-serenity-200/80 dark:border-midnight-200/60">
+              Annuleren
+            </Button>
+            <Button onClick={handleSaveProfile} className="rounded-full px-5 py-2.5 bg-gradient-to-r from-serenity-600 to-serenity-500 text-white shadow-soft">
+              Profiel Opslaan
+            </Button>
           </div>
         </div>
       </DialogContent>
@@ -281,11 +307,11 @@ export default function Profile() {
     return (
       <div className="max-w-4xl mx-auto px-4">
         <div className="animate-pulse space-y-8">
-          <div className="bg-serenity-100/70 h-40 rounded-2xl shadow-soft"></div>
-          <div className="bg-serenity-100/70 h-12 rounded-2xl shadow-soft"></div>
+          <div className="bg-serenity-100/70 dark:bg-midnight-700/60 h-40 rounded-2xl shadow-soft"></div>
+          <div className="bg-serenity-100/70 dark:bg-midnight-700/60 h-12 rounded-2xl shadow-soft"></div>
           <div className="grid grid-cols-3 gap-4">
             {Array(6).fill(0).map((_, i) => (
-              <div key={i} className="bg-serenity-100/70 aspect-square rounded-2xl shadow-soft"></div>
+              <div key={i} className="bg-serenity-100/70 dark:bg-midnight-700/60 aspect-square rounded-2xl shadow-soft"></div>
             ))}
           </div>
         </div>
@@ -308,21 +334,21 @@ export default function Profile() {
               <AvatarImage src={user.avatar_url} />
               <AvatarFallback>{user.display_name?.[0]}</AvatarFallback>
             </Avatar>
-            <div className="flex-1 text-center md:text-left">
-              <h1 className="text-3xl font-bold text-midnight-900 dark:text-white">{user.display_name || user.full_name}</h1>
-              <p className="text-slate-700 dark:text-slate-200 mt-2">{user.bio || "Deel je verhaal en inspireer anderen..."}</p>
-              <div className="flex flex-wrap gap-2 mt-4 justify-center md:justify-start">
-                {user.roles?.map(roleId => {
-                    const roleInfo = userRoles.find(r => r.id === roleId);
-                    return <Badge key={roleId} variant="secondary" className="bg-serenity-100 text-serenity-800 border-serenity-200">{roleInfo?.label}</Badge>
-                })}
-                {user.styles?.slice(0, 3).map(styleId => {
-                    const styleInfo = photographyStyles.find(s => s.id === styleId);
-                    return <Badge key={styleId} variant="outline" className="border-serenity-300 text-serenity-800 dark:text-serenity-100">{styleInfo?.label}</Badge>
-                })}
+              <div className="flex-1 text-center md:text-left">
+                <h1 className="text-3xl font-bold text-midnight-900 dark:text-white">{user.display_name || user.full_name}</h1>
+                <p className="text-slate-700 dark:text-slate-200 mt-2">{user.bio || "Deel je verhaal en inspireer anderen..."}</p>
+                <div className="flex flex-wrap gap-2 mt-4 justify-center md:justify-start">
+                  {user.roles?.map(roleId => {
+                      const roleInfo = userRoles.find(r => r.id === roleId);
+                      return <Badge key={roleId} variant="secondary" className="rounded-full px-4 py-1.5 bg-gradient-to-r from-serenity-200 to-serenity-300 text-midnight-900 border-serenity-200/70 shadow-soft">{roleInfo?.label}</Badge>
+                  })}
+                  {user.styles?.slice(0, 3).map(styleId => {
+                      const styleInfo = photographyStyles.find(s => s.id === styleId);
+                      return <Badge key={styleId} variant="outline" className="rounded-full px-4 py-1.5 border-serenity-300/80 dark:border-midnight-200/60 text-midnight-900 dark:text-serenity-50 bg-white/70 dark:bg-midnight-800/70">{styleInfo?.label}</Badge>
+                  })}
+                </div>
               </div>
             </div>
-          </div>
         </CardContent>
       </Card>
 
@@ -337,25 +363,25 @@ export default function Profile() {
               <div className="text-2xl font-bold text-midnight-900 dark:text-white">{savedPosts.length}</div>
               <div className="text-sm text-slate-600 dark:text-slate-300 uppercase">Opgeslagen</div>
             </div>
-            <div className="flex items-center space-x-2">
-                <Button variant="ghost" size="icon" className="rounded-full bg-serenity-100 dark:bg-midnight-100/40" onClick={() => setShowEditProfile(true)} title="Profiel bewerken"><Edit className="w-5 h-5" /></Button>
-                <Link to={createPageUrl("Analytics")}>
-                  <Button variant="ghost" size="icon" className="rounded-full bg-serenity-100 dark:bg-midnight-100/40" title="Statistieken"><BarChart2 className="w-5 h-5" /></Button>
-                </Link>
-                <Button variant="ghost" size="icon" className="rounded-full bg-serenity-100 dark:bg-midnight-100/40" onClick={toggleSensitiveContent} title={user.show_sensitive_content ? "Gevoelige content verbergen" : "Gevoelige content tonen"}>
-                  {user.show_sensitive_content ? <Eye className="w-5 h-5" /> : <EyeOff className="w-5 h-5" />}
-                </Button>
-                <Button variant="ghost" size="icon" className="rounded-full bg-serenity-100 dark:bg-midnight-100/40" onClick={() => setShowHouseRules(true)} title="Huisregels"><Shield className="w-5 h-5" /></Button>
-                <Button variant="ghost" size="icon" className="rounded-full bg-serenity-100 dark:bg-midnight-100/40" onClick={handleLogout} title="Uitloggen"><LogOut className="w-5 h-5 text-red-500" /></Button>
-            </div>
-        </CardContent>
-      </Card>
+              <div className="flex items-center space-x-2">
+                  <Button variant="ghost" size="icon" className="rounded-full bg-white/70 dark:bg-midnight-700/60 border border-serenity-200/70 dark:border-midnight-200/50 text-midnight-900 dark:text-serenity-50 shadow-soft" onClick={() => setShowEditProfile(true)} title="Profiel bewerken"><Edit className="w-5 h-5" /></Button>
+                  <Link to={createPageUrl("Analytics")}>
+                    <Button variant="ghost" size="icon" className="rounded-full bg-white/70 dark:bg-midnight-700/60 border border-serenity-200/70 dark:border-midnight-200/50 text-midnight-900 dark:text-serenity-50 shadow-soft" title="Statistieken"><BarChart2 className="w-5 h-5" /></Button>
+                  </Link>
+                  <Button variant="ghost" size="icon" className="rounded-full bg-white/70 dark:bg-midnight-700/60 border border-serenity-200/70 dark:border-midnight-200/50 text-midnight-900 dark:text-serenity-50 shadow-soft" onClick={toggleSensitiveContent} title={user.show_sensitive_content ? "Gevoelige content verbergen" : "Gevoelige content tonen"}>
+                    {user.show_sensitive_content ? <Eye className="w-5 h-5" /> : <EyeOff className="w-5 h-5" />}
+                  </Button>
+                  <Button variant="ghost" size="icon" className="rounded-full bg-white/70 dark:bg-midnight-700/60 border border-serenity-200/70 dark:border-midnight-200/50 text-midnight-900 dark:text-serenity-50 shadow-soft" onClick={() => setShowHouseRules(true)} title="Huisregels"><Shield className="w-5 h-5" /></Button>
+                  <Button variant="ghost" size="icon" className="rounded-full bg-white/70 dark:bg-midnight-700/60 border border-serenity-200/70 dark:border-midnight-200/50 text-midnight-900 dark:text-serenity-50 shadow-soft" onClick={handleLogout} title="Uitloggen"><LogOut className="w-5 h-5" /></Button>
+              </div>
+          </CardContent>
+        </Card>
       
       {/* Content Tabs */}
         <Tabs defaultValue="posts" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 mb-6 bg-white/70 dark:bg-midnight-100/60 backdrop-blur-sm rounded-2xl border border-serenity-200/70 dark:border-midnight-50/30 shadow-soft">
-            <TabsTrigger value="posts" className="flex items-center space-x-2 data-[state=active]:bg-serenity-600 data-[state=active]:text-white rounded-xl"><Grid className="w-4 h-4" /><span>Mijn Posts</span></TabsTrigger>
-            <TabsTrigger value="saved" className="flex items-center space-x-2 data-[state=active]:bg-serenity-600 data-[state=active]:text-white rounded-xl"><Bookmark className="w-4 h-4" /><span>Moodboard</span></TabsTrigger>
+          <TabsList className="grid w-full grid-cols-2 mb-6 bg-white/60 dark:bg-midnight-800/50 backdrop-blur-lg rounded-full border border-serenity-200/60 dark:border-midnight-200/50 shadow-floating p-1">
+            <TabsTrigger value="posts" className="flex items-center justify-center gap-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-serenity-600 data-[state=active]:to-serenity-500 data-[state=active]:text-white rounded-full py-3 px-4 text-midnight-800 dark:text-serenity-100"><Grid className="w-4 h-4" /><span>Mijn Posts</span></TabsTrigger>
+            <TabsTrigger value="saved" className="flex items-center justify-center gap-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-serenity-600 data-[state=active]:to-serenity-500 data-[state=active]:text-white rounded-full py-3 px-4 text-midnight-800 dark:text-serenity-100"><Bookmark className="w-4 h-4" /><span>Moodboard</span></TabsTrigger>
           </TabsList>
 
         <TabsContent value="posts">

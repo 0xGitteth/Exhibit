@@ -14,14 +14,18 @@ type StatCardProps = {
 };
 
 const StatCard = ({ icon: Icon, title, value, note }: StatCardProps) => (
-  <Card className="bg-white/60 backdrop-blur-md shadow-xl rounded-2xl">
-    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-      <CardTitle className="text-sm font-medium text-slate-600">{title}</CardTitle>
-      <Icon className="h-5 w-5 text-slate-500" />
+  <Card className="glass-panel h-full shadow-floating">
+    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
+      <CardTitle className="text-sm font-semibold text-midnight-800 dark:text-serenity-50 flex items-center gap-2">
+        <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-serenity-200/80 to-serenity-400/80 dark:from-midnight-700/70 dark:to-midnight-500/70 text-midnight-900 dark:text-serenity-50 shadow-soft">
+          <Icon className="h-4 w-4" />
+        </span>
+        {title}
+      </CardTitle>
     </CardHeader>
-    <CardContent>
-      <div className="text-3xl font-bold text-slate-800">{value}</div>
-      {note && <p className="text-xs text-slate-500 mt-1">{note}</p>}
+    <CardContent className="space-y-2">
+      <div className="text-3xl font-bold text-midnight-900 dark:text-white">{value}</div>
+      {note && <p className="text-xs text-slate-700 dark:text-slate-100/80 leading-relaxed">{note}</p>}
     </CardContent>
   </Card>
 );
@@ -81,16 +85,24 @@ export function AnalyticsPage(): JSX.Element {
   if (loading) {
     return (
       <div className="max-w-4xl mx-auto px-4 py-8">
-        <p>Statistieken laden...</p>
+        <div className="glass-panel p-6 shadow-floating">
+          <p className="text-slate-700 dark:text-slate-200">Statistieken laden...</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold text-slate-800 mb-8 flex items-center gap-3">
-        <BarChart2 className="w-8 h-8" /> Jouw Statistieken
-      </h1>
+    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+      <div className="glass-panel p-6 md:p-7 space-y-3 shadow-floating">
+        <p className="text-xs uppercase tracking-[0.25em] text-serenity-700 dark:text-serenity-200">Overzicht</p>
+        <h1 className="text-3xl font-bold text-midnight-900 dark:text-white flex items-center gap-3">
+          <span className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-gradient-to-br from-serenity-500 to-serenity-400 text-white shadow-floating"><BarChart2 className="w-6 h-6" /></span>
+          Jouw Statistieken
+        </h1>
+        <p className="text-slate-700 dark:text-slate-200">Een serene weergave van je prestaties met zachte blauwe tinten.</p>
+      </div>
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <StatCard
           icon={Users}
@@ -107,15 +119,19 @@ export function AnalyticsPage(): JSX.Element {
           note="Weergave-tracking binnenkort beschikbaar"
         />
       </div>
-      <Card className="mt-8 bg-white/60 backdrop-blur-md shadow-xl rounded-2xl">
+      <Card className="glass-panel shadow-floating">
         <CardHeader>
-          <CardTitle>Binnenkort meer</CardTitle>
+          <CardTitle className="flex items-center gap-2 text-midnight-900 dark:text-white">
+            <span className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-r from-serenity-400 to-serenity-500 text-white shadow-soft"><Eye className="w-5 h-5" /></span>
+            Binnenkort meer
+          </CardTitle>
         </CardHeader>
-        <CardContent>
-          <p className="text-slate-600">
+        <CardContent className="space-y-2">
+          <p className="text-slate-700 dark:text-slate-200">
             We werken aan gedetailleerde grafieken en analyses om je nog meer inzicht te geven in de
             prestaties van je account.
           </p>
+          <p className="text-sm text-serenity-700 dark:text-serenity-200">Houd deze pagina in de gaten voor nieuwe widgets en interactieve grafieken.</p>
         </CardContent>
       </Card>
     </div>

@@ -38,18 +38,18 @@ export const photographyStyles = [
 ];
 
 const colorPalette = [
-  { gradient: 'from-rose-50 via-rose-100 to-rose-200', text: 'text-rose-900', border: 'border-rose-100', ring: 'ring-rose-200/70' },
-  { gradient: 'from-sky-50 via-sky-100 to-sky-200', text: 'text-sky-900', border: 'border-sky-100', ring: 'ring-sky-200/70' },
-  { gradient: 'from-amber-50 via-amber-100 to-amber-200', text: 'text-amber-900', border: 'border-amber-100', ring: 'ring-amber-200/70' },
-  { gradient: 'from-emerald-50 via-emerald-100 to-emerald-200', text: 'text-emerald-900', border: 'border-emerald-100', ring: 'ring-emerald-200/70' },
-  { gradient: 'from-indigo-50 via-indigo-100 to-indigo-200', text: 'text-indigo-900', border: 'border-indigo-100', ring: 'ring-indigo-200/70' },
-  { gradient: 'from-purple-50 via-purple-100 to-purple-200', text: 'text-purple-900', border: 'border-purple-100', ring: 'ring-purple-200/70' },
-  { gradient: 'from-teal-50 via-teal-100 to-teal-200', text: 'text-teal-900', border: 'border-teal-100', ring: 'ring-teal-200/70' },
-  { gradient: 'from-blue-50 via-blue-100 to-blue-200', text: 'text-blue-900', border: 'border-blue-100', ring: 'ring-blue-200/70' },
-  { gradient: 'from-orange-50 via-orange-100 to-orange-200', text: 'text-orange-900', border: 'border-orange-100', ring: 'ring-orange-200/70' },
-  { gradient: 'from-lime-50 via-lime-100 to-lime-200', text: 'text-lime-900', border: 'border-lime-100', ring: 'ring-lime-200/70' },
-  { gradient: 'from-pink-50 via-pink-100 to-pink-200', text: 'text-pink-900', border: 'border-pink-100', ring: 'ring-pink-200/70' },
-  { gradient: 'from-slate-50 via-slate-100 to-slate-200', text: 'text-slate-900', border: 'border-slate-100', ring: 'ring-slate-200/70' },
+  { gradient: 'from-white via-serenity-50 to-serenity-100', text: 'text-midnight-900', border: 'border-serenity-100', ring: 'ring-serenity-200/70' },
+  { gradient: 'from-serenity-50 via-serenity-100 to-serenity-200', text: 'text-midnight-900', border: 'border-serenity-100/80', ring: 'ring-serenity-200/70' },
+  { gradient: 'from-sky-50 via-sky-100 to-sky-200', text: 'text-midnight-900', border: 'border-sky-100', ring: 'ring-sky-200/70' },
+  { gradient: 'from-serenity-100 via-serenity-200 to-serenity-300', text: 'text-midnight-900', border: 'border-serenity-200', ring: 'ring-serenity-300/60' },
+  { gradient: 'from-slate-50 via-serenity-50 to-slate-200', text: 'text-midnight-900', border: 'border-serenity-100', ring: 'ring-serenity-200/60' },
+  { gradient: 'from-sky-100 via-serenity-200 to-sky-300', text: 'text-midnight-900', border: 'border-sky-100', ring: 'ring-serenity-300/60' },
+  { gradient: 'from-white/90 via-slate-100 to-serenity-100', text: 'text-midnight-900', border: 'border-serenity-100/80', ring: 'ring-serenity-200/60' },
+  { gradient: 'from-midnight-900/20 via-midnight-800/10 to-serenity-200/80', text: 'text-midnight-900', border: 'border-midnight-100/40', ring: 'ring-serenity-300/70' },
+  { gradient: 'from-midnight-800/40 via-midnight-700/40 to-serenity-300/80', text: 'text-serenity-50', border: 'border-midnight-200/50', ring: 'ring-serenity-400/70' },
+  { gradient: 'from-serenity-200 via-serenity-300 to-serenity-400', text: 'text-midnight-900', border: 'border-serenity-300', ring: 'ring-serenity-400/60' },
+  { gradient: 'from-sky-200 via-serenity-200 to-serenity-300', text: 'text-midnight-900', border: 'border-serenity-200', ring: 'ring-serenity-300/60' },
+  { gradient: 'from-serenity-50 via-white to-serenity-100', text: 'text-midnight-900', border: 'border-serenity-100', ring: 'ring-serenity-200/70' },
 ];
 
 const styleColorMap = {

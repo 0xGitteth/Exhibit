@@ -4,18 +4,30 @@ import { MessageSquare } from 'lucide-react';
 
 export default function ChatPage() {
   return (
-    <div className="max-w-xl mx-auto px-4 py-8">
-      <Card className="bg-white/60 backdrop-blur-md shadow-xl rounded-2xl">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <MessageSquare />
+    <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <Card className="glass-panel shadow-floating">
+        <CardHeader className="pb-4">
+          <CardTitle className="flex items-center gap-3 text-midnight-900 dark:text-white">
+            <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-serenity-500 to-serenity-400 text-white shadow-floating">
+              <MessageSquare className="w-5 h-5" />
+            </span>
             Chat
           </CardTitle>
         </CardHeader>
-        <CardContent>
-          <div className="text-center py-12">
-            <h3 className="text-lg font-medium text-slate-800">Chatfunctie binnenkort beschikbaar</h3>
-            <p className="text-slate-500 mt-2">Hier kun je binnenkort gesprekken voeren met andere leden van de community.</p>
+        <CardContent className="bg-gradient-to-br from-serenity-50/70 via-white/50 to-serenity-100/40 dark:from-midnight-800/70 dark:via-midnight-700/60 dark:to-midnight-600/60 rounded-2xl border border-white/60 dark:border-midnight-100/30 shadow-inner-soft p-10 text-center space-y-4">
+          <div className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-white/70 dark:bg-midnight-700/70 border border-serenity-200/70 dark:border-midnight-200/50 shadow-soft text-midnight-900 dark:text-serenity-50">
+            <span className="h-2 w-2 rounded-full bg-serenity-500 animate-pulse" />
+            In ontwikkeling
+          </div>
+          <h3 className="text-2xl font-semibold text-midnight-900 dark:text-white">Chatfunctie binnenkort beschikbaar</h3>
+          <p className="text-slate-700 dark:text-slate-200 max-w-2xl mx-auto leading-relaxed">
+            Hier kun je binnenkort gesprekken voeren met andere leden van de community. Het scherm krijgt dezelfde glastint als de rest van Exhibit.
+          </p>
+          <div className="flex justify-center">
+            <div className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-serenity-500 to-serenity-600 text-white shadow-soft">
+              <span className="h-2 w-2 rounded-full bg-white/80 animate-pulse" />
+              Binnenkort live
+            </div>
           </div>
         </CardContent>
       </Card>

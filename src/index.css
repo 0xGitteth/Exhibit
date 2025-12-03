@@ -40,10 +40,10 @@
 
 @layer components {
   .glass-panel {
-    @apply bg-white/70 dark:bg-midnight-100/60 backdrop-blur-lg border border-serenity-200/70 dark:border-midnight-50/30 shadow-soft rounded-2xl;
+    @apply bg-gradient-to-br from-white/75 via-serenity-50/70 to-serenity-100/60 dark:from-midnight-800/70 dark:via-midnight-700/60 dark:to-midnight-800/70 backdrop-blur-xl border border-serenity-200/60 dark:border-midnight-100/40 shadow-floating rounded-3xl;
   }
 
   .pill-button {
-    @apply inline-flex items-center gap-2 rounded-full px-4 py-2 font-medium transition-all duration-200 shadow-soft bg-serenity-500 text-white hover:bg-serenity-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-serenity-300 dark:focus-visible:ring-midnight-50/50;
+    @apply inline-flex items-center gap-2 rounded-full px-5 py-2.5 font-semibold transition-all duration-200 shadow-soft bg-gradient-to-r from-serenity-600 to-serenity-500 text-white hover:from-serenity-700 hover:to-serenity-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-serenity-300 dark:focus-visible:ring-midnight-50/50;
   }
 }

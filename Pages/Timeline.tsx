@@ -54,8 +54,8 @@ export default function Timeline() {
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-6 pb-32 space-y-6">
-      <div className="space-y-3 glass-panel p-5">
-        <p className="text-xs uppercase tracking-[0.2em] text-serenity-600 font-semibold">Exhibit</p>
+      <div className="space-y-3 glass-panel p-6 shadow-floating">
+        <p className="text-xs uppercase tracking-[0.2em] text-serenity-700 dark:text-serenity-200 font-semibold">Exhibit</p>
         <div className="flex items-start justify-between gap-4">
           <div className="space-y-2">
             <h1 className="text-3xl font-bold text-midnight-900 dark:text-white">Tijdlijn</h1>
@@ -67,7 +67,10 @@ export default function Timeline() {
       {loading ? (
         <div className="space-y-4">
           {[...Array(3)].map((_, index) => (
-            <div key={index} className="h-80 rounded-2xl bg-gradient-to-r from-slate-100 to-slate-200 animate-pulse" />
+            <div
+              key={index}
+              className="h-80 rounded-3xl bg-gradient-to-r from-serenity-50 via-serenity-100 to-serenity-200 dark:from-midnight-700/60 dark:via-midnight-600/60 dark:to-midnight-500/60 animate-pulse shadow-soft"
+            />
           ))}
         </div>
       ) : posts.length === 0 ? (

@@ -10,6 +10,8 @@ import AnalyticsPage from '../Pages/Analytics';
 import CommunityPage from '../Pages/Community.jsx';
 import ProfilePage from '../Pages/Profile.jsx';
 import SearchPage from '../Pages/Discover.jsx';
+import ChatPage from '../Pages/Chat';
+import IDVerificationPage from '../Pages/IDVerfication';
 import TimelinePage from '../Pages/Timeline';
 import { PAGE_ROUTES } from '@/utils';
 import { ThemeProvider } from '@/context/ThemeContext';
@@ -51,6 +53,8 @@ function App() {
           <Route path={PAGE_ROUTES.discover} element={renderPage('Discover', <SearchPage />)} />
           <Route path={PAGE_ROUTES.profile} element={renderPage('Profile', <ProfilePage />)} />
           <Route path={PAGE_ROUTES.analytics} element={renderPage('Analytics', <AnalyticsPage />)} />
+          <Route path={PAGE_ROUTES.chat} element={renderPage('Chat', <ChatPage />)} />
+          <Route path={PAGE_ROUTES.idVerification} element={renderPage('IDVerification', <IDVerificationPage />)} />
         </Routes>
       </BrowserRouter>
     </ThemeProvider>
