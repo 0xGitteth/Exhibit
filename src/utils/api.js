@@ -33,8 +33,17 @@ export async function updateCurrentUser(payload) {
   return request('/users/me', { method: 'PATCH', body: JSON.stringify(payload) });
 }
 
+export async function updateUserByEmail(email, payload) {
+  const encodedEmail = encodeURIComponent(email);
+  return request(`/users/${encodedEmail}`, { method: 'PATCH', body: JSON.stringify(payload) });
+}
+
 export async function createUser(payload) {
   return request('/users', { method: 'POST', body: JSON.stringify(payload) });
+}
+
+export async function filterUsers(filter) {
+  return request('/users/filter', { method: 'POST', body: JSON.stringify(filter) });
 }
 
 export async function filterPosts(filter) {

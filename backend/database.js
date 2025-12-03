@@ -66,12 +66,21 @@ function parseJson(text) {
 }
 
 function serializeJson(value) {
-  return JSON.stringify(value || []);
+  return JSON.stringify(Array.isArray(value) ? value : value ? [value] : []);
 }
 
 function mapUser(row) {
   if (!row) return null;
-  return { ...row, onboarding_complete: !!row.onboarding_complete, roles: parseJson(row.roles) };
+  return {
+    ...row,
+    onboarding_complete: !!row.onboarding_complete,
+    show_sensitive_content: !!row.show_sensitive_content,
+    roles: parseJson(row.roles),
+    styles: parseJson(row.styles),
+    linked_agencies: parseJson(row.linked_agencies),
+    linked_companies: parseJson(row.linked_companies),
+    linked_models: parseJson(row.linked_models),
+  };
 }
 
 function mapPost(row) {
@@ -146,17 +155,29 @@ function createUser(payload) {
     return mapUser(row);
   }
 
+  const roles = Array.isArray(payload.roles) ? payload.roles : [];
+  const styles = Array.isArray(payload.styles) ? payload.styles : [];
+  const onboardingComplete = payload.onboarding_complete ? 1 : 0;
+
   db.prepare(
-    `INSERT INTO users (email, display_name, avatar_url, bio, roles, instagram, onboarding_complete)
-     VALUES (@email, @display_name, @avatar_url, @bio, @roles, @instagram, @onboarding_complete)`,
+    `INSERT INTO users (email, display_name, avatar_url, bio, roles, styles, instagram, onboarding_complete, primary_role, show_sensitive_content, agency_affiliation, company_affiliation, linked_agencies, linked_companies, linked_models)
+     VALUES (@email, @display_name, @avatar_url, @bio, @roles, @styles, @instagram, @onboarding_complete, @primary_role, @show_sensitive_content, @agency_affiliation, @company_affiliation, @linked_agencies, @linked_companies, @linked_models)`,
   ).run({
     email: payload.email,
     display_name: payload.display_name,
     avatar_url: payload.avatar_url || null,
     bio: payload.bio || null,
     roles: serializeJson(roles),
+    styles: serializeJson(styles),
     instagram: payload.instagram || null,
     onboarding_complete: onboardingComplete,
+    primary_role: payload.primary_role || null,
+    show_sensitive_content: payload.show_sensitive_content ? 1 : 0,
+    agency_affiliation: payload.agency_affiliation || null,
+    company_affiliation: payload.company_affiliation || null,
+    linked_agencies: serializeJson(payload.linked_agencies),
+    linked_companies: serializeJson(payload.linked_companies),
+    linked_models: serializeJson(payload.linked_models),
   });
 
   const row = db.prepare('SELECT * FROM users WHERE email = ?').get(payload.email);
@@ -166,21 +187,63 @@ function createUser(payload) {
 function updateCurrentUser(updates) {
   const current = getCurrentUser();
   if (!current) return null;
-  const next = { ...current, ...updates };
+  return updateUserByEmail(current.email, updates);
+}
+
+function buildUserUpdatePayload(current, updates = {}) {
+  const merged = { ...current, ...updates };
+
+  return {
+    ...merged,
+    roles: Array.isArray(merged.roles) ? merged.roles : [],
+    styles: Array.isArray(merged.styles) ? merged.styles : [],
+    linked_agencies: Array.isArray(merged.linked_agencies) ? merged.linked_agencies : [],
+    linked_companies: Array.isArray(merged.linked_companies) ? merged.linked_companies : [],
+    linked_models: Array.isArray(merged.linked_models) ? merged.linked_models : [],
+  };
+}
+
+function persistUser(email, payload) {
   db.prepare(
     `UPDATE users
-     SET display_name = ?, avatar_url = ?, bio = ?, roles = ?, instagram = ?, onboarding_complete = ?
+     SET display_name = ?, avatar_url = ?, bio = ?, roles = ?, styles = ?, instagram = ?, onboarding_complete = ?, primary_role = ?, show_sensitive_content = ?, agency_affiliation = ?, company_affiliation = ?, linked_agencies = ?, linked_companies = ?, linked_models = ?
      WHERE email = ?`,
   ).run(
-    next.display_name,
-    next.avatar_url,
-    next.bio,
-    serializeJson(next.roles),
-    next.instagram,
-    next.onboarding_complete ? 1 : 0,
-    next.email,
+    payload.display_name,
+    payload.avatar_url,
+    payload.bio,
+    serializeJson(payload.roles),
+    serializeJson(payload.styles),
+    payload.instagram,
+    payload.onboarding_complete ? 1 : 0,
+    payload.primary_role || null,
+    payload.show_sensitive_content ? 1 : 0,
+    payload.agency_affiliation || null,
+    payload.company_affiliation || null,
+    serializeJson(payload.linked_agencies),
+    serializeJson(payload.linked_companies),
+    serializeJson(payload.linked_models),
+    email,
   );
+}
+
+function updateUserByEmail(email, updates) {
+  const current = getUserByEmail(email);
+  if (!current) return null;
+  const next = buildUserUpdatePayload(current, updates);
+  persistUser(email, next);
   return next;
+}
+
+function filterUsers(filter = {}) {
+  const rows = db.prepare('SELECT * FROM users').all();
+  let users = rows.map(mapUser);
+
+  if (Array.isArray(filter.roles) && filter.roles.length > 0) {
+    users = users.filter((user) => user.roles?.some((role) => filter.roles.includes(role)));
+  }
+
+  return users;
 }
 
 function filterPosts(filter = {}) {
@@ -243,6 +306,8 @@ module.exports = {
   getCurrentUser,
   createUser,
   updateCurrentUser,
+  updateUserByEmail,
+  filterUsers,
   filterPosts,
   createPost,
   filterLikes,
