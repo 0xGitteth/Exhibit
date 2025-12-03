@@ -1,13 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { PAGE_ROUTES } from '@/utils';
-import { LayoutGrid } from 'lucide-react';
+import { Camera, LayoutGrid } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import HouseRulesModal from '@/components/HouseRulesModal';
 import PropTypes from 'prop-types';
+import CreatePostModal from './Components/CreatePostModal.jsx';
+import { Post } from './entities/Post.js';
 
 export default function Layout({ children, currentPageName }) {
   const [showHouseRules, setShowHouseRules] = useState(false);
+  const [showCreatePost, setShowCreatePost] = useState(false);
+  const [creatingPost, setCreatingPost] = useState(false);
 
   useEffect(() => {
     const hasSeenRules = localStorage.getItem('hasSeenHouseRules');
@@ -19,6 +23,18 @@ export default function Layout({ children, currentPageName }) {
   const handleCloseRules = () => {
     localStorage.setItem('hasSeenHouseRules', 'true');
     setShowHouseRules(false);
+  };
+
+  const handlePostCreated = async (payload) => {
+    try {
+      setCreatingPost(true);
+      await Post.create(payload);
+      window.dispatchEvent(new Event('post:created'));
+    } catch (error) {
+      console.error('Error creating post:', error);
+    } finally {
+      setCreatingPost(false);
+    }
   };
 
   return (
@@ -83,7 +99,24 @@ export default function Layout({ children, currentPageName }) {
 
       <main className={`pb-16 ${currentPageName === 'Timeline' ? 'pt-4' : 'pt-8'} relative z-10`}>{children}</main>
 
+      <div className="fixed bottom-6 right-4 sm:bottom-8 sm:right-8 z-50">
+        <Button
+          onClick={() => setShowCreatePost(true)}
+          className="rounded-full bg-gradient-to-br from-serenity-500 via-serenity-500 to-serenity-600 text-white shadow-floating hover:from-serenity-600 hover:to-serenity-700 transition-all px-5 sm:px-6 py-3 h-auto flex items-center gap-2"
+          size="lg"
+          disabled={creatingPost}
+        >
+          <Camera className="w-5 h-5" />
+          <span className="font-semibold">Foto plaatsen</span>
+        </Button>
+      </div>
+
       <HouseRulesModal open={showHouseRules} onOpenChange={handleCloseRules} />
+      <CreatePostModal
+        open={showCreatePost}
+        onOpenChange={setShowCreatePost}
+        onPostCreated={handlePostCreated}
+      />
     </div>
   );
 }
