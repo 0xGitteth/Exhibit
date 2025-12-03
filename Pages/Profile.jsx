@@ -64,6 +64,23 @@ const EditProfileDialog = ({ open, onOpenChange, user, onProfileUpdate, agencyAc
     setEditData(user);
   }, [user]);
 
+  const toArray = (value) => (Array.isArray(value) ? value : []);
+  const addUnique = (list, value) => {
+    if (!value) return toArray(list);
+    const arr = toArray(list);
+    return arr.includes(value) ? arr : [...arr, value];
+  };
+  const removeValue = (list, value) => toArray(list).filter((item) => item !== value);
+
+  const findAccountMatch = (value, accounts) => {
+    if (!value) return null;
+    const normalized = value.toLowerCase().trim();
+    return accounts.find((account) => {
+      const label = account.display_name || account.full_name || account.email;
+      return label?.toLowerCase().trim() === normalized;
+    });
+  };
+
   const handleAvatarUpload = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -80,8 +97,57 @@ const EditProfileDialog = ({ open, onOpenChange, user, onProfileUpdate, agencyAc
 
   const handleSaveProfile = async () => {
     try {
-      await User.updateMyUserData(editData);
-      onProfileUpdate(editData);
+      const agencyMatch = findAccountMatch(editData.agency_affiliation, agencyAccounts);
+      const companyMatch = findAccountMatch(editData.company_affiliation, companyAccounts);
+      const previousAgencyMatch = findAccountMatch(user?.agency_affiliation, agencyAccounts);
+      const previousCompanyMatch = findAccountMatch(user?.company_affiliation, companyAccounts);
+
+      const linkedAgencies = removeValue(
+        addUnique(editData.linked_agencies ?? user?.linked_agencies, agencyMatch?.email),
+        previousAgencyMatch && (!agencyMatch || previousAgencyMatch.email !== agencyMatch.email)
+          ? previousAgencyMatch.email
+          : null,
+      );
+      const linkedCompanies = removeValue(
+        addUnique(editData.linked_companies ?? user?.linked_companies, companyMatch?.email),
+        previousCompanyMatch && (!companyMatch || previousCompanyMatch.email !== companyMatch.email)
+          ? previousCompanyMatch.email
+          : null,
+      );
+
+      const payload = {
+        ...editData,
+        linked_agencies: linkedAgencies,
+        linked_companies: linkedCompanies,
+        linked_models: toArray(editData.linked_models ?? user?.linked_models),
+      };
+
+      const savedUser = await User.updateMyUserData(payload);
+      onProfileUpdate(savedUser);
+
+      const currentEmail = savedUser?.email || user?.email;
+
+      const syncLinkedModels = async (account, shouldLink) => {
+        if (!account?.email || !currentEmail) return;
+        const baseLinks = shouldLink
+          ? addUnique(account.linked_models, currentEmail)
+          : removeValue(account.linked_models, currentEmail);
+        await User.updateByEmail(account.email, { linked_models: baseLinks });
+      };
+
+      if (previousAgencyMatch && previousAgencyMatch.email !== agencyMatch?.email) {
+        await syncLinkedModels(previousAgencyMatch, false);
+      }
+      if (previousCompanyMatch && previousCompanyMatch.email !== companyMatch?.email) {
+        await syncLinkedModels(previousCompanyMatch, false);
+      }
+      if (agencyMatch) {
+        await syncLinkedModels(agencyMatch, true);
+      }
+      if (companyMatch) {
+        await syncLinkedModels(companyMatch, true);
+      }
+
       onOpenChange(false);
     } catch (error) {
       console.error("Update error:", error);
@@ -226,6 +292,9 @@ EditProfileDialog.propTypes = {
     styles: PropTypes.arrayOf(PropTypes.string),
     email: PropTypes.string,
     show_sensitive_content: PropTypes.bool,
+    linked_agencies: PropTypes.arrayOf(PropTypes.string),
+    linked_companies: PropTypes.arrayOf(PropTypes.string),
+    linked_models: PropTypes.arrayOf(PropTypes.string),
   }),
   onProfileUpdate: PropTypes.func,
   agencyAccounts: PropTypes.arrayOf(PropTypes.object),
@@ -252,14 +321,7 @@ export default function Profile() {
     const loadAffiliationAccounts = async () => {
       if (DUMMY_DATA_ENABLED) return;
       try {
-        const response = await fetch('/api/users/filter', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ roles: ['agency', 'company'] }),
-        });
-
-        const payload = await response.json();
-        const accounts = Array.isArray(payload) ? payload : payload?.data || [];
+        const accounts = await User.filter({ roles: ['agency', 'company'] });
         if (accounts.length) {
           setAgencyAccounts(accounts.filter((account) => account.roles?.includes('agency')));
           setCompanyAccounts(accounts.filter((account) => account.roles?.includes('company')));
