@@ -102,6 +102,7 @@ export const sampleUsers = [
   {
     id: 'sample-user-1',
     display_name: 'Ava Visser',
+    email: 'ava.visser@example.com',
     roles: ['photographer'],
     styles: ['street', 'portrait'],
     avatar_url: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=300&q=80',
@@ -109,6 +110,7 @@ export const sampleUsers = [
   {
     id: 'sample-user-2',
     display_name: 'Noor Vermeulen',
+    email: 'noor.vermeulen@example.com',
     roles: ['model', 'artist'],
     styles: ['fashion', 'editorial'],
     avatar_url: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=300&q=80',
@@ -116,6 +118,7 @@ export const sampleUsers = [
   {
     id: 'sample-user-3',
     display_name: 'Milan de Jong',
+    email: 'milan.dejong@example.com',
     roles: ['photographer'],
     styles: ['landscape', 'nature'],
     avatar_url: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=300&q=80',
@@ -123,6 +126,7 @@ export const sampleUsers = [
   {
     id: 'sample-user-4',
     display_name: 'Samira Bakker',
+    email: 'samira.bakker@example.com',
     roles: ['stylist'],
     styles: ['travel', 'candid'],
     avatar_url: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=300&q=80',
@@ -130,6 +134,7 @@ export const sampleUsers = [
   {
     id: 'sample-user-5',
     display_name: 'Ivo Janssen',
+    email: 'ivo.janssen@example.com',
     roles: ['artist'],
     styles: ['fine_art', 'portrait'],
     avatar_url: 'https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?auto=format&fit=crop&w=300&q=80',
@@ -137,6 +142,7 @@ export const sampleUsers = [
   {
     id: 'sample-user-6',
     display_name: 'Bo ter Horst',
+    email: 'bo.terhorst@example.com',
     roles: ['makeup_artist'],
     styles: ['beauty', 'editorial'],
     avatar_url: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=320&q=80',
@@ -144,6 +150,7 @@ export const sampleUsers = [
   {
     id: 'sample-user-7',
     display_name: 'Ravi Reinders',
+    email: 'ravi.reinders@example.com',
     roles: ['photographer', 'assistant'],
     styles: ['fashion', 'candid'],
     avatar_url: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=320&q=80',
@@ -151,6 +158,7 @@ export const sampleUsers = [
   {
     id: 'sample-user-8',
     display_name: 'Studio Aurora',
+    email: 'studio.aurora@example.com',
     roles: ['agency'],
     styles: ['fashion', 'editorial'],
     avatar_url: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=320&q=80',
@@ -158,6 +166,7 @@ export const sampleUsers = [
   {
     id: 'sample-user-9',
     display_name: 'Northwind Media',
+    email: 'hello@northwindmedia.example.com',
     roles: ['company'],
     styles: ['corporate', 'product'],
     avatar_url: 'https://images.unsplash.com/photo-1450101215322-bf5cd27642fc?auto=format&fit=crop&w=320&q=80',
@@ -214,6 +223,9 @@ export const sampleProfile = {
   show_sensitive_content: false,
   onboarding_complete: true,
   email: 'nova@example.com',
+  linked_agencies: [],
+  linked_companies: [],
+  linked_models: [],
 };
 
 export const sampleProfilePosts = samplePosts.slice(0, 4);

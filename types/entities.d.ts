@@ -5,12 +5,24 @@ declare module '@/entities/User' {
     display_name?: string;
     avatar_url?: string;
     bio?: string;
+    instagram?: string;
+    agency_affiliation?: string;
+    company_affiliation?: string;
+    primary_role?: string;
+    roles?: string[];
+    styles?: string[];
+    linked_agencies?: string[];
+    linked_companies?: string[];
+    linked_models?: string[];
     show_sensitive_content?: boolean;
+    onboarding_complete?: boolean;
   };
   export const User: {
     me: () => Promise<User>;
     update: (_data: Partial<User>) => Promise<User>;
     updateMyUserData: (_data: Partial<User>) => Promise<User>;
+    updateByEmail: (_email: string, _data: Partial<User>) => Promise<User>;
+    filter: (_data: any) => Promise<User[]>;
     loginWithRedirect: (_redirectTo?: string) => Promise<User>;
     logout: () => Promise<void>;
   };

@@ -5,12 +5,14 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 const crypto = require('crypto');
-  const {
-    getCurrentUser,
-    createUser,
-    updateCurrentUser,
-    filterPosts,
-    createPost,
+const {
+  getCurrentUser,
+  createUser,
+  updateCurrentUser,
+  updateUserByEmail,
+  filterPosts,
+  createPost,
+  filterUsers,
   filterLikes,
   filterSavedPosts,
 } = require('./database');
@@ -64,6 +66,13 @@ app.patch('/api/users/me', (req, res) => {
   return res.json(updated);
 });
 
+app.patch('/api/users/:email', (req, res) => {
+  const targetEmail = decodeURIComponent(req.params.email);
+  const updated = updateUserByEmail(targetEmail, req.body);
+  if (!updated) return res.status(404).json({ error: 'User not found' });
+  return res.json(updated);
+});
+
 app.post('/api/users', (req, res) => {
   try {
     const created = createUser(req.body || {});
@@ -71,6 +80,11 @@ app.post('/api/users', (req, res) => {
   } catch (error) {
     res.status(400).json({ error: error.message || 'Unable to create user' });
   }
+});
+
+app.post('/api/users/filter', (req, res) => {
+  const users = filterUsers(req.body || {});
+  res.json(users);
 });
 
 app.post('/api/posts/filter', (req, res) => {
