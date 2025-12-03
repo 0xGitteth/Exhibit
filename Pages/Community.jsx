@@ -142,9 +142,14 @@ export default function Community() {
                     <p className="text-slate-700 dark:text-slate-200 text-sm leading-relaxed mb-4">
                       {community.description}
                     </p>
-                    <Button variant="outline" className="w-full rounded-full border-serenity-300 text-serenity-800 hover:bg-serenity-100/70 shadow-soft">
-                      Bekijk community
-                    </Button>
+                    <Link to={`${PAGE_ROUTES.community}/${community.id}`} className="w-full block">
+                      <Button
+                        variant="outline"
+                        className="w-full rounded-full border-serenity-300 text-serenity-800 hover:bg-serenity-100/70 shadow-soft"
+                      >
+                        Bekijk community
+                      </Button>
+                    </Link>
                   </CardContent>
                 </Card>
               </motion.div>

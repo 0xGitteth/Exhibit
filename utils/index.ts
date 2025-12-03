@@ -1,6 +1,7 @@
 export const PAGE_ROUTES = {
   timeline: '/',
   community: '/community',
+  communityDetail: '/community/:communityId',
   discover: '/search',
   profile: '/profile',
   chat: '/chat',

@@ -8,6 +8,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Layout from '../Layout';
 import AnalyticsPage from '../Pages/Analytics';
 import CommunityPage from '../Pages/Community.jsx';
+import CommunityDetailPage from '../Pages/CommunityDetail.jsx';
 import LoginPage from '../Pages/Login';
 import OnboardingPage from '../Pages/Onboarding';
 import ProfilePage from '../Pages/Profile.jsx';
@@ -60,6 +61,10 @@ function App() {
             <Route
               path={PAGE_ROUTES.community}
               element={<ProtectedRoute>{renderPage('Community', <CommunityPage />)}</ProtectedRoute>}
+            />
+            <Route
+              path={PAGE_ROUTES.communityDetail}
+              element={<ProtectedRoute>{renderPage('Community', <CommunityDetailPage />)}</ProtectedRoute>}
             />
             <Route
               path={PAGE_ROUTES.discover}
