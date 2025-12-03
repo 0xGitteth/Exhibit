@@ -71,7 +71,7 @@ function serializeJson(value) {
 
 function mapUser(row) {
   if (!row) return null;
-  return { ...row, roles: parseJson(row.roles) };
+  return { ...row, onboarding_complete: !!row.onboarding_complete, roles: parseJson(row.roles) };
 }
 
 function mapPost(row) {
@@ -104,8 +104,34 @@ function buildFilter(filter = {}, allowedFields = []) {
 }
 
 function getCurrentUser() {
-  const userRow = db.prepare('SELECT * FROM users ORDER BY created_at LIMIT 1').get();
+  const userRow = db.prepare('SELECT * FROM users ORDER BY created_at DESC LIMIT 1').get();
   return mapUser(userRow);
+}
+
+function createUser(payload) {
+  const exists = db.prepare('SELECT email FROM users WHERE email = ?').get(payload.email);
+  if (exists) {
+    throw new Error('User already exists');
+  }
+
+  const roles = Array.isArray(payload.roles) ? payload.roles : [];
+  const onboardingComplete = payload.onboarding_complete ? 1 : 0;
+
+  db.prepare(
+    `INSERT INTO users (email, display_name, avatar_url, bio, roles, instagram, onboarding_complete)
+     VALUES (@email, @display_name, @avatar_url, @bio, @roles, @instagram, @onboarding_complete)`,
+  ).run({
+    email: payload.email,
+    display_name: payload.display_name,
+    avatar_url: payload.avatar_url || null,
+    bio: payload.bio || null,
+    roles: serializeJson(roles),
+    instagram: payload.instagram || null,
+    onboarding_complete: onboardingComplete,
+  });
+
+  const row = db.prepare('SELECT * FROM users WHERE email = ?').get(payload.email);
+  return mapUser(row);
 }
 
 function updateCurrentUser(updates) {
@@ -114,7 +140,7 @@ function updateCurrentUser(updates) {
   const next = { ...current, ...updates };
   db.prepare(
     `UPDATE users
-     SET display_name = ?, avatar_url = ?, bio = ?, roles = ?, instagram = ?
+     SET display_name = ?, avatar_url = ?, bio = ?, roles = ?, instagram = ?, onboarding_complete = ?
      WHERE email = ?`,
   ).run(
     next.display_name,
@@ -122,6 +148,7 @@ function updateCurrentUser(updates) {
     next.bio,
     serializeJson(next.roles),
     next.instagram,
+    next.onboarding_complete ? 1 : 0,
     next.email,
   );
   return next;
@@ -176,6 +203,7 @@ module.exports = {
   db,
   initializeDatabase,
   getCurrentUser,
+  createUser,
   updateCurrentUser,
   filterPosts,
   createPost,

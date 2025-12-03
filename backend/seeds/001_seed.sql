@@ -1,11 +1,12 @@
-INSERT INTO users (email, display_name, avatar_url, bio, roles, instagram)
+INSERT INTO users (email, display_name, avatar_url, bio, roles, instagram, onboarding_complete)
 VALUES (
   'user@example.com',
   'Demo User',
   'https://images.unsplash.com/photo-1544723795-3fb6469f5b39?auto=format&fit=crop&w=200&q=80',
   'Fotograaf & model',
   '["model"]',
-  '@demo'
+  '@demo',
+  1
 );
 
 INSERT INTO posts (id, title, caption, image_url, photography_style, tags, trigger_warnings, created_by)

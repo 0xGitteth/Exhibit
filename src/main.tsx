@@ -9,6 +9,7 @@ import Layout from '../Layout';
 import AnalyticsPage from '../Pages/Analytics';
 import CommunityPage from '../Pages/Community.jsx';
 import LoginPage from '../Pages/Login';
+import OnboardingPage from '../Pages/Onboarding';
 import ProfilePage from '../Pages/Profile.jsx';
 import SearchPage from '../Pages/Discover.jsx';
 import TimelinePage from '../Pages/Timeline';
@@ -51,6 +52,7 @@ function App() {
         <AuthProvider>
           <Routes>
             <Route path={PAGE_ROUTES.login} element={<LoginPage />} />
+            <Route path={PAGE_ROUTES.onboarding} element={<OnboardingPage />} />
             <Route
               path={PAGE_ROUTES.timeline}
               element={<ProtectedRoute>{renderPage('Timeline', <TimelinePage />)}</ProtectedRoute>}

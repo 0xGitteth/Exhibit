@@ -8,6 +8,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useAuth } from '@/context/AuthContext';
 import { dummyAccounts } from '../utils/dummyAccounts';
 import { PAGE_ROUTES } from '@/utils';
+import { Link } from 'react-router-dom';
 
 const roleLabels: Record<string, string> = {
   photographer: 'Fotograaf',
@@ -135,6 +136,12 @@ const LoginPage: React.FC = () => {
                   Na het inloggen sturen we je door naar: <span className="font-semibold">{redirectTarget}</span>
                 </p>
               )}
+              <div className="pt-2 text-sm text-slate-700 dark:text-slate-200">
+                Nog geen account?{' '}
+                <Link className="text-serenity-700 font-semibold" to={PAGE_ROUTES.onboarding}>
+                  Maak er één aan
+                </Link>
+              </div>
             </form>
           </CardContent>
         </Card>

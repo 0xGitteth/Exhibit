@@ -197,6 +197,7 @@ export const sampleProfile = {
   roles: ['photographer', 'artist'],
   styles: ['fine_art', 'fashion', 'portrait'],
   show_sensitive_content: false,
+  onboarding_complete: true,
   email: 'nova@example.com',
 };
 

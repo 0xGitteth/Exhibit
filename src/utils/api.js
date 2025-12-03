@@ -33,6 +33,10 @@ export async function updateCurrentUser(payload) {
   return request('/users/me', { method: 'PATCH', body: JSON.stringify(payload) });
 }
 
+export async function createUser(payload) {
+  return request('/users', { method: 'POST', body: JSON.stringify(payload) });
+}
+
 export async function filterPosts(filter) {
   return request('/posts/filter', { method: 'POST', body: JSON.stringify(filter) });
 }
