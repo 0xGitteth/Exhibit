@@ -235,12 +235,18 @@ export default function Discover() {
 
       {/* Tabs */}
       <Tabs defaultValue="people" className="w-full">
-        <TabsList className="grid w-full grid-cols-2 mb-6 bg-white/70 dark:bg-midnight-100/60 backdrop-blur-sm rounded-2xl mx-4 border border-serenity-200/70 dark:border-midnight-50/30 shadow-soft">
-          <TabsTrigger value="people" className="flex items-center space-x-2 data-[state=active]:bg-serenity-600 data-[state=active]:text-white rounded-xl">
+        <TabsList className="grid w-full grid-cols-2 gap-3 mb-6 px-4">
+          <TabsTrigger
+            value="people"
+            className="flex items-center justify-center gap-2 rounded-2xl border border-serenity-200/70 bg-white/80 px-4 py-3 shadow-soft backdrop-blur-sm transition hover:border-serenity-300 data-[state=active]:border-serenity-600 data-[state=active]:bg-serenity-600 data-[state=active]:text-white"
+          >
             <UserIcon className="w-4 h-4" />
             <span>Mensen</span>
           </TabsTrigger>
-          <TabsTrigger value="styles" className="flex items-center space-x-2 data-[state=active]:bg-serenity-600 data-[state=active]:text-white rounded-xl">
+          <TabsTrigger
+            value="styles"
+            className="flex items-center justify-center gap-2 rounded-2xl border border-serenity-200/70 bg-white/80 px-4 py-3 shadow-soft backdrop-blur-sm transition hover:border-serenity-300 data-[state=active]:border-serenity-600 data-[state=active]:bg-serenity-600 data-[state=active]:text-white"
+          >
             <Palette className="w-4 h-4" />
             <span>Stijlen</span>
           </TabsTrigger>
