@@ -54,16 +54,6 @@ export default function Timeline() {
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-6 pb-32 space-y-6">
-      <div className="space-y-3 glass-panel p-5">
-        <p className="text-xs uppercase tracking-[0.2em] text-serenity-600 font-semibold">Exhibit</p>
-        <div className="flex items-start justify-between gap-4">
-          <div className="space-y-2">
-            <h1 className="text-3xl font-bold text-midnight-900 dark:text-white">Tijdlijn</h1>
-            <p className="text-slate-700 dark:text-slate-200">De nieuwste creaties uit de community op een rij.</p>
-          </div>
-        </div>
-      </div>
-
       {loading ? (
         <div className="space-y-4">
           {[...Array(3)].map((_, index) => (
