@@ -8,6 +8,7 @@ import {
   removePostFromMoodboard,
 } from '../utils/moodboardStorage';
 import { getStyleTone, photographyStyles } from '../utils/photographyStyles';
+import { sampleUsers } from '../utils/dummyData';
 
 export default function PostCard({ post, onSaveToMoodboard }) {
   const [liked, setLiked] = useState(false);
@@ -61,6 +62,25 @@ export default function PostCard({ post, onSaveToMoodboard }) {
 
   const comments = post?.comments_count ?? post?.comment_count ?? 0;
   const image = post?.image_url;
+
+  const fallbackUser = useMemo(() => {
+    const name = post?.display_name || post?.photographer_name;
+    if (!name) return null;
+    return sampleUsers.find((user) => user.display_name === name) || null;
+  }, [post?.display_name, post?.photographer_name]);
+
+  const resolvedTitle = post?.title?.trim() || 'Ongetitelde post';
+  const resolvedDescription = post?.description?.trim() || 'Geen beschrijving beschikbaar.';
+  const resolvedRoles = useMemo(() => {
+    if (Array.isArray(post?.roles) && post.roles.length > 0) return post.roles;
+    if (post?.roles && !Array.isArray(post.roles)) return [post.roles];
+    if (fallbackUser?.roles?.length) return fallbackUser.roles;
+    return [];
+  }, [fallbackUser?.roles, post?.roles]);
+
+  const creatorName =
+    post?.display_name || fallbackUser?.display_name || post?.photographer_name || 'Onbekende maker';
+  const roleLabel = resolvedRoles.length > 0 ? resolvedRoles.join(' • ') : 'Rol onbekend';
 
   useEffect(() => {
     setImageLoaded(false);
@@ -139,6 +159,22 @@ export default function PostCard({ post, onSaveToMoodboard }) {
             </Button>
           </div>
 
+          <div className="flex flex-col gap-3 border-t border-serenity-100/70 dark:border-midnight-50/20 pt-4 text-left">
+            <div className="space-y-1">
+              <h3 className="text-2xl font-bold text-midnight-900 dark:text-white">{resolvedTitle}</h3>
+              <p className="text-base leading-relaxed text-slate-700 dark:text-slate-200">
+                {resolvedDescription}
+              </p>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-2 text-sm">
+              <div className="flex items-center gap-2 rounded-xl bg-serenity-50/90 dark:bg-midnight-100/15 px-3 py-2 shadow-soft border border-white/60 dark:border-midnight-50/10">
+                <span className="text-sm font-semibold text-midnight-900 dark:text-white">{creatorName}</span>
+                <span className="text-xs text-serenity-700 dark:text-serenity-100">{roleLabel}</span>
+              </div>
+            </div>
+          </div>
+
           {tags?.length > 0 && (
             <div className="mt-auto flex flex-wrap gap-2 pt-2">
               {tags.slice(0, 6).map((tag) => {
@@ -165,6 +201,11 @@ PostCard.propTypes = {
   post: PropTypes.shape({
     id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     title: PropTypes.string,
+    display_name: PropTypes.string,
+    roles: PropTypes.oneOfType([
+      PropTypes.arrayOf(PropTypes.string),
+      PropTypes.string,
+    ]),
     description: PropTypes.string,
     likes: PropTypes.number,
     tags: PropTypes.arrayOf(PropTypes.string),
