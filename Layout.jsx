@@ -27,11 +27,11 @@ export default function Layout({ children, currentPageName }) {
   const [showHouseRules, setShowHouseRules] = useState(false);
 
   const navigationItems = [
-    { name: 'Gallery', icon: LayoutGrid, path: PAGE_ROUTES.timeline },
+    { name: 'Galerij', icon: LayoutGrid, path: PAGE_ROUTES.timeline },
     { name: 'Ontdekken', icon: Search, path: PAGE_ROUTES.discover },
     { name: 'Community', icon: Users, path: PAGE_ROUTES.community },
     { name: 'Profiel', icon: UserIcon, path: PAGE_ROUTES.profile, isProfile: true },
-    { name: 'Plaatsen', icon: Plus, action: () => setShowCreatePost(true), isAction: true },
+    { name: '+', icon: Plus, action: () => setShowCreatePost(true), isAction: true },
   ];
 
   useEffect(() => {
@@ -55,9 +55,6 @@ export default function Layout({ children, currentPageName }) {
     }
   };
 
-  const tabItems = navigationItems.filter((item) => !item.isAction);
-  const actionItem = navigationItems.find((item) => item.isAction);
-  const ActionIcon = actionItem?.icon;
   const profileImage =
     user?.avatar_url ||
     user?.avatarUrl ||
@@ -118,80 +115,59 @@ export default function Layout({ children, currentPageName }) {
 
       <nav
         aria-label="Hoofdnavigatie"
-        className="pointer-events-auto fixed inset-x-0 bottom-0 z-[120] flex justify-center"
-        style={{
-          paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 0.85rem)',
-          top: 'auto',
-        }}
+        className="pointer-events-auto fixed inset-x-0 bottom-0 z-[120] bg-white/90 dark:bg-midnight-100/85 backdrop-blur-xl border-t border-serenity-200/60 dark:border-midnight-50/40 shadow-[0_-10px_40px_rgba(15,23,42,0.18)]"
+        style={{ paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 0.65rem)' }}
       >
-        <div
-          className="pointer-events-none absolute inset-x-0 bottom-0 h-[7.5rem] bg-gradient-to-t from-white/95 via-white/85 to-white/60 dark:from-midnight-100/85 dark:via-midnight-100/70 dark:to-midnight-100/55 backdrop-blur-xl border-t border-serenity-200/60 dark:border-midnight-50/30 shadow-[0_-18px_50px_rgba(15,23,42,0.25)]"
-          aria-hidden
-        />
-        <div className="pointer-events-auto relative w-full max-w-[960px] px-4 pb-3 pt-2">
-          <div
-            className="absolute inset-x-3 -bottom-6 h-16 rounded-full bg-serenity-400/25 blur-3xl dark:bg-serenity-300/25 pointer-events-none"
-            aria-hidden
-          />
-          <div className="relative mx-auto flex items-end justify-center gap-3 rounded-full border-2 border-white/95 dark:border-midnight-50/60 bg-gradient-to-br from-white/98 via-white/95 to-serenity-50/95 dark:from-midnight-50/90 dark:via-midnight-100/85 dark:to-midnight-50/80 px-3 py-2.5 shadow-[0_20px_70px_rgba(15,23,42,0.25)] ring-1 ring-serenity-200/70 dark:ring-midnight-50/40 backdrop-blur-2xl supports-[backdrop-filter]:bg-white/92">
-            <div className="flex items-center justify-between gap-1">
-              {tabItems.map((item) => {
-                const isRootPath = item.path === PAGE_ROUTES.timeline;
-                const isActive =
-                  isRootPath
-                    ? location.pathname === PAGE_ROUTES.timeline
-                    : location.pathname === item.path || location.pathname.startsWith(`${item.path}/`);
-                const IconComponent = item.icon;
+        <div className="max-w-6xl mx-auto px-4">
+          <div className="grid grid-cols-5 gap-2 py-3">
+            {navigationItems.map((item) => {
+              const isRootPath = item.path === PAGE_ROUTES.timeline;
+              const isActive = item.path
+                ? isRootPath
+                  ? location.pathname === PAGE_ROUTES.timeline
+                  : location.pathname === item.path || location.pathname.startsWith(`${item.path}/`)
+                : false;
+              const IconComponent = item.icon;
 
+              if (item.isAction) {
                 return (
-                  <Link
-                    key={`${item.name}-${item.path}`}
-                    to={item.path}
-                    className={`group inline-flex items-center gap-2 rounded-full px-3 sm:px-4 py-2 text-sm font-semibold transition-all duration-200 border ${
-                      isActive
-                        ? 'bg-serenity-600 text-white border-serenity-600 shadow-floating'
-                        : 'bg-white/70 dark:bg-midnight-50/30 border-serenity-200/80 dark:border-midnight-50/40 text-midnight-900 dark:text-slate-100 hover:-translate-y-[1px] hover:shadow-soft'
-                    }`}
+                  <button
+                    key={item.name}
+                    type="button"
+                    onClick={item.action}
+                    aria-label="Plaatsen"
+                    className="flex flex-col items-center justify-center gap-1 rounded-xl bg-gradient-to-br from-serenity-500 to-serenity-700 text-white py-2.5 text-xs font-semibold shadow-soft transition-transform duration-150 hover:scale-105 focus-visible:scale-105 focus:outline-none focus-visible:ring-2 focus-visible:ring-serenity-200"
                   >
-                    {item.isProfile ? (
-                      <div
-                        className={`p-0.5 rounded-full border transition-colors ${
-                          isActive
-                            ? 'border-white/70 bg-white/10'
-                            : 'border-serenity-100 dark:border-midnight-50/40 group-hover:border-serenity-200'
-                        }`}
-                      >
-                        <Avatar className="w-8 h-8 border border-white/60 shadow-sm">
-                          <AvatarImage src={profileImage} className="object-cover" />
-                          <AvatarFallback className="text-xs font-semibold uppercase">
-                            {user?.display_name?.[0] || <UserIcon className="w-4 h-4" />}
-                          </AvatarFallback>
-                        </Avatar>
-                      </div>
-                    ) : (
-                      <IconComponent
-                        className={`w-4 h-4 transition-transform duration-200 ${
-                          isActive ? 'scale-110' : 'group-hover:scale-105'
-                        }`}
-                      />
-                    )}
-                    <span>{item.name}</span>
-                  </Link>
+                    {IconComponent && <IconComponent className="w-5 h-5" />}
+                    <span className="leading-none">Plaatsen</span>
+                  </button>
                 );
-              })}
+              }
 
-              {actionItem && (
-                <button
-                  type="button"
-                  onClick={actionItem.action}
-                  aria-label={actionItem.name}
-                  className="inline-flex items-center gap-2 rounded-full bg-gradient-to-br from-serenity-500 to-serenity-700 text-white px-4 sm:px-5 py-2.5 font-semibold shadow-floating transition-transform duration-200 hover:scale-105 focus-visible:scale-105 focus:outline-none focus-visible:ring-4 focus-visible:ring-serenity-200"
+              return (
+                <Link
+                  key={`${item.name}-${item.path}`}
+                  to={item.path}
+                  className={`flex flex-col items-center justify-center gap-1 rounded-xl py-2.5 text-xs font-semibold transition-colors duration-150 border ${
+                    isActive
+                      ? 'bg-serenity-600 text-white border-serenity-600 shadow-soft'
+                      : 'bg-white/70 dark:bg-midnight-50/40 border-serenity-200/80 dark:border-midnight-50/40 text-midnight-900 dark:text-slate-100 hover:bg-serenity-50/70 dark:hover:bg-midnight-50/50'
+                  }`}
                 >
-                  {ActionIcon && <ActionIcon className="h-5 w-5" />}
-                  <span>Upload foto</span>
-                </button>
-              )}
-            </div>
+                  {item.isProfile ? (
+                    <Avatar className="w-8 h-8 border border-white/70 dark:border-midnight-50/50 shadow-sm">
+                      <AvatarImage src={profileImage} className="object-cover" />
+                      <AvatarFallback className="text-xs font-semibold uppercase">
+                        {user?.display_name?.[0] || <UserIcon className="w-4 h-4" />}
+                      </AvatarFallback>
+                    </Avatar>
+                  ) : (
+                    IconComponent && <IconComponent className="w-5 h-5" />
+                  )}
+                  <span className="leading-none">{item.name}</span>
+                </Link>
+              );
+            })}
           </div>
         </div>
       </nav>
