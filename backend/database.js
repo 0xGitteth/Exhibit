@@ -162,7 +162,15 @@ function filterPosts(filter = {}) {
 
 function createPost(payload) {
   const id = payload.id || crypto.randomUUID();
-  const createdBy = payload.created_by || getCurrentUser()?.email;
+  const currentUser = getCurrentUser();
+  const roles = Array.isArray(currentUser?.roles) ? currentUser.roles : [];
+  const isFanOnly = roles.length > 0 && roles.every((role) => role === 'fan');
+
+  if (isFanOnly) {
+    throw new Error('Alleen makers mogen posts plaatsen. Fan-accounts kunnen geen posts delen.');
+  }
+
+  const createdBy = currentUser?.email || payload.created_by;
   if (!createdBy) {
     throw new Error('Missing post creator');
   }

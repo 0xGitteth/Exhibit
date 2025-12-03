@@ -59,6 +59,11 @@ export default function CreatePostModal({ open, onOpenChange, onPostCreated }) {
   });
   const [newPersonTag, setNewPersonTag] = useState({ name: '', role: 'model', instagram: '' });
 
+  const isFanOnly =
+    Array.isArray(currentUser?.roles) &&
+    currentUser.roles.length > 0 &&
+    currentUser.roles.every((role) => role === 'fan');
+
   useEffect(() => {
     const loadUser = async () => {
       try {
@@ -170,6 +175,11 @@ export default function CreatePostModal({ open, onOpenChange, onPostCreated }) {
     }));
 
   const handleCreatePost = async () => {
+    if (isFanOnly) {
+      setValidationMessage('Alleen makers kunnen foto’s plaatsen. Fan-accounts kunnen niet posten.');
+      return;
+    }
+
     if (!newPost.title || !newPost.image_url || !newPost.photography_style) {
       const missing = [
         !newPost.image_url && 'een foto',
@@ -250,13 +260,22 @@ export default function CreatePostModal({ open, onOpenChange, onPostCreated }) {
             </Alert>
           )}
 
+          {isFanOnly && (
+            <Alert variant="destructive">
+              <Shield className="h-4 w-4" />
+              <AlertDescription>
+                Fan-accounts kunnen geen posts plaatsen. Voeg een maker-rol toe aan je profiel om foto’s te delen.
+              </AlertDescription>
+            </Alert>
+          )}
+
           <div className="space-y-4">
             <div className="rounded-2xl border border-slate-200 bg-white shadow-sm p-4 lg:p-6 space-y-3">
-              <div className="flex items-center justify-between">
-                <div>
-                  <Label htmlFor="image" className="text-lg font-semibold">
-                    Foto uploaden
-                  </Label>
+            <div className="flex items-center justify-between">
+              <div>
+                <Label htmlFor="image" className="text-lg font-semibold">
+                  Foto uploaden
+                </Label>
                   <p className="text-sm text-slate-500">Selecteer of vervang de hoofdfoto.</p>
                 </div>
                 {newPost.image_url && (
@@ -277,13 +296,14 @@ export default function CreatePostModal({ open, onOpenChange, onPostCreated }) {
                   accept="image/*"
                   onChange={handleImageUpload}
                   className="hidden"
+                  disabled={isFanOnly}
                 />
                 {!newPost.image_url ? (
                   <Button
                     variant="outline"
                     onClick={() => document.getElementById('image')?.click()}
                     className="w-full h-48 border-dashed border-2 border-slate-300 hover:border-blue-400 bg-slate-50"
-                    disabled={uploading || analyzing}
+                    disabled={uploading || analyzing || isFanOnly}
                   >
                     <div className="text-center" aria-hidden>
                       {analyzing ? (
@@ -309,16 +329,16 @@ export default function CreatePostModal({ open, onOpenChange, onPostCreated }) {
                         <p className="text-sm font-semibold">Sensitive cover actief</p>
                       </div>
                     )}
-                    <Button
-                      variant="secondary"
-                      size="sm"
-                      onClick={() => document.getElementById('image')?.click()}
-                      className="absolute top-3 right-3 shadow"
-                      disabled={analyzing}
-                    >
-                      {analyzing ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null}Wijzig foto
-                    </Button>
-                  </div>
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    onClick={() => document.getElementById('image')?.click()}
+                    className="absolute top-3 right-3 shadow"
+                    disabled={analyzing || isFanOnly}
+                  >
+                    {analyzing ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null}Wijzig foto
+                  </Button>
+                </div>
                 )}
               </div>
             </div>
@@ -495,7 +515,7 @@ export default function CreatePostModal({ open, onOpenChange, onPostCreated }) {
             </Button>
             <Button
               onClick={handleCreatePost}
-              disabled={analyzing || !!contentError}
+              disabled={analyzing || !!contentError || isFanOnly}
               className="bg-blue-800 hover:bg-blue-900 sm:min-w-[160px]"
             >
               {analyzing ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null}Foto delen
