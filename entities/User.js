@@ -1,4 +1,4 @@
-import { fetchCurrentUser, updateCurrentUser } from '../src/utils/api.js';
+import { createUser, fetchCurrentUser, updateCurrentUser } from '../src/utils/api.js';
 import { clearStoredUser, getStoredUser, setStoredUser } from '../utils/authSession.js';
 import { createPageUrl } from '../utils';
 
@@ -19,6 +19,11 @@ export const User = {
     const updated = await updateCurrentUser(payload);
     setStoredUser(updated);
     return updated;
+  },
+  async create(payload) {
+    const created = await createUser(payload);
+    setStoredUser(created);
+    return created;
   },
   async loginWithRedirect(redirectTo) {
     const redirectTarget = redirectTo || window.location.href;

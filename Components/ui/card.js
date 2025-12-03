@@ -17,3 +17,7 @@ CardHeader.propTypes = { children: PropTypes.node };
 export const CardTitle = ({ children }) => React.createElement('h3', null, children);
 CardTitle.displayName = 'CardTitle';
 CardTitle.propTypes = { children: PropTypes.node };
+
+export const CardFooter = ({ children }) => React.createElement('div', null, children);
+CardFooter.displayName = 'CardFooter';
+CardFooter.propTypes = { children: PropTypes.node };

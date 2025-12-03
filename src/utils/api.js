@@ -19,7 +19,14 @@ async function request(path, options = {}) {
   });
 
   if (!response.ok) {
-    throw new Error(`API request failed: ${response.status}`);
+    let message = `API request failed: ${response.status}`;
+    try {
+      const errorBody = await response.json();
+      if (errorBody?.error) message = errorBody.error;
+    } catch (_err) {
+      // ignore parsing error and fall back to default message
+    }
+    throw new Error(message);
   }
 
   return response.json();
@@ -31,6 +38,10 @@ export async function fetchCurrentUser() {
 
 export async function updateCurrentUser(payload) {
   return request('/users/me', { method: 'PATCH', body: JSON.stringify(payload) });
+}
+
+export async function createUser(payload) {
+  return request('/users', { method: 'POST', body: JSON.stringify(payload) });
 }
 
 export async function filterPosts(filter) {
