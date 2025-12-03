@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Edit, Bookmark, Camera, Grid, LogOut, Eye, EyeOff, Shield, BarChart2, SunMedium, Moon, Star } from "lucide-react";
+import { Edit, Bookmark, Camera, Grid, LogOut, Eye, EyeOff, Shield, BarChart2, SunMedium, Moon, Star, Users } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -310,6 +310,7 @@ export default function Profile() {
   const [primaryRole, setPrimaryRole] = useState(null);
   const [userPosts, setUserPosts] = useState([]);
   const [savedPosts, setSavedPosts] = useState([]);
+  const [linkedModels, setLinkedModels] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showEditProfile, setShowEditProfile] = useState(false);
   const [showHouseRules, setShowHouseRules] = useState(false);
@@ -372,6 +373,44 @@ export default function Profile() {
     return <span className="text-slate-700 dark:text-slate-200">{value}</span>;
   };
 
+  const fetchLinkedModels = useCallback(
+    async (resolvedUser) => {
+      const hasTalentRole = resolvedUser?.roles?.some((role) => ["agency", "company"].includes(role));
+      if (!hasTalentRole) {
+        setLinkedModels([]);
+        return;
+      }
+
+      const identifiers = resolvedUser?.linked_models?.filter(Boolean) || [];
+      if (identifiers.length === 0) {
+        setLinkedModels([]);
+        return;
+      }
+
+      const mapManualEntries = (knownAccounts = []) =>
+        identifiers
+          .filter((value) => !knownAccounts.some((account) => account.email === value || account.id === value))
+          .map((value) => ({ display_name: value, roles: [], avatar_url: null, id: value, is_manual: true }));
+
+      try {
+        if (DUMMY_DATA_ENABLED) {
+          const matched = sampleUsers.filter((account) => identifiers.includes(account.email || account.id));
+          const manual = mapManualEntries(matched);
+          setLinkedModels([...matched, ...manual]);
+          return;
+        }
+
+        const matched = await User.filter({ email: { $in: identifiers } });
+        const manual = mapManualEntries(matched);
+        setLinkedModels([...(matched || []), ...manual]);
+      } catch (error) {
+        console.error("Linked models fetch error:", error);
+        setLinkedModels(mapManualEntries());
+      }
+    },
+    [],
+  );
+
   const loadUserData = useCallback(async () => {
     if (authLoading) return;
     setLoading(true);
@@ -384,6 +423,7 @@ export default function Profile() {
       }
 
       setUser(resolvedUser);
+      fetchLinkedModels(resolvedUser);
 
       try {
         const posts = resolvedUser.email
@@ -426,11 +466,17 @@ export default function Profile() {
       }
     }
     setLoading(false);
-  }, [authLoading, authUser]);
+  }, [authLoading, authUser, fetchLinkedModels]);
 
   useEffect(() => {
     loadUserData();
   }, [loadUserData]);
+
+  useEffect(() => {
+    if (user) {
+      fetchLinkedModels(user);
+    }
+  }, [user, fetchLinkedModels]);
 
   useEffect(() => {
     const handleMoodboardUpdate = (event) => {
@@ -449,6 +495,7 @@ export default function Profile() {
         : updatedUser?.roles?.[0] || null;
 
     setUser({ ...updatedUser, primary_role: resolvedPrimary });
+    fetchLinkedModels(updatedUser);
     setPrimaryRole(resolvedPrimary);
     setActiveRole((prev) => {
       if (prev && updatedUser?.roles?.includes(prev)) return prev;
@@ -516,6 +563,8 @@ export default function Profile() {
   }
 
   if (!user) return null;
+
+  const showTalentTab = user.roles?.some((role) => ["agency", "company"].includes(role));
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-2 space-y-6">
@@ -690,32 +739,43 @@ export default function Profile() {
       </Card>
       
       {/* Content Tabs */}
-        <Tabs defaultValue="posts" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 mb-6 bg-white/70 dark:bg-midnight-100/60 backdrop-blur-sm rounded-2xl border border-serenity-200/70 dark:border-midnight-50/30 shadow-soft">
-            <TabsTrigger value="posts" className="flex items-center space-x-2 data-[state=active]:bg-serenity-600 data-[state=active]:text-white rounded-xl"><Grid className="w-4 h-4" /><span>Mijn Posts</span></TabsTrigger>
-            <TabsTrigger value="saved" className="flex items-center space-x-2 data-[state=active]:bg-serenity-600 data-[state=active]:text-white rounded-xl"><Bookmark className="w-4 h-4" /><span>Moodboard</span></TabsTrigger>
-          </TabsList>
+      <Tabs defaultValue="posts" className="w-full">
+        <TabsList
+          className={`grid w-full ${showTalentTab ? "grid-cols-3" : "grid-cols-2"} mb-6 bg-white/70 dark:bg-midnight-100/60 backdrop-blur-sm rounded-2xl border border-serenity-200/70 dark:border-midnight-50/30 shadow-soft`}
+        >
+          <TabsTrigger value="posts" className="flex items-center space-x-2 data-[state=active]:bg-serenity-600 data-[state=active]:text-white rounded-xl"><Grid className="w-4 h-4" /><span>Mijn Posts</span></TabsTrigger>
+          <TabsTrigger value="saved" className="flex items-center space-x-2 data-[state=active]:bg-serenity-600 data-[state=active]:text-white rounded-xl"><Bookmark className="w-4 h-4" /><span>Moodboard</span></TabsTrigger>
+          {showTalentTab && (
+            <TabsTrigger
+              value="talent"
+              className="flex items-center space-x-2 data-[state=active]:bg-serenity-600 data-[state=active]:text-white rounded-xl"
+            >
+              <Users className="w-4 h-4" />
+              <span>Talent</span>
+            </TabsTrigger>
+          )}
+        </TabsList>
 
         <TabsContent value="posts">
-            {userPosts.length === 0 ? (
-              <div className="text-center py-16 glass-panel shadow-floating">
-                <Camera className="w-16 h-16 mx-auto mb-4 text-serenity-500" />
-                <h3 className="text-lg font-medium text-midnight-900 dark:text-white mb-2">Nog geen posts gedeeld</h3>
-                <p className="text-slate-700 dark:text-slate-200">Begin met het delen van je werk om je portfolio op te bouwen</p>
-              </div>
-            ) : (
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                {userPosts.map((post, index) => (
-                  <motion.div
-                    key={post.id}
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: index * 0.05 }}
-                    className="aspect-square relative rounded-xl overflow-hidden group cursor-pointer shadow-soft"
-                  >
-                    <img src={post.image_url} alt={post.title} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
-                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all duration-300 flex items-end p-4">
-                      <h4 className="text-white font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300">{post.title}</h4>
+          {userPosts.length === 0 ? (
+            <div className="text-center py-16 glass-panel shadow-floating">
+              <Camera className="w-16 h-16 mx-auto mb-4 text-serenity-500" />
+              <h3 className="text-lg font-medium text-midnight-900 dark:text-white mb-2">Nog geen posts gedeeld</h3>
+              <p className="text-slate-700 dark:text-slate-200">Begin met het delen van je werk om je portfolio op te bouwen</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+              {userPosts.map((post, index) => (
+                <motion.div
+                  key={post.id}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: index * 0.05 }}
+                  className="aspect-square relative rounded-xl overflow-hidden group cursor-pointer shadow-soft"
+                >
+                  <img src={post.image_url} alt={post.title} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
+                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all duration-300 flex items-end p-4">
+                    <h4 className="text-white font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300">{post.title}</h4>
                   </div>
                 </motion.div>
               ))}
@@ -724,27 +784,27 @@ export default function Profile() {
         </TabsContent>
 
         <TabsContent value="saved">
-            {savedPosts.length === 0 ? (
-              <div className="text-center py-16 glass-panel shadow-floating">
-                <Bookmark className="w-16 h-16 mx-auto mb-4 text-serenity-500" />
-                <h3 className="text-lg font-medium text-midnight-900 dark:text-white mb-2">Nog geen foto&apos;s opgeslagen</h3>
-                <p className="text-slate-700 dark:text-slate-200">Sla inspirerende foto&apos;s op om je persoonlijke moodboard te maken</p>
-              </div>
-            ) : (
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                {savedPosts.map((post, index) => (
-                  <motion.div
-                    key={post.id}
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: index * 0.05 }}
-                    className="aspect-square relative rounded-xl overflow-hidden group cursor-pointer shadow-soft"
-                  >
-                    <img src={post.image_url} alt={post.title} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
-                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all duration-300 flex items-end p-4">
-                      <div className="text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        <h4 className="font-medium">{post.title}</h4>
-                        <p className="text-sm opacity-80">door {post.photographer_name}</p>
+          {savedPosts.length === 0 ? (
+            <div className="text-center py-16 glass-panel shadow-floating">
+              <Bookmark className="w-16 h-16 mx-auto mb-4 text-serenity-500" />
+              <h3 className="text-lg font-medium text-midnight-900 dark:text-white mb-2">Nog geen foto&apos;s opgeslagen</h3>
+              <p className="text-slate-700 dark:text-slate-200">Sla inspirerende foto&apos;s op om je persoonlijke moodboard te maken</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+              {savedPosts.map((post, index) => (
+                <motion.div
+                  key={post.id}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: index * 0.05 }}
+                  className="aspect-square relative rounded-xl overflow-hidden group cursor-pointer shadow-soft"
+                >
+                  <img src={post.image_url} alt={post.title} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
+                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all duration-300 flex items-end p-4">
+                    <div className="text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      <h4 className="font-medium">{post.title}</h4>
+                      <p className="text-sm opacity-80">door {post.photographer_name}</p>
                     </div>
                   </div>
                 </motion.div>
@@ -752,6 +812,88 @@ export default function Profile() {
             </div>
           )}
         </TabsContent>
+
+        {showTalentTab && (
+          <TabsContent value="talent">
+            <div className="glass-panel shadow-floating">
+              <div className="p-4 space-y-4 max-h-[520px] overflow-y-auto">
+                <div className="flex items-center justify-between gap-3">
+                  <div>
+                    <h3 className="text-lg font-semibold text-midnight-900 dark:text-white">Gekoppeld talent</h3>
+                    <p className="text-sm text-slate-600 dark:text-slate-300">
+                      Overzicht van modellen en creators die aan dit profiel zijn gekoppeld.
+                    </p>
+                  </div>
+                  <Badge variant="outline" className="border-serenity-200 text-serenity-800 dark:text-serenity-100">
+                    {linkedModels.length} gekoppeld
+                  </Badge>
+                </div>
+
+                {linkedModels.length === 0 ? (
+                  <div className="text-center py-10 text-slate-700 dark:text-slate-200">
+                    <p className="font-medium">Nog geen talent gekoppeld.</p>
+                    <p className="text-sm text-slate-500 dark:text-slate-400">
+                      Voeg namen of accounts toe in je profielinstellingen.
+                    </p>
+                  </div>
+                ) : (
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    {linkedModels.map((talent) => {
+                      const profileTarget = talent.email || talent.id
+                        ? `${createPageUrl('Profile')}?user=${encodeURIComponent(talent.id || talent.email)}`
+                        : null;
+                      const talentRoles = Array.isArray(talent.roles) ? talent.roles : [];
+                      const isManual = talent.is_manual || (!talent.email && talentRoles.length === 0);
+
+                      return (
+                        <Card key={talent.email || talent.id || talent.display_name} className="glass-panel shadow-soft">
+                          <CardContent className="p-4 flex gap-3 items-center">
+                            <Avatar className="w-12 h-12 ring-2 ring-white/70">
+                              {talent.avatar_url ? <AvatarImage src={talent.avatar_url} /> : null}
+                              <AvatarFallback>{talent.display_name?.[0] || talent.full_name?.[0] || "T"}</AvatarFallback>
+                            </Avatar>
+                            <div className="flex-1 min-w-0">
+                              {profileTarget && !isManual ? (
+                                <Link
+                                  to={profileTarget}
+                                  className="text-midnight-900 dark:text-white font-semibold hover:underline line-clamp-1"
+                                >
+                                  {talent.display_name || talent.full_name || talent.email}
+                                </Link>
+                              ) : (
+                                <p className="text-midnight-900 dark:text-white font-semibold line-clamp-1">
+                                  {talent.display_name || talent.full_name || talent.email}
+                                </p>
+                              )}
+                              {talentRoles.length > 0 ? (
+                                <div className="flex flex-wrap gap-1 mt-1">
+                                  {talentRoles.map((roleId) => {
+                                    const roleInfo = userRoles.find((role) => role.id === roleId);
+                                    return (
+                                      <Badge
+                                        key={`${talent.email || talent.id}-${roleId}`}
+                                        variant="secondary"
+                                        className="bg-serenity-50 text-serenity-800 border-serenity-100"
+                                      >
+                                        {roleInfo?.label || roleId}
+                                      </Badge>
+                                    );
+                                  })}
+                                </div>
+                              ) : (
+                                <p className="text-sm text-slate-600 dark:text-slate-300 mt-1">Vrije affiliatie</p>
+                              )}
+                            </div>
+                          </CardContent>
+                        </Card>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            </div>
+          </TabsContent>
+        )}
       </Tabs>
     </div>
   );

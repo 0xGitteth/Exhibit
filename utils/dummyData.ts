@@ -225,7 +225,11 @@ export const sampleProfile = {
   email: 'nova@example.com',
   linked_agencies: [],
   linked_companies: [],
-  linked_models: [],
+  linked_models: [
+    'noor.vermeulen@example.com',
+    'bo.terhorst@example.com',
+    'Ravi Reinders',
+  ],
 };
 
 export const sampleProfilePosts = samplePosts.slice(0, 4);
