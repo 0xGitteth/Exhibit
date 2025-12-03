@@ -20,7 +20,7 @@ import HouseRulesModal from "@/components/HouseRulesModal";
 import { createPageUrl } from "@/utils";
 import { Link } from "react-router-dom";
 import { DUMMY_DATA_ENABLED } from "../utils/featureFlags";
-import { sampleMoodboardPosts, sampleProfile, sampleProfilePosts } from "../utils/dummyData";
+import { sampleMoodboardPosts, sampleProfile, sampleProfilePosts, sampleUsers } from "../utils/dummyData";
 import { getMoodboardPosts } from "../utils/moodboardStorage";
 import { useAuth } from "@/context/AuthContext";
 import { useTheme } from "@/context/ThemeContext";
@@ -52,8 +52,11 @@ const userRoles = [
   { id: "other", label: "Overig" }
 ];
 
+const defaultAgencyAccounts = sampleUsers.filter((u) => u.roles?.includes("agency"));
+const defaultCompanyAccounts = sampleUsers.filter((u) => u.roles?.includes("company"));
 
-const EditProfileDialog = ({ open, onOpenChange, user, onProfileUpdate }) => {
+
+const EditProfileDialog = ({ open, onOpenChange, user, onProfileUpdate, agencyAccounts = [], companyAccounts = [] }) => {
   const [editData, setEditData] = useState(user);
   const [uploading, setUploading] = useState(false);
 
@@ -127,6 +130,46 @@ const EditProfileDialog = ({ open, onOpenChange, user, onProfileUpdate }) => {
               <Label htmlFor="website">Website / Shop</Label>
               <Input id="website" value={editData.website || ""} onChange={(e) => setEditData(prev => ({ ...prev, website: e.target.value }))} placeholder="https://..." />
             </div>
+            <div className="grid gap-4 md:grid-cols-2">
+              <div>
+                <Label htmlFor="agency_affiliation">Agency affiliatie</Label>
+                <Input
+                  id="agency_affiliation"
+                  list="agency-affiliations"
+                  value={editData.agency_affiliation || ""}
+                  onChange={(e) => setEditData(prev => ({ ...prev, agency_affiliation: e.target.value }))}
+                  placeholder="Bijv. Studio Aurora"
+                />
+                <datalist id="agency-affiliations">
+                  {agencyAccounts.map((agency) => (
+                    <option
+                      key={agency.id || agency.email || agency.display_name}
+                      value={agency.display_name || agency.full_name || agency.email}
+                    />
+                  ))}
+                </datalist>
+                <p className="text-xs text-slate-500 mt-1">Kies een bestaande agency of vul vrij in.</p>
+              </div>
+              <div>
+                <Label htmlFor="company_affiliation">Bedrijf affiliatie</Label>
+                <Input
+                  id="company_affiliation"
+                  list="company-affiliations"
+                  value={editData.company_affiliation || ""}
+                  onChange={(e) => setEditData(prev => ({ ...prev, company_affiliation: e.target.value }))}
+                  placeholder="Bijv. Northwind Media"
+                />
+                <datalist id="company-affiliations">
+                  {companyAccounts.map((company) => (
+                    <option
+                      key={company.id || company.email || company.display_name}
+                      value={company.display_name || company.full_name || company.email}
+                    />
+                  ))}
+                </datalist>
+                <p className="text-xs text-slate-500 mt-1">Optioneel: selecteer een bestaand bedrijf of typ zelf.</p>
+              </div>
+            </div>
           </div>
 
           <div className="space-y-4">
@@ -176,6 +219,8 @@ EditProfileDialog.propTypes = {
     display_name: PropTypes.string,
     bio: PropTypes.string,
     website: PropTypes.string,
+    agency_affiliation: PropTypes.string,
+    company_affiliation: PropTypes.string,
     roles: PropTypes.arrayOf(PropTypes.string),
     primary_role: PropTypes.string,
     styles: PropTypes.arrayOf(PropTypes.string),
@@ -183,6 +228,8 @@ EditProfileDialog.propTypes = {
     show_sensitive_content: PropTypes.bool,
   }),
   onProfileUpdate: PropTypes.func,
+  agencyAccounts: PropTypes.arrayOf(PropTypes.object),
+  companyAccounts: PropTypes.arrayOf(PropTypes.object),
 };
 
 
@@ -198,6 +245,32 @@ export default function Profile() {
   const [showEditProfile, setShowEditProfile] = useState(false);
   const [showHouseRules, setShowHouseRules] = useState(false);
   const [savingPrimaryRole, setSavingPrimaryRole] = useState(false);
+  const [agencyAccounts, setAgencyAccounts] = useState(defaultAgencyAccounts);
+  const [companyAccounts, setCompanyAccounts] = useState(defaultCompanyAccounts);
+
+  useEffect(() => {
+    const loadAffiliationAccounts = async () => {
+      if (DUMMY_DATA_ENABLED) return;
+      try {
+        const response = await fetch('/api/users/filter', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ roles: ['agency', 'company'] }),
+        });
+
+        const payload = await response.json();
+        const accounts = Array.isArray(payload) ? payload : payload?.data || [];
+        if (accounts.length) {
+          setAgencyAccounts(accounts.filter((account) => account.roles?.includes('agency')));
+          setCompanyAccounts(accounts.filter((account) => account.roles?.includes('company')));
+        }
+      } catch (error) {
+        console.error('Affiliation fetch error:', error);
+      }
+    };
+
+    loadAffiliationAccounts();
+  }, []);
 
   const mergeMoodboardPosts = (posts = [], local = []) => {
     const byId = new Map();
@@ -206,6 +279,35 @@ export default function Profile() {
       byId.set(item.id, item);
     });
     return Array.from(byId.values());
+  };
+
+  const findAffiliationAccount = useCallback(
+    (value, type) => {
+      if (!value) return null;
+      const normalized = value.toLowerCase().trim();
+      const pool = type === 'agency' ? agencyAccounts : companyAccounts;
+      return pool.find((account) => {
+        const label = account.display_name || account.full_name || account.email;
+        return label?.toLowerCase().trim() === normalized;
+      });
+    },
+    [agencyAccounts, companyAccounts],
+  );
+
+  const renderAffiliation = (value, type) => {
+    if (!value) return null;
+    const match = findAffiliationAccount(value, type);
+    if (match) {
+      const target = `${createPageUrl('Profile')}?user=${encodeURIComponent(
+        match.id || match.email || match.display_name,
+      )}`;
+      return (
+        <Link to={target} className="text-serenity-700 dark:text-serenity-200 font-medium hover:underline">
+          {match.display_name || match.full_name || match.email}
+        </Link>
+      );
+    }
+    return <span className="text-slate-700 dark:text-slate-200">{value}</span>;
   };
 
   const loadUserData = useCallback(async () => {
@@ -356,7 +458,14 @@ export default function Profile() {
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-2 space-y-6">
       <HouseRulesModal open={showHouseRules} onOpenChange={setShowHouseRules} />
-      <EditProfileDialog open={showEditProfile} onOpenChange={setShowEditProfile} user={user} onProfileUpdate={handleProfileUpdate} />
+      <EditProfileDialog
+        open={showEditProfile}
+        onOpenChange={setShowEditProfile}
+        user={user}
+        onProfileUpdate={handleProfileUpdate}
+        agencyAccounts={agencyAccounts}
+        companyAccounts={companyAccounts}
+      />
 
       {/* Profile Header */}
       <Card className="glass-panel shadow-floating">
@@ -391,6 +500,22 @@ export default function Profile() {
                     return <Badge key={styleId} variant="outline" className="border-serenity-300 text-serenity-800 dark:text-serenity-100">{styleInfo?.label}</Badge>
                 })}
               </div>
+              {(user.agency_affiliation || user.company_affiliation) && (
+                <div className="mt-3 space-y-1 text-sm">
+                  {user.agency_affiliation && (
+                    <div className="flex items-center gap-1 text-slate-700 dark:text-slate-200 justify-center md:justify-start">
+                      <span className="font-semibold text-slate-900 dark:text-white">Agency:</span>
+                      {renderAffiliation(user.agency_affiliation, 'agency')}
+                    </div>
+                  )}
+                  {user.company_affiliation && (
+                    <div className="flex items-center gap-1 text-slate-700 dark:text-slate-200 justify-center md:justify-start">
+                      <span className="font-semibold text-slate-900 dark:text-white">Bedrijf:</span>
+                      {renderAffiliation(user.company_affiliation, 'company')}
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         </CardContent>
