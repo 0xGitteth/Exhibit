@@ -18,6 +18,7 @@ import HouseRulesModal from '@/components/HouseRulesModal';
 import { Post } from './entities/Post.js';
 import { useTheme } from '@/context/ThemeContext';
 import { useAuth } from '@/context/AuthContext';
+import PropTypes from 'prop-types';
 
 export default function Layout({ children, currentPageName }) {
   const location = useLocation();
@@ -131,61 +132,61 @@ export default function Layout({ children, currentPageName }) {
           />
           <div className="relative mx-auto flex items-end justify-center gap-3 rounded-full border-2 border-white/95 dark:border-midnight-50/60 bg-gradient-to-br from-white/98 via-white/95 to-serenity-50/95 dark:from-midnight-50/90 dark:via-midnight-100/85 dark:to-midnight-50/80 px-3 py-2.5 shadow-[0_20px_70px_rgba(15,23,42,0.25)] ring-1 ring-serenity-200/70 dark:ring-midnight-50/40 backdrop-blur-2xl supports-[backdrop-filter]:bg-white/92">
             <div className="flex items-center justify-between gap-1">
-              {tabItems.map((item) => {
+              {navigationItems.map((item) => {
+                const IconComponent = item.icon;
+
+                if (item.isAction) {
+                  return (
+                    <button
+                      key={item.name}
+                      type="button"
+                      onClick={item.action}
+                      aria-label="Plaatsen"
+                      className="flex flex-col items-center justify-center gap-1 rounded-xl bg-gradient-to-br from-serenity-500 to-serenity-700 text-white py-2.5 text-xs font-semibold shadow-soft transition-transform duration-150 hover:scale-105 focus-visible:scale-105 focus:outline-none focus-visible:ring-2 focus-visible:ring-serenity-200"
+                    >
+                      {IconComponent && <IconComponent className="w-5 h-5" />}
+                      <span className="leading-none">Plaatsen</span>
+                    </button>
+                  );
+                }
+
                 const isRootPath = item.path === PAGE_ROUTES.timeline;
                 const isActive =
                   isRootPath
                     ? location.pathname === PAGE_ROUTES.timeline
                     : location.pathname === item.path || location.pathname.startsWith(`${item.path}/`);
-                const IconComponent = item.icon;
 
                 return (
-                  <button
-                    key={item.name}
-                    type="button"
-                    onClick={item.action}
-                    aria-label="Plaatsen"
-                    className="flex flex-col items-center justify-center gap-1 rounded-xl bg-gradient-to-br from-serenity-500 to-serenity-700 text-white py-2.5 text-xs font-semibold shadow-soft transition-transform duration-150 hover:scale-105 focus-visible:scale-105 focus:outline-none focus-visible:ring-2 focus-visible:ring-serenity-200"
+                  <Link
+                    key={`${item.name}-${item.path}`}
+                    to={item.path}
+                    className={`flex flex-col items-center justify-center gap-1 rounded-xl py-2.5 text-xs font-semibold transition-colors duration-150 border ${
+                      isActive
+                        ? 'bg-serenity-600 text-white border-serenity-600 shadow-soft'
+                        : 'bg-white/70 dark:bg-midnight-50/40 border-serenity-200/80 dark:border-midnight-50/40 text-midnight-900 dark:text-slate-100 hover:bg-serenity-50/70 dark:hover:bg-midnight-50/50'
+                    }`}
                   >
-                    {IconComponent && <IconComponent className="w-5 h-5" />}
-                    <span className="leading-none">Plaatsen</span>
-                  </button>
+                    {item.isProfile ? (
+                      <Avatar className="w-8 h-8 border border-white/70 dark:border-midnight-50/50 shadow-sm">
+                        <AvatarImage src={profileImage} className="object-cover" />
+                        <AvatarFallback className="text-xs font-semibold uppercase">
+                          {user?.display_name?.[0] || <UserIcon className="w-4 h-4" />}
+                        </AvatarFallback>
+                      </Avatar>
+                    ) : (
+                      IconComponent && <IconComponent className="w-5 h-5" />
+                    )}
+                    <span className="leading-none">{item.name}</span>
+                  </Link>
                 );
-              }
-
-              return (
-                <Link
-                  key={`${item.name}-${item.path}`}
-                  to={item.path}
-                  className={`flex flex-col items-center justify-center gap-1 rounded-xl py-2.5 text-xs font-semibold transition-colors duration-150 border ${
-                    isActive
-                      ? 'bg-serenity-600 text-white border-serenity-600 shadow-soft'
-                      : 'bg-white/70 dark:bg-midnight-50/40 border-serenity-200/80 dark:border-midnight-50/40 text-midnight-900 dark:text-slate-100 hover:bg-serenity-50/70 dark:hover:bg-midnight-50/50'
-                  }`}
-                >
-                  {item.isProfile ? (
-                    <Avatar className="w-8 h-8 border border-white/70 dark:border-midnight-50/50 shadow-sm">
-                      <AvatarImage src={profileImage} className="object-cover" />
-                      <AvatarFallback className="text-xs font-semibold uppercase">
-                        {user?.display_name?.[0] || <UserIcon className="w-4 h-4" />}
-                      </AvatarFallback>
-                    </Avatar>
-                  ) : (
-                    IconComponent && <IconComponent className="w-5 h-5" />
-                  )}
-                  <span className="leading-none">{item.name}</span>
-                </Link>
-              );
-            })}
+              })}
+            </div>
           </div>
         </div>
       </nav>
     </div>
   );
 }
-
-// PropTypes for runtime prop validation in JS files
-import PropTypes from 'prop-types';
 
 Layout.propTypes = {
   children: PropTypes.node,
