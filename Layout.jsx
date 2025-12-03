@@ -27,11 +27,11 @@ export default function Layout({ children, currentPageName }) {
   const [showHouseRules, setShowHouseRules] = useState(false);
 
   const navigationItems = [
-    { name: 'Gallery', icon: LayoutGrid, path: PAGE_ROUTES.timeline },
+    { name: 'Galerij', icon: LayoutGrid, path: PAGE_ROUTES.timeline },
     { name: 'Ontdekken', icon: Search, path: PAGE_ROUTES.discover },
     { name: 'Community', icon: Users, path: PAGE_ROUTES.community },
     { name: 'Profiel', icon: UserIcon, path: PAGE_ROUTES.profile, isProfile: true },
-    { name: 'Plaatsen', icon: Plus, action: () => setShowCreatePost(true), isAction: true },
+    { name: '+', icon: Plus, action: () => setShowCreatePost(true), isAction: true },
   ];
 
   useEffect(() => {
@@ -55,9 +55,6 @@ export default function Layout({ children, currentPageName }) {
     }
   };
 
-  const tabItems = navigationItems.filter((item) => !item.isAction);
-  const actionItem = navigationItems.find((item) => item.isAction);
-  const ActionIcon = actionItem?.icon;
   const profileImage =
     user?.avatar_url ||
     user?.avatarUrl ||
@@ -143,54 +140,43 @@ export default function Layout({ children, currentPageName }) {
                 const IconComponent = item.icon;
 
                 return (
-                  <Link
-                    key={`${item.name}-${item.path}`}
-                    to={item.path}
-                    className={`group inline-flex items-center gap-2 rounded-full px-3 sm:px-4 py-2 text-sm font-semibold transition-all duration-200 border ${
-                      isActive
-                        ? 'bg-serenity-600 text-white border-serenity-600 shadow-floating'
-                        : 'bg-white/70 dark:bg-midnight-50/30 border-serenity-200/80 dark:border-midnight-50/40 text-midnight-900 dark:text-slate-100 hover:-translate-y-[1px] hover:shadow-soft'
-                    }`}
+                  <button
+                    key={item.name}
+                    type="button"
+                    onClick={item.action}
+                    aria-label="Plaatsen"
+                    className="flex flex-col items-center justify-center gap-1 rounded-xl bg-gradient-to-br from-serenity-500 to-serenity-700 text-white py-2.5 text-xs font-semibold shadow-soft transition-transform duration-150 hover:scale-105 focus-visible:scale-105 focus:outline-none focus-visible:ring-2 focus-visible:ring-serenity-200"
                   >
-                    {item.isProfile ? (
-                      <div
-                        className={`p-0.5 rounded-full border transition-colors ${
-                          isActive
-                            ? 'border-white/70 bg-white/10'
-                            : 'border-serenity-100 dark:border-midnight-50/40 group-hover:border-serenity-200'
-                        }`}
-                      >
-                        <Avatar className="w-8 h-8 border border-white/60 shadow-sm">
-                          <AvatarImage src={profileImage} className="object-cover" />
-                          <AvatarFallback className="text-xs font-semibold uppercase">
-                            {user?.display_name?.[0] || <UserIcon className="w-4 h-4" />}
-                          </AvatarFallback>
-                        </Avatar>
-                      </div>
-                    ) : (
-                      <IconComponent
-                        className={`w-4 h-4 transition-transform duration-200 ${
-                          isActive ? 'scale-110' : 'group-hover:scale-105'
-                        }`}
-                      />
-                    )}
-                    <span>{item.name}</span>
-                  </Link>
+                    {IconComponent && <IconComponent className="w-5 h-5" />}
+                    <span className="leading-none">Plaatsen</span>
+                  </button>
                 );
-              })}
+              }
 
-              {actionItem && (
-                <button
-                  type="button"
-                  onClick={actionItem.action}
-                  aria-label={actionItem.name}
-                  className="inline-flex items-center gap-2 rounded-full bg-gradient-to-br from-serenity-500 to-serenity-700 text-white px-4 sm:px-5 py-2.5 font-semibold shadow-floating transition-transform duration-200 hover:scale-105 focus-visible:scale-105 focus:outline-none focus-visible:ring-4 focus-visible:ring-serenity-200"
+              return (
+                <Link
+                  key={`${item.name}-${item.path}`}
+                  to={item.path}
+                  className={`flex flex-col items-center justify-center gap-1 rounded-xl py-2.5 text-xs font-semibold transition-colors duration-150 border ${
+                    isActive
+                      ? 'bg-serenity-600 text-white border-serenity-600 shadow-soft'
+                      : 'bg-white/70 dark:bg-midnight-50/40 border-serenity-200/80 dark:border-midnight-50/40 text-midnight-900 dark:text-slate-100 hover:bg-serenity-50/70 dark:hover:bg-midnight-50/50'
+                  }`}
                 >
-                  {ActionIcon && <ActionIcon className="h-5 w-5" />}
-                  <span>Upload foto</span>
-                </button>
-              )}
-            </div>
+                  {item.isProfile ? (
+                    <Avatar className="w-8 h-8 border border-white/70 dark:border-midnight-50/50 shadow-sm">
+                      <AvatarImage src={profileImage} className="object-cover" />
+                      <AvatarFallback className="text-xs font-semibold uppercase">
+                        {user?.display_name?.[0] || <UserIcon className="w-4 h-4" />}
+                      </AvatarFallback>
+                    </Avatar>
+                  ) : (
+                    IconComponent && <IconComponent className="w-5 h-5" />
+                  )}
+                  <span className="leading-none">{item.name}</span>
+                </Link>
+              );
+            })}
           </div>
         </div>
       </nav>
