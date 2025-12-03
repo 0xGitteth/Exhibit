@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { Community as CommunityEntity } from "../entities/Community.js";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Users, Shield, HeartHandshake, Camera, Award, Zap, RefreshCcw } from "lucide-react";
+import { Users, Shield, HeartHandshake, Camera, Award, Zap, RefreshCcw, MessageSquare } from "lucide-react";
 import { motion } from "framer-motion";
+import { PAGE_ROUTES } from "@/utils";
 
 const communityIcons = {
   safety_consent: Shield,
@@ -46,6 +48,29 @@ export default function Community() {
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-2 space-y-6">
+      <Card className="glass-panel border border-serenity-200/60 dark:border-midnight-50/30 shadow-soft">
+        <CardContent className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-6 p-6">
+          <div className="flex items-start gap-4">
+            <div className="h-12 w-12 rounded-2xl bg-serenity-500 text-white flex items-center justify-center shadow-floating">
+              <MessageSquare className="w-5 h-5" />
+            </div>
+            <div className="space-y-1">
+              <p className="text-xs uppercase tracking-[0.2em] text-serenity-600 dark:text-serenity-200">Community chat</p>
+              <h3 className="text-xl font-semibold text-midnight-900 dark:text-white">Praat mee met andere makers</h3>
+              <p className="text-slate-700 dark:text-slate-200 text-sm max-w-2xl">
+                Deel ideeën, vraag feedback en bouw samen aan nieuwe projecten in onze directe chatruimte.
+              </p>
+            </div>
+          </div>
+          <Link to={PAGE_ROUTES.chat} className="w-full sm:w-auto">
+            <Button className="w-full sm:w-auto rounded-full bg-serenity-500 text-white hover:bg-serenity-600 shadow-floating inline-flex items-center gap-2">
+              <MessageSquare className="w-4 h-4" />
+              Ga naar de chat
+            </Button>
+          </Link>
+        </CardContent>
+      </Card>
+
       {loading ? (
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {Array(6).fill(0).map((_, i) => (
