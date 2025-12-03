@@ -130,6 +130,11 @@ function createUser(payload) {
     : existing
       ? parseJson(existing.roles)
       : [];
+  const styles = Array.isArray(payload.styles)
+    ? payload.styles
+    : existing
+      ? parseJson(existing.styles)
+      : [];
   const onboardingComplete = payload.onboarding_complete
     ? 1
     : existing?.onboarding_complete
@@ -154,10 +159,6 @@ function createUser(payload) {
     const row = db.prepare('SELECT * FROM users WHERE email = ?').get(existing.email);
     return mapUser(row);
   }
-
-  const roles = Array.isArray(payload.roles) ? payload.roles : [];
-  const styles = Array.isArray(payload.styles) ? payload.styles : [];
-  const onboardingComplete = payload.onboarding_complete ? 1 : 0;
 
   db.prepare(
     `INSERT INTO users (email, display_name, avatar_url, bio, roles, styles, instagram, onboarding_complete, primary_role, show_sensitive_content, agency_affiliation, company_affiliation, linked_agencies, linked_companies, linked_models)

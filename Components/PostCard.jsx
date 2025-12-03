@@ -62,51 +62,6 @@ export default function PostCard({ post, onSaveToMoodboard }) {
   const comments = post?.comments_count ?? post?.comment_count ?? 0;
   const image = post?.image_url;
 
-  const roleLabels = useMemo(
-    () => ({
-      photographer: 'Fotograaf',
-      model: 'Model',
-      makeup_artist: 'MUA',
-      stylist: 'Stylist',
-      assistant: 'Assistent',
-      agency: 'Agency',
-      company: 'Bedrijf',
-      other: 'Artiest',
-    }),
-    []
-  );
-
-  const formatInstagramLink = (handle) => {
-    if (!handle) return null;
-    const cleanHandle = handle.replace('@', '');
-    if (cleanHandle.startsWith('http')) return cleanHandle;
-    return `https://instagram.com/${cleanHandle}`;
-  };
-
-  const contributors = useMemo(() => {
-    const stack = [];
-
-    if (post?.photographer_name) {
-      stack.push({ role: 'Fotograaf', name: post.photographer_name });
-    }
-
-    if (Array.isArray(post?.tagged_people)) {
-      post.tagged_people.forEach((person) => {
-        if (!person?.name) return;
-        const label = roleLabels[person.role] || 'Artiest';
-        if (['Fotograaf', 'Model', 'MUA', 'Artiest', 'Agency', 'Bedrijf'].includes(label)) {
-          stack.push({
-            role: label,
-            name: person.name,
-            link: formatInstagramLink(person.instagram),
-          });
-        }
-      });
-    }
-
-    return stack;
-  }, [post?.photographer_name, post?.tagged_people, roleLabels]);
-
   useEffect(() => {
     setImageLoaded(false);
     setImageError(false);
