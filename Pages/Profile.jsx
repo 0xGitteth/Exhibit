@@ -22,6 +22,7 @@ import { Link } from "react-router-dom";
 import { DUMMY_DATA_ENABLED } from "../utils/featureFlags";
 import { sampleMoodboardPosts, sampleProfile, sampleProfilePosts } from "../utils/dummyData";
 import { getMoodboardPosts } from "../utils/moodboardStorage";
+import { useAuth } from "@/context/AuthContext";
 
 const photographyStyles = [
   { id: "portrait", label: "Portrait" }, { id: "fashion", label: "Fashion" }, { id: "boudoir", label: "Boudoir" },
@@ -177,6 +178,7 @@ EditProfileDialog.propTypes = {
 
 
 export default function Profile() {
+  const { user: authUser, loading: authLoading, logout } = useAuth();
   const [user, setUser] = useState(null);
   const [userPosts, setUserPosts] = useState([]);
   const [savedPosts, setSavedPosts] = useState([]);
@@ -194,9 +196,10 @@ export default function Profile() {
   };
 
   const loadUserData = useCallback(async () => {
+    if (authLoading) return;
     setLoading(true);
     try {
-      const userData = await User.me();
+      const userData = authUser || (await User.me());
       const resolvedUser = userData || (DUMMY_DATA_ENABLED ? sampleProfile : null);
 
       if (!resolvedUser) {
@@ -246,7 +249,7 @@ export default function Profile() {
       }
     }
     setLoading(false);
-  }, []);
+  }, [authLoading, authUser]);
 
   useEffect(() => {
     loadUserData();
@@ -273,8 +276,7 @@ export default function Profile() {
   };
 
   const handleLogout = async () => {
-    await User.logout();
-    window.location.href = createPageUrl("Timeline");
+    await logout();
   };
 
   if (loading) {

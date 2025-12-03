@@ -79,6 +79,23 @@ export const samplePosts = [
     likes: 131,
     comments_count: 14,
   },
+  {
+    id: 'sample-post-6',
+    title: 'Studio Glow',
+    description: 'Beauty-shoot met grafische eyeliner en zachte highlighter.',
+    created_date: '2024-06-01',
+    photography_style: 'beauty',
+    tags: ['beauty', 'editorial'],
+    image_url:
+      'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=1200&q=80',
+    photographer_name: 'Ravi Reinders',
+    tagged_people: [
+      { name: 'Bo ter Horst', role: 'makeup_artist', instagram: '@boterhorst' },
+      { name: 'Noor Vermeulen', role: 'model', instagram: '@noorvm' },
+    ],
+    likes: 205,
+    comments_count: 26,
+  },
 ];
 
 export const sampleUsers = [
@@ -116,6 +133,20 @@ export const sampleUsers = [
     roles: ['artist'],
     styles: ['fine_art', 'portrait'],
     avatar_url: 'https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?auto=format&fit=crop&w=300&q=80',
+  },
+  {
+    id: 'sample-user-6',
+    display_name: 'Bo ter Horst',
+    roles: ['makeup_artist'],
+    styles: ['beauty', 'editorial'],
+    avatar_url: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=320&q=80',
+  },
+  {
+    id: 'sample-user-7',
+    display_name: 'Ravi Reinders',
+    roles: ['photographer', 'assistant'],
+    styles: ['fashion', 'candid'],
+    avatar_url: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=320&q=80',
   },
 ];
 

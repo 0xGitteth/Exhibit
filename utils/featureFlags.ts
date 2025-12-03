@@ -11,4 +11,4 @@ const getEnvValue = (key: string) => {
 const envDummySetting = getEnvValue('VITE_ENABLE_DUMMY_DATA');
 const isDummyFlagSet = (envDummySetting || '').toString().toLowerCase();
 
-export const DUMMY_DATA_ENABLED = envDummySetting === undefined ? true : isDummyFlagSet === 'true';
+export const DUMMY_DATA_ENABLED = envDummySetting === undefined ? false : isDummyFlagSet === 'true';
