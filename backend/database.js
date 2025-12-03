@@ -71,7 +71,7 @@ function serializeJson(value) {
 
 function mapUser(row) {
   if (!row) return null;
-  return { ...row, roles: parseJson(row.roles) };
+  return { ...row, roles: parseJson(row.roles), show_sensitive_content: Boolean(row.show_sensitive_content) };
 }
 
 function mapPost(row) {
@@ -80,6 +80,7 @@ function mapPost(row) {
     ...row,
     tags: parseJson(row.tags),
     trigger_warnings: parseJson(row.trigger_warnings),
+    is_sensitive: Boolean(row.is_sensitive),
   };
 }
 
@@ -95,7 +96,8 @@ function buildFilter(filter = {}, allowedFields = []) {
       params.push(...value.$in);
     } else {
       clauses.push(`${key} = ?`);
-      params.push(value);
+      const normalizedValue = key === 'is_sensitive' ? Number(value) : value;
+      params.push(normalizedValue);
     }
   });
 
@@ -114,7 +116,7 @@ function updateCurrentUser(updates) {
   const next = { ...current, ...updates };
   db.prepare(
     `UPDATE users
-     SET display_name = ?, avatar_url = ?, bio = ?, roles = ?, instagram = ?
+     SET display_name = ?, avatar_url = ?, bio = ?, roles = ?, instagram = ?, show_sensitive_content = ?
      WHERE email = ?`,
   ).run(
     next.display_name,
@@ -122,13 +124,14 @@ function updateCurrentUser(updates) {
     next.bio,
     serializeJson(next.roles),
     next.instagram,
+    Number(Boolean(next.show_sensitive_content)),
     next.email,
   );
   return next;
 }
 
 function filterPosts(filter = {}) {
-  const { where, params } = buildFilter(filter, ['id', 'created_by', 'photography_style']);
+  const { where, params } = buildFilter(filter, ['id', 'created_by', 'photography_style', 'is_sensitive']);
   const rows = db.prepare(`SELECT * FROM posts ${where} ORDER BY created_at DESC`).all(...params);
   return rows.map(mapPost);
 }
@@ -141,10 +144,11 @@ function createPost(payload) {
   }
   const tags = serializeJson(payload.tags);
   const triggers = serializeJson(payload.trigger_warnings);
+  const isSensitive = Number(Boolean(payload.is_sensitive));
 
   db.prepare(
-    `INSERT INTO posts (id, title, caption, image_url, photography_style, tags, trigger_warnings, created_by)
-     VALUES (@id, @title, @caption, @image_url, @photography_style, @tags, @trigger_warnings, @created_by)`,
+    `INSERT INTO posts (id, title, caption, image_url, photography_style, tags, trigger_warnings, is_sensitive, created_by)
+     VALUES (@id, @title, @caption, @image_url, @photography_style, @tags, @trigger_warnings, @is_sensitive, @created_by)`,
   ).run({
     id,
     title: payload.title,
@@ -153,6 +157,7 @@ function createPost(payload) {
     photography_style: payload.photography_style,
     tags,
     trigger_warnings: triggers,
+    is_sensitive: isSensitive,
     created_by: createdBy,
   });
 

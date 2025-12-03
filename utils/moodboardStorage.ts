@@ -45,6 +45,7 @@ export function addPostToMoodboard(post: any) {
     photographer_name: post.photographer_name,
     created_date: post.created_date,
     tags: post.tags,
+    is_sensitive: Boolean(post.is_sensitive),
   };
 
   const updated = [normalized, ...existing];

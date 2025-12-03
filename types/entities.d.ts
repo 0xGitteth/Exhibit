@@ -29,6 +29,7 @@ declare module '@/entities/Post' {
     location?: string;
     tagged_people?: any[];
     created_by?: string;
+    is_sensitive?: boolean;
   };
   export const Post: {
     filter: (_q: any) => Promise<Post[]>;

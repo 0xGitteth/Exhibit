@@ -17,6 +17,7 @@ interface PostSummary {
   likes?: number;
   comments_count?: number;
   comment_count?: number;
+  is_sensitive?: boolean;
 }
 
 export default function Timeline() {

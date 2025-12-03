@@ -8,6 +8,8 @@ import {
   removePostFromMoodboard,
 } from '../utils/moodboardStorage';
 import { getStyleTone, photographyStyles } from '../utils/photographyStyles';
+import { useCurrentUser } from '@/context/UserContext';
+import SensitiveContentGuard from './SensitiveContentGuard';
 
 export default function PostCard({ post, onSaveToMoodboard }) {
   const [liked, setLiked] = useState(false);
@@ -15,6 +17,7 @@ export default function PostCard({ post, onSaveToMoodboard }) {
   const [saved, setSaved] = useState(isPostInMoodboard(post?.id));
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);
+  const { user } = useCurrentUser();
 
   useEffect(() => {
     setSaved(isPostInMoodboard(post?.id));
@@ -61,6 +64,8 @@ export default function PostCard({ post, onSaveToMoodboard }) {
 
   const comments = post?.comments_count ?? post?.comment_count ?? 0;
   const image = post?.image_url;
+  const isSensitive = Boolean(post?.is_sensitive);
+  const allowSensitiveContent = Boolean(user?.show_sensitive_content);
 
   const roleLabels = useMemo(
     () => ({
@@ -114,7 +119,13 @@ export default function PostCard({ post, onSaveToMoodboard }) {
 
   return (
     <div className="flex flex-col items-center gap-3">
-      <div className="relative w-full max-w-5xl overflow-hidden bg-serenity-100/60 dark:bg-midnight-100/40">
+      <SensitiveContentGuard
+        isSensitive={isSensitive}
+        allowSensitive={allowSensitiveContent}
+        className="w-full max-w-5xl overflow-hidden bg-serenity-100/60 dark:bg-midnight-100/40 rounded-none"
+        placeholderClassName="min-h-[260px]"
+        message="Deze post is gemarkeerd als gevoelig. Respecteer de voorkeuren van de community voordat je bekijkt."
+      >
         {showImage ? (
           <>
             {!imageLoaded && (
@@ -138,7 +149,7 @@ export default function PostCard({ post, onSaveToMoodboard }) {
             <p className="text-sm font-medium">Geen afbeelding beschikbaar</p>
           </div>
         )}
-      </div>
+      </SensitiveContentGuard>
 
       <div className="w-full max-w-5xl px-3 sm:px-4 -mt-1">
         <div className="flex flex-col gap-4 bg-white/90 dark:bg-midnight-500/75 backdrop-blur shadow-lg shadow-serenity-300/40 dark:shadow-black/40 border border-white/60 dark:border-midnight-50/20 px-4 sm:px-5 py-4 sm:py-5 rounded-2xl">
@@ -223,6 +234,7 @@ PostCard.propTypes = {
         instagram: PropTypes.string,
       })
     ),
+    is_sensitive: PropTypes.bool,
   }),
   onSaveToMoodboard: PropTypes.func,
 };

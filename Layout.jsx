@@ -18,6 +18,9 @@ import CreatePostModal from '@/components/CreatePostModal';
 import HouseRulesModal from '@/components/HouseRulesModal';
 import { Post } from './entities/Post.js';
 import { useTheme } from '@/context/ThemeContext';
+import { CurrentUserProvider } from '@/context/UserContext';
+import { DUMMY_DATA_ENABLED } from './utils/featureFlags';
+import { sampleProfile } from './utils/dummyData';
 
 export default function Layout({ children, currentPageName }) {
   const location = useLocation();
@@ -42,9 +45,9 @@ export default function Layout({ children, currentPageName }) {
     const fetchUser = async () => {
       try {
         const userData = await User.me();
-        setUser(userData);
+        setUser(userData || (DUMMY_DATA_ENABLED ? sampleProfile : null));
       } catch (e) {
-        setUser(null);
+        setUser(DUMMY_DATA_ENABLED ? sampleProfile : null);
       }
     };
     fetchUser();
@@ -73,11 +76,12 @@ export default function Layout({ children, currentPageName }) {
     'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=320&q=80';
 
   return (
-    <div className="min-h-screen font-sans relative text-slate-900 dark:text-slate-100">
-      <div className="fixed inset-0 w-full h-screen pointer-events-none z-0">
-        <div className="absolute inset-0 bg-gradient-to-br from-serenity-100 via-white to-serenity-50 dark:from-midnight-500 dark:via-midnight-400 dark:to-midnight-600" />
-        <div className="absolute inset-0 opacity-50 bg-[radial-gradient(circle_at_20%_20%,rgba(70,99,172,0.18),transparent_25%),radial-gradient(circle_at_80%_0%,rgba(161,185,226,0.2),transparent_20%),radial-gradient(circle_at_50%_80%,rgba(70,99,172,0.12),transparent_30%)]" />
-      </div>
+    <CurrentUserProvider user={user} setUser={setUser}>
+      <div className="min-h-screen font-sans relative text-slate-900 dark:text-slate-100">
+        <div className="fixed inset-0 w-full h-screen pointer-events-none z-0">
+          <div className="absolute inset-0 bg-gradient-to-br from-serenity-100 via-white to-serenity-50 dark:from-midnight-500 dark:via-midnight-400 dark:to-midnight-600" />
+          <div className="absolute inset-0 opacity-50 bg-[radial-gradient(circle_at_20%_20%,rgba(70,99,172,0.18),transparent_25%),radial-gradient(circle_at_80%_0%,rgba(161,185,226,0.2),transparent_20%),radial-gradient(circle_at_50%_80%,rgba(70,99,172,0.12),transparent_30%)]" />
+        </div>
 
       <header className="sticky top-0 z-40 backdrop-blur-xl bg-white/80 dark:bg-midnight-100/60 border-b border-serenity-200/60 dark:border-midnight-50/30 shadow-soft">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -200,7 +204,8 @@ export default function Layout({ children, currentPageName }) {
           </div>
         </div>
       </nav>
-    </div>
+      </div>
+    </CurrentUserProvider>
   );
 }
 

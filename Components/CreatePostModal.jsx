@@ -53,6 +53,7 @@ export default function CreatePostModal({ open, onOpenChange, onPostCreated }) {
     photography_style: '',
     tags: [],
     trigger_warnings: [],
+    is_sensitive: false,
     tagged_people: [],
     location: '',
     image_url: '',
@@ -91,6 +92,15 @@ export default function CreatePostModal({ open, onOpenChange, onPostCreated }) {
       }));
     }
   }, [newPost.tags, newPost.photography_style, newPost.trigger_warnings]); // Added newPost.trigger_warnings to dependencies to fix warning and ensure current state is used.
+
+  useEffect(() => {
+    const shouldForceSensitive =
+      newPost.trigger_warnings.length > 0 || newPost.photography_style === 'art_nude';
+
+    if (shouldForceSensitive && !newPost.is_sensitive) {
+      setNewPost((prev) => ({ ...prev, is_sensitive: true }));
+    }
+  }, [newPost.trigger_warnings, newPost.photography_style, newPost.is_sensitive]);
 
   useEffect(() => {
     if (newPost.title && newPost.image_url && newPost.photography_style && validationMessage) {
@@ -204,6 +214,7 @@ export default function CreatePostModal({ open, onOpenChange, onPostCreated }) {
       ...newPost,
       tagged_people: finalTaggedPeople,
       photographer_name: currentUser?.display_name || 'Onbekend',
+      is_sensitive: newPost.is_sensitive,
       is_approved: true,
     });
 
@@ -213,6 +224,7 @@ export default function CreatePostModal({ open, onOpenChange, onPostCreated }) {
       photography_style: '',
       tags: [],
       trigger_warnings: [],
+      is_sensitive: false,
       tagged_people: [],
       location: '',
       image_url: '',
@@ -303,7 +315,7 @@ export default function CreatePostModal({ open, onOpenChange, onPostCreated }) {
                       alt="Preview"
                       className="w-full max-h-72 object-cover"
                     />
-                    {newPost.trigger_warnings.length > 0 && (
+                    {(newPost.trigger_warnings.length > 0 || newPost.is_sensitive) && (
                       <div className="absolute inset-0 bg-slate-900/70 backdrop-blur-sm text-white flex flex-col items-center justify-center gap-2">
                         <EyeOff className="w-8 h-8" />
                         <p className="text-sm font-semibold">Sensitive cover actief</p>
@@ -385,6 +397,28 @@ export default function CreatePostModal({ open, onOpenChange, onPostCreated }) {
                     {warning.label}
                   </Button>
                 ))}
+              </div>
+            </div>
+
+            <div className="rounded-2xl border border-white/50 bg-white/70 backdrop-blur-xl shadow-lg p-4 lg:p-6 space-y-3">
+              <div className="flex items-center gap-3">
+                <Checkbox
+                  id="markSensitive"
+                  checked={newPost.is_sensitive}
+                  onCheckedChange={(checked) =>
+                    setNewPost((prev) => ({ ...prev, is_sensitive: Boolean(checked) }))
+                  }
+                  className="mt-1"
+                />
+                <div>
+                  <Label htmlFor="markSensitive" className="text-sm font-semibold text-slate-900">
+                    Markeer als gevoelige content
+                  </Label>
+                  <p className="text-sm text-slate-600">
+                    Plaats een waarschuwing en verberg de media automatisch voor gebruikers die gevoelige beelden uit willen
+                    schakelen.
+                  </p>
+                </div>
               </div>
             </div>
 

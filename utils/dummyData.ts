@@ -6,6 +6,7 @@ export const samplePosts = [
     created_date: '2024-05-12',
     photography_style: 'street',
     tags: ['street', 'portrait'],
+    is_sensitive: false,
     image_url: 'https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&w=1200&q=80',
     photographer_name: 'Ava Visser',
     tagged_people: [
@@ -22,6 +23,7 @@ export const samplePosts = [
     created_date: '2024-04-28',
     photography_style: 'landscape',
     tags: ['landscape', 'nature'],
+    is_sensitive: true,
     image_url: 'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80',
     photographer_name: 'Milan de Jong',
     tagged_people: [
@@ -38,6 +40,7 @@ export const samplePosts = [
     created_date: '2024-03-15',
     photography_style: 'fashion',
     tags: ['fashion', 'editorial'],
+    is_sensitive: false,
     image_url: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=1200&q=80',
     photographer_name: 'Noor Vermeulen',
     tagged_people: [
@@ -54,6 +57,7 @@ export const samplePosts = [
     created_date: '2024-02-02',
     photography_style: 'candid',
     tags: ['candid', 'travel'],
+    is_sensitive: true,
     image_url: 'https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?auto=format&fit=crop&w=1200&q=80',
     photographer_name: 'Samira Bakker',
     tagged_people: [
@@ -70,6 +74,7 @@ export const samplePosts = [
     created_date: '2024-01-20',
     photography_style: 'fine_art',
     tags: ['portrait', 'fine_art'],
+    is_sensitive: false,
     image_url: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=1200&q=80',
     photographer_name: 'Ivo Janssen',
     tagged_people: [

@@ -1,14 +1,15 @@
-INSERT INTO users (email, display_name, avatar_url, bio, roles, instagram)
+INSERT INTO users (email, display_name, avatar_url, bio, roles, instagram, show_sensitive_content)
 VALUES (
   'user@example.com',
   'Demo User',
   'https://images.unsplash.com/photo-1544723795-3fb6469f5b39?auto=format&fit=crop&w=200&q=80',
   'Fotograaf & model',
   '["model"]',
-  '@demo'
+  '@demo',
+  0
 );
 
-INSERT INTO posts (id, title, caption, image_url, photography_style, tags, trigger_warnings, created_by)
+INSERT INTO posts (id, title, caption, image_url, photography_style, tags, trigger_warnings, is_sensitive, created_by)
 VALUES
   (
     'seed-1',
@@ -18,6 +19,7 @@ VALUES
     'portrait',
     '["portrait"]',
     '[]',
+    0,
     'user@example.com'
   ),
   (
@@ -28,6 +30,7 @@ VALUES
     'fashion',
     '["fashion","editorial"]',
     '[]',
+    1,
     'user@example.com'
   ),
   (
@@ -38,6 +41,7 @@ VALUES
     'candid',
     '["candid","travel"]',
     '[]',
+    0,
     'user@example.com'
   );
 

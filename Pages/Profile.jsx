@@ -22,6 +22,8 @@ import { Link } from "react-router-dom";
 import { DUMMY_DATA_ENABLED } from "../utils/featureFlags";
 import { sampleMoodboardPosts, sampleProfile, sampleProfilePosts } from "../utils/dummyData";
 import { getMoodboardPosts } from "../utils/moodboardStorage";
+import SensitiveContentGuard from "@/components/SensitiveContentGuard";
+import { useCurrentUser } from "@/context/UserContext";
 
 const photographyStyles = [
   { id: "portrait", label: "Portrait" }, { id: "fashion", label: "Fashion" }, { id: "boudoir", label: "Boudoir" },
@@ -177,7 +179,8 @@ EditProfileDialog.propTypes = {
 
 
 export default function Profile() {
-  const [user, setUser] = useState(null);
+  const { user: currentUser, setUser: setCurrentUser } = useCurrentUser();
+  const [user, setUser] = useState(currentUser);
   const [userPosts, setUserPosts] = useState([]);
   const [savedPosts, setSavedPosts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -204,6 +207,7 @@ export default function Profile() {
       }
 
       setUser(resolvedUser);
+      setCurrentUser(resolvedUser);
 
       try {
         const posts = resolvedUser.email
@@ -239,6 +243,7 @@ export default function Profile() {
     } catch (error) {
       if (DUMMY_DATA_ENABLED) {
         setUser(sampleProfile);
+        setCurrentUser(sampleProfile);
         setUserPosts(sampleProfilePosts);
         setSavedPosts(mergeMoodboardPosts(sampleMoodboardPosts, getMoodboardPosts()));
       } else {
@@ -253,6 +258,10 @@ export default function Profile() {
   }, [loadUserData]);
 
   useEffect(() => {
+    setUser(currentUser || null);
+  }, [currentUser]);
+
+  useEffect(() => {
     const handleMoodboardUpdate = (event) => {
       const updated = event?.detail?.posts || getMoodboardPosts();
       setSavedPosts((prev) => mergeMoodboardPosts(prev, updated));
@@ -264,12 +273,15 @@ export default function Profile() {
 
   const handleProfileUpdate = (updatedUser) => {
     setUser(updatedUser);
+    setCurrentUser(updatedUser);
   };
 
   const toggleSensitiveContent = async () => {
+    if (!user) return;
     const newPreference = !user.show_sensitive_content;
     await User.updateMyUserData({ show_sensitive_content: newPreference });
-    setUser(prev => ({ ...prev, show_sensitive_content: newPreference }));
+    setUser(prev => (prev ? { ...prev, show_sensitive_content: newPreference } : prev));
+    setCurrentUser(prev => (prev ? { ...prev, show_sensitive_content: newPreference } : prev));
   };
 
   const handleLogout = async () => {
@@ -294,6 +306,8 @@ export default function Profile() {
   }
 
   if (!user) return null;
+
+  const allowSensitiveContent = Boolean(user?.show_sensitive_content);
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-2 space-y-6">
@@ -375,10 +389,24 @@ export default function Profile() {
                     transition={{ delay: index * 0.05 }}
                     className="aspect-square relative rounded-xl overflow-hidden group cursor-pointer shadow-soft"
                   >
-                    <img src={post.image_url} alt={post.title} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
-                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all duration-300 flex items-end p-4">
-                      <h4 className="text-white font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300">{post.title}</h4>
-                  </div>
+                    <SensitiveContentGuard
+                      isSensitive={Boolean(post.is_sensitive)}
+                      allowSensitive={allowSensitiveContent}
+                      className="h-full w-full"
+                      placeholderClassName="h-full w-full"
+                      message="Deze foto is gemarkeerd als gevoelig. Klik op 'Toon toch' om hem alsnog te bekijken."
+                    >
+                      <div className="relative h-full w-full">
+                        <img
+                          src={post.image_url}
+                          alt={post.title}
+                          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                        />
+                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all duration-300 flex items-end p-4">
+                          <h4 className="text-white font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300">{post.title}</h4>
+                        </div>
+                      </div>
+                    </SensitiveContentGuard>
                 </motion.div>
               ))}
             </div>
@@ -402,18 +430,32 @@ export default function Profile() {
                     transition={{ delay: index * 0.05 }}
                     className="aspect-square relative rounded-xl overflow-hidden group cursor-pointer shadow-soft"
                   >
-                    <img src={post.image_url} alt={post.title} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
-                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all duration-300 flex items-end p-4">
-                      <div className="text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        <h4 className="font-medium">{post.title}</h4>
-                        <p className="text-sm opacity-80">door {post.photographer_name}</p>
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          )}
-        </TabsContent>
+                    <SensitiveContentGuard
+                      isSensitive={Boolean(post.is_sensitive)}
+                      allowSensitive={allowSensitiveContent}
+                      className="h-full w-full"
+                      placeholderClassName="h-full w-full"
+                      message="Deze foto is gemarkeerd als gevoelig. Klik op 'Toon toch' om hem alsnog te bekijken."
+                    >
+                      <div className="relative h-full w-full">
+                        <img
+                          src={post.image_url}
+                          alt={post.title}
+                          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                        />
+                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all duration-300 flex items-end p-4">
+                          <div className="text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                            <h4 className="font-medium">{post.title}</h4>
+                            <p className="text-sm opacity-80">door {post.photographer_name}</p>
+                          </div>
+                        </div>
+                      </div>
+                    </SensitiveContentGuard>
+                  </motion.div>
+                ))}
+              </div>
+            )}
+          </TabsContent>
       </Tabs>
     </div>
   );
