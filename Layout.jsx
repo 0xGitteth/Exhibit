@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { PAGE_ROUTES } from '@/utils';
-import { User } from './entities/User.js';
 import {
   Search,
   UserIcon,
@@ -18,11 +17,12 @@ import CreatePostModal from '@/components/CreatePostModal';
 import HouseRulesModal from '@/components/HouseRulesModal';
 import { Post } from './entities/Post.js';
 import { useTheme } from '@/context/ThemeContext';
+import { useAuth } from '@/context/AuthContext';
 
 export default function Layout({ children, currentPageName }) {
   const location = useLocation();
   const { theme, toggleTheme } = useTheme();
-  const [user, setUser] = useState(null);
+  const { user } = useAuth();
   const [showCreatePost, setShowCreatePost] = useState(false);
   const [showHouseRules, setShowHouseRules] = useState(false);
 
@@ -39,15 +39,6 @@ export default function Layout({ children, currentPageName }) {
     if (!hasSeenRules) {
       setShowHouseRules(true);
     }
-    const fetchUser = async () => {
-      try {
-        const userData = await User.me();
-        setUser(userData);
-      } catch (e) {
-        setUser(null);
-      }
-    };
-    fetchUser();
   }, []);
 
   const handleCloseRules = () => {

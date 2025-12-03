@@ -8,11 +8,14 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Layout from '../Layout';
 import AnalyticsPage from '../Pages/Analytics';
 import CommunityPage from '../Pages/Community.jsx';
+import LoginPage from '../Pages/Login';
 import ProfilePage from '../Pages/Profile.jsx';
 import SearchPage from '../Pages/Discover.jsx';
 import TimelinePage from '../Pages/Timeline';
 import { PAGE_ROUTES } from '@/utils';
 import { ThemeProvider } from '@/context/ThemeContext';
+import { AuthProvider } from '@/context/AuthContext';
+import ProtectedRoute from '@/components/ProtectedRoute';
 
 const routerBasename = (() => {
   const baseUrl = import.meta.env.BASE_URL || '/';
@@ -45,13 +48,31 @@ function App() {
   return (
     <ThemeProvider>
       <BrowserRouter basename={routerBasename}>
-        <Routes>
-          <Route path={PAGE_ROUTES.timeline} element={renderPage('Timeline', <TimelinePage />)} />
-          <Route path={PAGE_ROUTES.community} element={renderPage('Community', <CommunityPage />)} />
-          <Route path={PAGE_ROUTES.discover} element={renderPage('Discover', <SearchPage />)} />
-          <Route path={PAGE_ROUTES.profile} element={renderPage('Profile', <ProfilePage />)} />
-          <Route path={PAGE_ROUTES.analytics} element={renderPage('Analytics', <AnalyticsPage />)} />
-        </Routes>
+        <AuthProvider>
+          <Routes>
+            <Route path={PAGE_ROUTES.login} element={<LoginPage />} />
+            <Route
+              path={PAGE_ROUTES.timeline}
+              element={<ProtectedRoute>{renderPage('Timeline', <TimelinePage />)}</ProtectedRoute>}
+            />
+            <Route
+              path={PAGE_ROUTES.community}
+              element={<ProtectedRoute>{renderPage('Community', <CommunityPage />)}</ProtectedRoute>}
+            />
+            <Route
+              path={PAGE_ROUTES.discover}
+              element={<ProtectedRoute>{renderPage('Discover', <SearchPage />)}</ProtectedRoute>}
+            />
+            <Route
+              path={PAGE_ROUTES.profile}
+              element={<ProtectedRoute>{renderPage('Profile', <ProfilePage />)}</ProtectedRoute>}
+            />
+            <Route
+              path={PAGE_ROUTES.analytics}
+              element={<ProtectedRoute>{renderPage('Analytics', <AnalyticsPage />)}</ProtectedRoute>}
+            />
+          </Routes>
+        </AuthProvider>
       </BrowserRouter>
     </ThemeProvider>
   );
