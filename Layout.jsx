@@ -72,16 +72,30 @@ export default function Layout({ children, currentPageName }) {
 
       <header className="sticky top-0 z-40 backdrop-blur-xl bg-white/80 dark:bg-midnight-100/60 border-b border-serenity-200/60 dark:border-midnight-50/30 shadow-soft">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col sm:flex-row items-center h-auto sm:h-16 gap-3 sm:gap-6 justify-center py-3 sm:py-0">
-            <Link
-              to={PAGE_ROUTES.timeline}
-              className="flex items-center gap-3 flex-shrink-0 rounded-2xl bg-gradient-to-br from-serenity-500 to-serenity-600 text-white p-2 shadow-floating"
-              aria-label="Terug naar galerij"
-            >
-              <LayoutGrid className="w-6 h-6" />
-            </Link>
+          <div className="flex flex-col sm:flex-row items-center sm:items-start lg:items-center h-auto sm:h-16 gap-3 sm:gap-4 lg:gap-6 py-3 sm:py-4 lg:py-0 sm:justify-between">
+            <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-start">
+              <Link
+                to={PAGE_ROUTES.timeline}
+                className="flex items-center gap-3 flex-shrink-0 rounded-2xl bg-white text-serenity-700 border border-serenity-200 shadow-soft hover:bg-serenity-50 transition"
+                aria-label="Terug naar galerij"
+              >
+                <LayoutGrid className="w-6 h-6" />
+              </Link>
 
-            <nav className="flex items-center gap-1 sm:gap-2 flex-wrap justify-center">
+              {!isFanOnly && (
+                <Button
+                  onClick={() => setShowCreatePost(true)}
+                  className="rounded-full bg-gradient-to-br from-amber-500 via-rose-500 to-fuchsia-600 text-white shadow-floating hover:from-amber-600 hover:via-rose-600 hover:to-fuchsia-700 transition-all px-4 sm:px-5 py-2.5 h-auto flex items-center gap-2"
+                  size="sm"
+                  disabled={creatingPost}
+                >
+                  <Camera className="w-5 h-5" />
+                  <span className="font-semibold text-sm">Foto plaatsen</span>
+                </Button>
+              )}
+            </div>
+
+            <nav className="flex items-center gap-1 sm:gap-2 flex-wrap justify-center w-full sm:w-auto">
               <Link to={PAGE_ROUTES.timeline}>
                 <Button
                   variant="ghost"
