@@ -122,16 +122,20 @@ export default function Layout({ children, currentPageName }) {
       <main className={`pb-16 ${currentPageName === 'Timeline' ? 'pt-4' : 'pt-8'} relative z-10`}>{children}</main>
 
       {!isFanOnly && (
-        <div className="fixed bottom-6 right-4 sm:bottom-8 sm:right-8 z-50">
-          <Button
-            onClick={() => setShowCreatePost(true)}
-            className="rounded-full bg-gradient-to-br from-serenity-500 via-serenity-500 to-serenity-600 text-white shadow-floating hover:from-serenity-600 hover:to-serenity-700 transition-all px-5 sm:px-6 py-3 h-auto flex items-center gap-2"
-            size="lg"
-            disabled={creatingPost}
-          >
-            <Camera className="w-5 h-5" />
-            <span className="font-semibold">Foto plaatsen</span>
-          </Button>
+        <div className="fixed inset-x-0 bottom-4 sm:bottom-6 lg:bottom-10 z-50 pointer-events-none px-4 sm:px-6 lg:px-10">
+          <div className="flex justify-center sm:justify-end pointer-events-auto">
+            <div className="rounded-full bg-white/60 dark:bg-midnight-100/60 backdrop-blur-md shadow-floating border border-white/40 dark:border-midnight-50/30 px-1.5 py-1 sm:px-2 sm:py-1.5">
+              <Button
+                onClick={() => setShowCreatePost(true)}
+                className="rounded-full bg-gradient-to-br from-serenity-500 via-serenity-500 to-serenity-600 text-white shadow-floating hover:from-serenity-600 hover:to-serenity-700 transition-all px-5 sm:px-6 md:px-7 py-3 sm:py-3.5 h-auto flex items-center gap-2"
+                size="lg"
+                disabled={creatingPost}
+              >
+                <Camera className="w-5 h-5 md:w-6 md:h-6" />
+                <span className="font-semibold">Foto plaatsen</span>
+              </Button>
+            </div>
+          </div>
         </div>
       )}
 
