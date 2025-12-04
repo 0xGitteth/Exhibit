@@ -72,53 +72,63 @@ export default function Layout({ children, currentPageName }) {
 
       <header className="sticky top-0 z-40 backdrop-blur-xl bg-white/80 dark:bg-midnight-100/60 border-b border-serenity-200/60 dark:border-midnight-50/30 shadow-soft">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center h-16 gap-4 sm:gap-6 justify-between">
-            <div className="flex items-center gap-6 sm:gap-8 flex-1 min-w-0">
-              <Link to={PAGE_ROUTES.timeline} className="flex items-center gap-3 flex-shrink-0">
-                <div className="h-10 w-10 rounded-2xl bg-gradient-to-br from-serenity-500 to-serenity-600 text-white flex items-center justify-center shadow-floating">
-                  <LayoutGrid className="w-5 h-5" />
-                </div>
-                <div>
-                  <p className="text-xs uppercase tracking-[0.2em] text-serenity-600 dark:text-serenity-200">Exhibit</p>
-                  <p className="font-semibold text-lg text-midnight-900 dark:text-white">Creatieve community</p>
-                </div>
+          <div className="flex flex-col sm:flex-row items-center sm:items-start lg:items-center h-auto sm:h-16 gap-3 sm:gap-4 lg:gap-6 py-3 sm:py-4 lg:py-0 sm:justify-between">
+            <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-start">
+              <Link
+                to={PAGE_ROUTES.timeline}
+                className="flex items-center gap-3 flex-shrink-0 rounded-2xl bg-white text-serenity-700 border border-serenity-200 shadow-soft hover:bg-serenity-50 transition"
+                aria-label="Terug naar galerij"
+              >
+                <LayoutGrid className="w-6 h-6" />
               </Link>
 
-              <nav className="flex items-center gap-1 sm:gap-2 flex-wrap">
-                <Link to={PAGE_ROUTES.timeline}>
-                  <Button
-                    variant="ghost"
-                    className="rounded-full px-4 py-2 text-sm font-semibold text-midnight-900 dark:text-white hover:bg-serenity-100/70 dark:hover:bg-midnight-50/20"
-                  >
-                    Galerij
-                  </Button>
-                </Link>
-                <Link to={PAGE_ROUTES.discover}>
-                  <Button
-                    variant="ghost"
-                    className="rounded-full px-4 py-2 text-sm font-semibold text-midnight-900 dark:text-white hover:bg-serenity-100/70 dark:hover:bg-midnight-50/20"
-                  >
-                    Ontdekken
-                  </Button>
-                </Link>
-                <Link to={PAGE_ROUTES.community}>
-                  <Button
-                    variant="ghost"
-                    className="rounded-full px-4 py-2 text-sm font-semibold text-midnight-900 dark:text-white hover:bg-serenity-100/70 dark:hover:bg-midnight-50/20"
-                  >
-                    Community
-                  </Button>
-                </Link>
-                <Link to={PAGE_ROUTES.profile}>
-                  <Button
-                    variant="ghost"
-                    className="rounded-full px-4 py-2 text-sm font-semibold text-midnight-900 dark:text-white hover:bg-serenity-100/70 dark:hover:bg-midnight-50/20"
-                  >
-                    Profiel
-                  </Button>
-                </Link>
-              </nav>
+              {!isFanOnly && (
+                <Button
+                  onClick={() => setShowCreatePost(true)}
+                  className="rounded-full bg-gradient-to-br from-amber-500 via-rose-500 to-fuchsia-600 text-white shadow-floating hover:from-amber-600 hover:via-rose-600 hover:to-fuchsia-700 transition-all px-4 sm:px-5 py-2.5 h-auto flex items-center gap-2"
+                  size="sm"
+                  disabled={creatingPost}
+                >
+                  <Camera className="w-5 h-5" />
+                  <span className="font-semibold text-sm">Foto plaatsen</span>
+                </Button>
+              )}
             </div>
+
+            <nav className="flex items-center gap-1 sm:gap-2 flex-wrap justify-center w-full sm:w-auto">
+              <Link to={PAGE_ROUTES.timeline}>
+                <Button
+                  variant="ghost"
+                  className="rounded-full px-4 py-2 text-sm font-semibold text-midnight-900 dark:text-white hover:bg-serenity-100/70 dark:hover:bg-midnight-50/20"
+                >
+                  Galerij
+                </Button>
+              </Link>
+              <Link to={PAGE_ROUTES.discover}>
+                <Button
+                  variant="ghost"
+                  className="rounded-full px-4 py-2 text-sm font-semibold text-midnight-900 dark:text-white hover:bg-serenity-100/70 dark:hover:bg-midnight-50/20"
+                >
+                  Ontdekken
+                </Button>
+              </Link>
+              <Link to={PAGE_ROUTES.community}>
+                <Button
+                  variant="ghost"
+                  className="rounded-full px-4 py-2 text-sm font-semibold text-midnight-900 dark:text-white hover:bg-serenity-100/70 dark:hover:bg-midnight-50/20"
+                >
+                  Community
+                </Button>
+              </Link>
+              <Link to={PAGE_ROUTES.profile}>
+                <Button
+                  variant="ghost"
+                  className="rounded-full px-4 py-2 text-sm font-semibold text-midnight-900 dark:text-white hover:bg-serenity-100/70 dark:hover:bg-midnight-50/20"
+                >
+                  Profiel
+                </Button>
+              </Link>
+            </nav>
           </div>
         </div>
       </header>
@@ -126,16 +136,20 @@ export default function Layout({ children, currentPageName }) {
       <main className={`pb-16 ${currentPageName === 'Timeline' ? 'pt-4' : 'pt-8'} relative z-10`}>{children}</main>
 
       {!isFanOnly && (
-        <div className="fixed bottom-6 right-4 sm:bottom-8 sm:right-8 z-50">
-          <Button
-            onClick={() => setShowCreatePost(true)}
-            className="rounded-full bg-gradient-to-br from-serenity-500 via-serenity-500 to-serenity-600 text-white shadow-floating hover:from-serenity-600 hover:to-serenity-700 transition-all px-5 sm:px-6 py-3 h-auto flex items-center gap-2"
-            size="lg"
-            disabled={creatingPost}
-          >
-            <Camera className="w-5 h-5" />
-            <span className="font-semibold">Foto plaatsen</span>
-          </Button>
+        <div className="fixed inset-x-0 bottom-4 sm:bottom-6 lg:bottom-10 z-50 pointer-events-none px-4 sm:px-6 lg:px-10">
+          <div className="flex justify-center sm:justify-end pointer-events-auto">
+            <div className="rounded-full bg-white/60 dark:bg-midnight-100/60 backdrop-blur-md shadow-floating border border-white/40 dark:border-midnight-50/30 px-1.5 py-1 sm:px-2 sm:py-1.5">
+              <Button
+                onClick={() => setShowCreatePost(true)}
+                className="rounded-full bg-gradient-to-br from-serenity-500 via-serenity-500 to-serenity-600 text-white shadow-floating hover:from-serenity-600 hover:to-serenity-700 transition-all px-5 sm:px-6 md:px-7 py-3 sm:py-3.5 h-auto flex items-center gap-2"
+                size="lg"
+                disabled={creatingPost}
+              >
+                <Camera className="w-5 h-5 md:w-6 md:h-6" />
+                <span className="font-semibold">Foto plaatsen</span>
+              </Button>
+            </div>
+          </div>
         </div>
       )}
 
