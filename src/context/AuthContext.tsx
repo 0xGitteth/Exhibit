@@ -5,11 +5,15 @@ import { dummyAccounts } from '../../utils/dummyAccounts';
 import { createPageUrl } from '../../utils';
 import { clearStoredUser, getStoredUser, setStoredUser } from '../../utils/authSession.js';
 
+interface RegisterOptions {
+  skipRedirect?: boolean;
+}
+
 interface AuthContextType {
   user: any;
   loading: boolean;
   login: (email: string, password: string, redirectTo?: string | null) => Promise<any>;
-  register: (payload: any, redirectTo?: string | null) => Promise<any>;
+  register: (payload: any, redirectTo?: string | null, options?: RegisterOptions) => Promise<any>;
   logout: () => Promise<void>;
   refreshUser: () => Promise<void>;
 }
@@ -69,13 +73,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   );
 
   const register = useCallback(
-    async (payload: any, redirectTo?: string | null) => {
+    async (payload: any, redirectTo?: string | null, options?: RegisterOptions) => {
       const created = await User.create(payload);
       setStoredUser(created);
       setUser(created);
 
-      const target = redirectTo || createPageUrl(payload.start_page || 'Timeline');
-      navigate(target, { replace: true });
+      if (!options?.skipRedirect) {
+        const target = redirectTo || createPageUrl(payload.start_page || 'Timeline');
+        navigate(target, { replace: true });
+      }
+
       return created;
     },
     [navigate],

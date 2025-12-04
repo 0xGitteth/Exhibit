@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Edit, Bookmark, Camera, Grid, LogOut, Eye, EyeOff, Shield, BarChart2, SunMedium, Moon, Star, Users } from "lucide-react";
+import { Edit, Bookmark, Camera, Grid, LogOut, Eye, EyeOff, Shield, BarChart2, SunMedium, Moon, Star, Users, Settings } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -318,6 +318,8 @@ export default function Profile() {
   const [agencyAccounts, setAgencyAccounts] = useState(defaultAgencyAccounts);
   const [companyAccounts, setCompanyAccounts] = useState(defaultCompanyAccounts);
 
+  const isOwner = authUser?.email ? authUser.email === user?.email : DUMMY_DATA_ENABLED;
+
   useEffect(() => {
     const loadAffiliationAccounts = async () => {
       if (DUMMY_DATA_ENABLED) return;
@@ -357,20 +359,25 @@ export default function Profile() {
     [agencyAccounts, companyAccounts],
   );
 
-  const renderAffiliation = (value, type) => {
+  const renderAffiliation = (value, type, tone = "default") => {
     if (!value) return null;
     const match = findAffiliationAccount(value, type);
+    const linkClasses =
+      tone === "dark"
+        ? "text-white font-semibold hover:text-white/80 underline-offset-2"
+        : "text-serenity-700 dark:text-serenity-200 font-medium hover:underline";
+    const textClasses = tone === "dark" ? "text-white/90" : "text-slate-700 dark:text-slate-200";
     if (match) {
       const target = `${createPageUrl('Profile')}?user=${encodeURIComponent(
         match.id || match.email || match.display_name,
       )}`;
       return (
-        <Link to={target} className="text-serenity-700 dark:text-serenity-200 font-medium hover:underline">
+        <Link to={target} className={linkClasses}>
           {match.display_name || match.full_name || match.email}
         </Link>
       );
     }
-    return <span className="text-slate-700 dark:text-slate-200">{value}</span>;
+    return <span className={textClasses}>{value}</span>;
   };
 
   const fetchLinkedModels = useCallback(
@@ -565,6 +572,7 @@ export default function Profile() {
   if (!user) return null;
 
   const showTalentTab = user.roles?.some((role) => ["agency", "company"].includes(role));
+  const heroBackground = user.banner_url || user.avatar_url;
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-2 space-y-6">
@@ -578,59 +586,98 @@ export default function Profile() {
         companyAccounts={companyAccounts}
       />
 
-      {/* Profile Header */}
-      <Card className="glass-panel shadow-floating">
-        <CardContent className="p-6">
-          <div className="flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-6">
-            <Avatar className="w-24 h-24 ring-4 ring-white shadow-lg">
-              <AvatarImage src={user.avatar_url} />
-              <AvatarFallback>{user.display_name?.[0]}</AvatarFallback>
-            </Avatar>
-            <div className="flex-1 text-center md:text-left">
-              <h1 className="text-3xl font-bold text-midnight-900 dark:text-white">{user.display_name || user.full_name}</h1>
-              <p className="text-slate-700 dark:text-slate-200 mt-2">{user.bio || "Deel je verhaal en inspireer anderen..."}</p>
-              <div className="flex flex-wrap gap-2 mt-4 justify-center md:justify-start">
-                {[...(user.roles || [])]
-                  .sort((a, b) => (a === primaryRole ? -1 : b === primaryRole ? 1 : 0))
-                  .map(roleId => {
-                    const roleInfo = userRoles.find(r => r.id === roleId);
-                    const isPrimary = roleId === primaryRole;
-                    return (
-                      <Badge
-                        key={roleId}
-                        variant="secondary"
-                        className="bg-serenity-100 text-serenity-800 border-serenity-200 flex items-center gap-1"
-                      >
-                        {roleInfo?.label}
-                        {isPrimary && <span className="text-[11px] font-semibold text-amber-700">Primair</span>}
-                      </Badge>
-                    );
-                  })}
-                {user.styles?.slice(0, 3).map(styleId => {
-                    const styleInfo = photographyStyles.find(s => s.id === styleId);
-                    return <Badge key={styleId} variant="outline" className="border-serenity-300 text-serenity-800 dark:text-serenity-100">{styleInfo?.label}</Badge>
-                })}
+      {/* Profile Hero */}
+      <div className="relative overflow-hidden rounded-3xl shadow-floating border border-white/70 dark:border-midnight-50/30">
+        {heroBackground ? (
+          <img
+            src={heroBackground}
+            alt="Profiel achtergrond"
+            className="absolute inset-0 w-full h-full object-cover blur-sm scale-110"
+            aria-hidden
+          />
+        ) : (
+          <div className="absolute inset-0 bg-gradient-to-r from-serenity-600 via-serenity-500 to-midnight-900" aria-hidden />
+        )}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" aria-hidden />
+
+        <div className="relative p-6 sm:p-8 flex flex-col gap-6">
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex-1 flex flex-col md:flex-row md:items-end gap-4 md:gap-6">
+              <Avatar className="w-28 h-28 sm:w-32 sm:h-32 ring-4 ring-white shadow-2xl border-4 border-white/80 bg-white/60">
+                <AvatarImage src={user.avatar_url} />
+                <AvatarFallback>{user.display_name?.[0]}</AvatarFallback>
+              </Avatar>
+              <div className="text-white space-y-2">
+                <h1 className="text-3xl sm:text-4xl font-bold drop-shadow-lg">
+                  {user.display_name || user.full_name}
+                </h1>
+                <p className="text-white/80 max-w-2xl">
+                  {user.bio || "Deel je verhaal en inspireer anderen..."}
+                </p>
               </div>
-              {(user.agency_affiliation || user.company_affiliation) && (
-                <div className="mt-3 space-y-1 text-sm">
-                  {user.agency_affiliation && (
-                    <div className="flex items-center gap-1 text-slate-700 dark:text-slate-200 justify-center md:justify-start">
-                      <span className="font-semibold text-slate-900 dark:text-white">Agency:</span>
-                      {renderAffiliation(user.agency_affiliation, 'agency')}
-                    </div>
-                  )}
-                  {user.company_affiliation && (
-                    <div className="flex items-center gap-1 text-slate-700 dark:text-slate-200 justify-center md:justify-start">
-                      <span className="font-semibold text-slate-900 dark:text-white">Bedrijf:</span>
-                      {renderAffiliation(user.company_affiliation, 'company')}
-                    </div>
-                  )}
+            </div>
+            {isOwner && (
+              <Button
+                variant="secondary"
+                size="lg"
+                onClick={() => setShowEditProfile(true)}
+                className="bg-white/90 text-midnight-900 hover:bg-white"
+              >
+                <Settings className="w-5 h-5 mr-2" />
+                Instellingen
+              </Button>
+            )}
+          </div>
+
+          <div className="flex flex-wrap gap-2">
+            {[...(user.roles || [])]
+              .sort((a, b) => (a === primaryRole ? -1 : b === primaryRole ? 1 : 0))
+              .map(roleId => {
+                const roleInfo = userRoles.find(r => r.id === roleId);
+                const isPrimary = roleId === primaryRole;
+                return (
+                  <Badge
+                    key={roleId}
+                    variant="secondary"
+                    className="bg-white/20 text-white border-white/40 flex items-center gap-1"
+                  >
+                    {roleInfo?.label}
+                    {isPrimary && <span className="text-[11px] font-semibold text-amber-200">Primair</span>}
+                  </Badge>
+                );
+              })}
+            {user.styles?.slice(0, 3).map(styleId => {
+              const styleInfo = photographyStyles.find(s => s.id === styleId);
+              return (
+                <Badge
+                  key={styleId}
+                  variant="outline"
+                  className="border-white/60 text-white bg-white/10"
+                >
+                  {styleInfo?.label}
+                </Badge>
+              );
+            })}
+          </div>
+
+          {(user.agency_affiliation || user.company_affiliation) && (
+            <div className="flex flex-wrap gap-4 text-sm text-white/90">
+              {user.agency_affiliation && (
+                <div className="flex items-center gap-2">
+                  <span className="font-semibold">Agency:</span>
+                  {renderAffiliation(user.agency_affiliation, 'agency', 'dark')}
+                </div>
+              )}
+              {user.company_affiliation && (
+                <div className="flex items-center gap-2">
+                  <span className="font-semibold">Bedrijf:</span>
+                  {renderAffiliation(user.company_affiliation, 'company', 'dark')}
                 </div>
               )}
             </div>
-          </div>
-        </CardContent>
-      </Card>
+          )}
+        </div>
+      </div>
 
       {user.roles?.length > 1 && (
         <Card className="glass-panel shadow-floating">
@@ -706,112 +753,165 @@ export default function Profile() {
 
       {/* Stats and Settings */}
       <Card className="glass-panel shadow-floating">
-        <CardContent className="p-4 flex justify-around items-center flex-wrap gap-4">
-            <div className="text-center">
-              <div className="text-2xl font-bold text-midnight-900 dark:text-white">{userPosts.length}</div>
-              <div className="text-sm text-slate-600 dark:text-slate-300 uppercase">Posts</div>
+        <CardContent className="p-4 sm:p-6 flex flex-col gap-4">
+          <div className="flex flex-wrap items-center gap-6">
+            <div className="text-center px-4 py-2 rounded-xl bg-serenity-50 dark:bg-midnight-100/40 min-w-[120px]">
+              <div className="text-3xl font-bold text-midnight-900 dark:text-white">{userPosts.length}</div>
+              <div className="text-xs font-semibold tracking-wide text-serenity-700 dark:text-serenity-100 uppercase">Posts</div>
             </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-midnight-900 dark:text-white">{savedPosts.length}</div>
-              <div className="text-sm text-slate-600 dark:text-slate-300 uppercase">Opgeslagen</div>
+            <div className="text-center px-4 py-2 rounded-xl bg-serenity-50 dark:bg-midnight-100/40 min-w-[120px]">
+              <div className="text-3xl font-bold text-midnight-900 dark:text-white">{savedPosts.length}</div>
+              <div className="text-xs font-semibold tracking-wide text-serenity-700 dark:text-serenity-100 uppercase">Moodboard</div>
             </div>
-            <div className="flex items-center space-x-2">
-                <Button variant="ghost" size="icon" className="rounded-full bg-serenity-100 dark:bg-midnight-100/40" onClick={() => setShowEditProfile(true)} title="Profiel bewerken"><Edit className="w-5 h-5" /></Button>
-                <Link to={createPageUrl("Analytics")}>
-                  <Button variant="ghost" size="icon" className="rounded-full bg-serenity-100 dark:bg-midnight-100/40" title="Statistieken"><BarChart2 className="w-5 h-5" /></Button>
-                </Link>
-                <Button
-                  variant="ghost"
-                  className="rounded-full bg-serenity-100 dark:bg-midnight-100/40 px-4 py-2 flex items-center gap-2"
-                  onClick={toggleTheme}
-                  title="Schakel thema"
-                >
-                  {theme === 'light' ? <SunMedium className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-                  <span className="text-sm font-semibold">Thema: {theme === 'light' ? 'Licht' : 'Donker'}</span>
-                </Button>
-                <Button variant="ghost" size="icon" className="rounded-full bg-serenity-100 dark:bg-midnight-100/40" onClick={toggleSensitiveContent} title={user.show_sensitive_content ? "Gevoelige content verbergen" : "Gevoelige content tonen"}>
-                  {user.show_sensitive_content ? <Eye className="w-5 h-5" /> : <EyeOff className="w-5 h-5" />}
-                </Button>
-                <Button variant="ghost" size="icon" className="rounded-full bg-serenity-100 dark:bg-midnight-100/40" onClick={() => setShowHouseRules(true)} title="Huisregels"><Shield className="w-5 h-5" /></Button>
-                <Button variant="ghost" size="icon" className="rounded-full bg-serenity-100 dark:bg-midnight-100/40" onClick={handleLogout} title="Uitloggen"><LogOut className="w-5 h-5 text-red-500" /></Button>
-            </div>
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+            <Link to={createPageUrl("Analytics")}>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="rounded-full bg-serenity-100 dark:bg-midnight-100/40"
+                title="Statistieken"
+              >
+                <BarChart2 className="w-5 h-5" />
+              </Button>
+            </Link>
+            <Button
+              variant="ghost"
+              className="rounded-full bg-serenity-100 dark:bg-midnight-100/40 px-4 py-2 flex items-center gap-2"
+              onClick={toggleTheme}
+              title="Schakel thema"
+            >
+              {theme === 'light' ? <SunMedium className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+              <span className="text-sm font-semibold">Thema: {theme === 'light' ? 'Licht' : 'Donker'}</span>
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="rounded-full bg-serenity-100 dark:bg-midnight-100/40"
+              onClick={toggleSensitiveContent}
+              title={user.show_sensitive_content ? "Gevoelige content verbergen" : "Gevoelige content tonen"}
+            >
+              {user.show_sensitive_content ? <Eye className="w-5 h-5" /> : <EyeOff className="w-5 h-5" />}
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="rounded-full bg-serenity-100 dark:bg-midnight-100/40"
+              onClick={() => setShowHouseRules(true)}
+              title="Huisregels"
+            >
+              <Shield className="w-5 h-5" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="rounded-full bg-serenity-100 dark:bg-midnight-100/40"
+              onClick={handleLogout}
+              title="Uitloggen"
+            >
+              <LogOut className="w-5 h-5 text-red-500" />
+            </Button>
+          </div>
         </CardContent>
       </Card>
       
       {/* Content Tabs */}
-      <Tabs defaultValue="posts" className="w-full">
-        <TabsList
-          className={`grid w-full ${showTalentTab ? "grid-cols-3" : "grid-cols-2"} mb-6 bg-white/70 dark:bg-midnight-100/60 backdrop-blur-sm rounded-2xl border border-serenity-200/70 dark:border-midnight-50/30 shadow-soft`}
-        >
-          <TabsTrigger value="posts" className="flex items-center space-x-2 data-[state=active]:bg-serenity-600 data-[state=active]:text-white rounded-xl"><Grid className="w-4 h-4" /><span>Mijn Posts</span></TabsTrigger>
-          <TabsTrigger value="saved" className="flex items-center space-x-2 data-[state=active]:bg-serenity-600 data-[state=active]:text-white rounded-xl"><Bookmark className="w-4 h-4" /><span>Moodboard</span></TabsTrigger>
-          {showTalentTab && (
+      <Tabs defaultValue="posts" className="w-full glass-panel shadow-floating overflow-hidden">
+        <div className="border-b border-serenity-100/80 dark:border-midnight-100/40 bg-white/70 dark:bg-midnight-100/40 px-2 py-1">
+          <TabsList
+            className={`grid w-full ${showTalentTab ? "grid-cols-3" : "grid-cols-2"} bg-transparent shadow-none gap-2`}
+          >
             <TabsTrigger
-              value="talent"
-              className="flex items-center space-x-2 data-[state=active]:bg-serenity-600 data-[state=active]:text-white rounded-xl"
+              value="posts"
+              className="flex items-center justify-center space-x-2 rounded-xl data-[state=active]:bg-serenity-600 data-[state=active]:text-white"
             >
-              <Users className="w-4 h-4" />
-              <span>Talent</span>
+              <Grid className="w-4 h-4" />
+              <span>Mijn Posts</span>
             </TabsTrigger>
-          )}
-        </TabsList>
+            <TabsTrigger
+              value="saved"
+              className="flex items-center justify-center space-x-2 rounded-xl data-[state=active]:bg-serenity-600 data-[state=active]:text-white"
+            >
+              <Bookmark className="w-4 h-4" />
+              <span>Moodboard</span>
+            </TabsTrigger>
+            {showTalentTab && (
+              <TabsTrigger
+                value="talent"
+                className="flex items-center justify-center space-x-2 rounded-xl data-[state=active]:bg-serenity-600 data-[state=active]:text-white"
+              >
+                <Users className="w-4 h-4" />
+                <span>Talent</span>
+              </TabsTrigger>
+            )}
+          </TabsList>
+        </div>
 
-        <TabsContent value="posts">
-          {userPosts.length === 0 ? (
-            <div className="text-center py-16 glass-panel shadow-floating">
-              <Camera className="w-16 h-16 mx-auto mb-4 text-serenity-500" />
-              <h3 className="text-lg font-medium text-midnight-900 dark:text-white mb-2">Nog geen posts gedeeld</h3>
-              <p className="text-slate-700 dark:text-slate-200">Begin met het delen van je werk om je portfolio op te bouwen</p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-              {userPosts.map((post, index) => (
-                <motion.div
-                  key={post.id}
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: index * 0.05 }}
-                  className="aspect-square relative rounded-xl overflow-hidden group cursor-pointer shadow-soft"
-                >
-                  <img src={post.image_url} alt={post.title} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
-                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all duration-300 flex items-end p-4">
-                    <h4 className="text-white font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300">{post.title}</h4>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          )}
-        </TabsContent>
-
-        <TabsContent value="saved">
-          {savedPosts.length === 0 ? (
-            <div className="text-center py-16 glass-panel shadow-floating">
-              <Bookmark className="w-16 h-16 mx-auto mb-4 text-serenity-500" />
-              <h3 className="text-lg font-medium text-midnight-900 dark:text-white mb-2">Nog geen foto&apos;s opgeslagen</h3>
-              <p className="text-slate-700 dark:text-slate-200">Sla inspirerende foto&apos;s op om je persoonlijke moodboard te maken</p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-              {savedPosts.map((post, index) => (
-                <motion.div
-                  key={post.id}
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: index * 0.05 }}
-                  className="aspect-square relative rounded-xl overflow-hidden group cursor-pointer shadow-soft"
-                >
-                  <img src={post.image_url} alt={post.title} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
-                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all duration-300 flex items-end p-4">
-                    <div className="text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      <h4 className="font-medium">{post.title}</h4>
-                      <p className="text-sm opacity-80">door {post.photographer_name}</p>
+        <div className="p-4 sm:p-6">
+          <TabsContent value="posts">
+            {userPosts.length === 0 ? (
+              <div className="text-center py-16 glass-panel shadow-floating">
+                <Camera className="w-16 h-16 mx-auto mb-4 text-serenity-500" />
+                <h3 className="text-lg font-medium text-midnight-900 dark:text-white mb-2">Nog geen posts gedeeld</h3>
+                <p className="text-slate-700 dark:text-slate-200">Begin met het delen van je werk om je portfolio op te bouwen</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                {userPosts.map((post, index) => (
+                  <motion.div
+                    key={post.id}
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: index * 0.05 }}
+                    className="relative group overflow-hidden rounded-2xl border border-white/70 dark:border-midnight-50/30 bg-white/60 dark:bg-midnight-100/30 shadow-floating aspect-[3/4]"
+                  >
+                    <img
+                      src={post.image_url}
+                      alt={post.title}
+                      className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent opacity-80 group-hover:opacity-90 transition-opacity" />
+                    <div className="relative h-full flex flex-col justify-end p-4">
+                      <h4 className="text-white font-semibold drop-shadow-lg">{post.title}</h4>
                     </div>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          )}
-        </TabsContent>
+                  </motion.div>
+                ))}
+              </div>
+            )}
+          </TabsContent>
+
+          <TabsContent value="saved">
+            {savedPosts.length === 0 ? (
+              <div className="text-center py-16 glass-panel shadow-floating">
+                <Bookmark className="w-16 h-16 mx-auto mb-4 text-serenity-500" />
+                <h3 className="text-lg font-medium text-midnight-900 dark:text-white mb-2">Nog geen foto&apos;s opgeslagen</h3>
+                <p className="text-slate-700 dark:text-slate-200">Sla inspirerende foto&apos;s op om je persoonlijke moodboard te maken</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                {savedPosts.map((post, index) => (
+                  <motion.div
+                    key={post.id}
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: index * 0.05 }}
+                    className="relative group overflow-hidden rounded-2xl border border-white/70 dark:border-midnight-50/30 bg-white/60 dark:bg-midnight-100/30 shadow-floating aspect-[3/4] cursor-pointer"
+                  >
+                    <img
+                      src={post.image_url}
+                      alt={post.title}
+                      className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent opacity-80 group-hover:opacity-90 transition-opacity" />
+                    <div className="relative h-full flex flex-col justify-end p-4">
+                      <h4 className="text-white font-semibold drop-shadow-lg">{post.title}</h4>
+                      <p className="text-sm text-white/80">door {post.photographer_name}</p>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            )}
+          </TabsContent>
 
         {showTalentTab && (
           <TabsContent value="talent">
@@ -894,6 +994,7 @@ export default function Profile() {
             </div>
           </TabsContent>
         )}
+        </div>
       </Tabs>
     </div>
   );
