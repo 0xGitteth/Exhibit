@@ -24,21 +24,7 @@ import { sampleMoodboardPosts, sampleProfile, sampleProfilePosts, sampleUsers } 
 import { getMoodboardPosts } from "../utils/moodboardStorage";
 import { useAuth } from "@/context/AuthContext";
 import { useTheme } from "@/context/ThemeContext";
-
-const photographyStyles = [
-  { id: "portrait", label: "Portrait" }, { id: "fashion", label: "Fashion" }, { id: "boudoir", label: "Boudoir" },
-  { id: "art_nude", label: "Art Nude" }, { id: "street", label: "Street" }, { id: "landscape", label: "Landscape" },
-  { id: "nature", label: "Nature" }, { id: "conceptual", label: "Conceptual" }, { id: "editorial", label: "Editorial" },
-  { id: "fine_art", label: "Fine Art" }, { id: "wedding", label: "Wedding" }, { id: "sport", label: "Sport" },
-  { id: "advertising", label: "Advertising" }, { id: "beauty", label: "Beauty" }, { id: "lifestyle", label: "Lifestyle" },
-  { id: "documentary", label: "Documentary" }, { id: "travel", label: "Travel" }, { id: "architecture", label: "Architecture" },
-  { id: "macro", label: "Macro" }, { id: "wildlife", label: "Wildlife" }, { id: "food", label: "Food" },
-  { id: "product", label: "Product" }, { id: "automotive", label: "Automotive" }, { id: "event", label: "Event" },
-  { id: "corporate", label: "Corporate" }, { id: "maternity", label: "Maternity" }, { id: "family", label: "Family" },
-  { id: "children", label: "Children" }, { id: "pet", label: "Pet" }, { id: "black_white", label: "Black & White" },
-  { id: "abstract", label: "Abstract" }, { id: "surreal", label: "Surreal" }, { id: "vintage", label: "Vintage" },
-  { id: "minimalist", label: "Minimalist" }, { id: "candid", label: "Candid" }, { id: "glamour", label: "Glamour" }
-];
+import { getStyleLabel, getStyleTone, photographyStyles, resolveStyleId } from "../utils/photographyStyles";
 
 const userRoles = [
   { id: "photographer", label: "Fotograaf" },
@@ -647,14 +633,15 @@ export default function Profile() {
                 );
               })}
             {user.styles?.slice(0, 3).map(styleId => {
-              const styleInfo = photographyStyles.find(s => s.id === styleId);
+              const resolvedId = resolveStyleId(styleId);
+              const styleInfo = photographyStyles.find(s => s.id === resolvedId);
+              const tone = getStyleTone(resolvedId);
               return (
                 <Badge
                   key={styleId}
-                  variant="outline"
-                  className="border-white/60 text-white bg-white/10"
+                  className={`bg-gradient-to-r ${tone.gradient} ${tone.text} border ${tone.border} ring-1 ring-white/70 shadow-none px-3 py-1 rounded-full text-sm font-semibold`}
                 >
-                  {styleInfo?.label}
+                  {styleInfo?.label || getStyleLabel(resolvedId)}
                 </Badge>
               );
             })}

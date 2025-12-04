@@ -7,7 +7,7 @@ import {
   isPostInMoodboard,
   removePostFromMoodboard,
 } from '../utils/moodboardStorage';
-import { getStyleTone, photographyStyles } from '../utils/photographyStyles';
+import { getStyleLabel, getStyleTone, photographyStyles, resolveStyleId } from '../utils/photographyStyles';
 import { sampleUsers } from '../utils/dummyData';
 
 export default function PostCard({ post, onSaveToMoodboard }) {
@@ -178,8 +178,9 @@ export default function PostCard({ post, onSaveToMoodboard }) {
           {tags?.length > 0 && (
             <div className="mt-auto flex flex-wrap gap-2 pt-2">
               {tags.slice(0, 6).map((tag) => {
-                const tone = getStyleTone(tag);
-                const label = styleLabelMap[tag] || tag;
+                const resolvedId = resolveStyleId(tag);
+                const tone = getStyleTone(resolvedId);
+                const label = getStyleLabel(resolvedId) || styleLabelMap[tag] || tag;
                 return (
                   <span
                     key={tag}
