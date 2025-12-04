@@ -1,7 +1,8 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Button } from '@/components/ui/button';
-import { Heart, MessageCircle, BookmarkPlus, Bookmark, ImageOff } from 'lucide-react';
+import { Heart, MessageCircle, BookmarkPlus, Bookmark, ImageOff, Send } from 'lucide-react';
+import Post from '../entities/Post';
 import {
   addPostToMoodboard,
   isPostInMoodboard,
@@ -16,6 +17,9 @@ export default function PostCard({ post, onSaveToMoodboard }) {
   const [saved, setSaved] = useState(isPostInMoodboard(post?.id));
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);
+  const [commentText, setCommentText] = useState('');
+  const [commentError, setCommentError] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     setSaved(isPostInMoodboard(post?.id));
@@ -61,6 +65,7 @@ export default function PostCard({ post, onSaveToMoodboard }) {
   }, []);
 
   const comments = post?.comments_count ?? post?.comment_count ?? 0;
+  const [commentCount, setCommentCount] = useState(comments);
   const image = post?.image_url;
 
   const fallbackUser = useMemo(() => {
@@ -87,7 +92,36 @@ export default function PostCard({ post, onSaveToMoodboard }) {
     setImageError(false);
   }, [image, post]);
 
+  useEffect(() => {
+    setCommentCount(comments);
+    setCommentText('');
+    setCommentError('');
+  }, [comments, post?.id]);
+
   const showImage = image && !imageError;
+
+  const handleSubmitComment = async (event) => {
+    event.preventDefault();
+    const trimmed = commentText.trim();
+
+    if (!trimmed) {
+      setCommentError('Voer een reactie in om te plaatsen.');
+      return;
+    }
+
+    setIsSubmitting(true);
+    setCommentError('');
+
+    try {
+      await Post.createComment({ postId: post?.id, content: trimmed });
+      setCommentCount((prev) => prev + 1);
+      setCommentText('');
+    } catch (error) {
+      setCommentError('Reactie plaatsen is mislukt. Probeer het opnieuw.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <div className="flex flex-col items-center gap-3">
@@ -135,7 +169,7 @@ export default function PostCard({ post, onSaveToMoodboard }) {
               </Button>
               <div className="flex items-center gap-2 text-slate-700 dark:text-slate-200 text-lg font-semibold">
                 <MessageCircle className="w-5 h-5" />
-                <span>{comments}</span>
+                <span>{commentCount}</span>
               </div>
             </div>
 
@@ -158,6 +192,35 @@ export default function PostCard({ post, onSaveToMoodboard }) {
               )}
             </Button>
           </div>
+
+          <form
+            onSubmit={handleSubmitComment}
+            className="flex flex-col gap-2 rounded-xl border border-serenity-100/80 bg-serenity-50/50 px-3 py-3 dark:border-midnight-50/30 dark:bg-midnight-100/20"
+          >
+            <label className="text-sm font-semibold text-midnight-900 dark:text-serenity-50" htmlFor={`comment-${post?.id}`}>
+              Plaats een reactie
+            </label>
+            <div className="flex flex-col gap-2 sm:flex-row">
+              <textarea
+                id={`comment-${post?.id}`}
+                value={commentText}
+                onChange={(e) => setCommentText(e.target.value)}
+                rows={2}
+                className="flex-1 resize-none rounded-lg border border-serenity-100 bg-white/80 px-3 py-2 text-sm text-midnight-900 shadow-inner placeholder:text-serenity-400 focus:border-serenity-400 focus:outline-none focus:ring-2 focus:ring-serenity-300 dark:border-midnight-50/30 dark:bg-midnight-500/40 dark:text-serenity-50 dark:placeholder:text-serenity-200"
+                placeholder="Deel je feedback of laat een compliment achter"
+                disabled={isSubmitting}
+              />
+              <Button
+                type="submit"
+                className="self-end h-10 gap-2 rounded-lg px-4 text-sm font-semibold"
+                disabled={isSubmitting}
+              >
+                <Send className="h-4 w-4" />
+                {isSubmitting ? 'Plaatsen...' : 'Verstuur'}
+              </Button>
+            </div>
+            {commentError && <p className="text-xs font-medium text-rose-600">{commentError}</p>}
+          </form>
 
           <div className="flex flex-col gap-3 border-t border-serenity-100/70 dark:border-midnight-50/20 pt-4 text-left">
             <div className="space-y-1">

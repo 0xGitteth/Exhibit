@@ -54,6 +54,10 @@ export async function createPost(payload) {
   return request('/posts', { method: 'POST', body: JSON.stringify(payload) });
 }
 
+export async function createComment(payload) {
+  return request('/comments', { method: 'POST', body: JSON.stringify(payload) });
+}
+
 export async function filterLikes(filter) {
   return request('/likes/filter', { method: 'POST', body: JSON.stringify(filter) });
 }
