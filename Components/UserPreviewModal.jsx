@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { getStyleLabel, getStyleTone, photographyStyles, resolveStyleId } from '../utils/photographyStyles';
+import { getStyleTone, photographyStyles } from '../utils/photographyStyles';
 
 const tintTowardWhite = (hexColor, intensity = 0.9) => {
   const normalized = hexColor.replace('#', '');
@@ -21,6 +21,18 @@ const hexWithAlpha = (hexColor, alpha = 0.85) => {
   const g = parseInt(normalized.slice(2, 4), 16);
   const b = parseInt(normalized.slice(4, 6), 16);
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+};
+
+const styleLabelMap = Object.fromEntries(photographyStyles.map((style) => [style.id, style.label]));
+
+const resolveStyleId = (theme) => {
+  if (!theme) return null;
+  const normalized = theme.toLowerCase().trim();
+  const byId = photographyStyles.find((style) => style.id === normalized);
+  if (byId) return byId.id;
+
+  const byLabel = photographyStyles.find((style) => style.label.toLowerCase() === normalized);
+  return byLabel?.id || normalized;
 };
 
 export default function UserPreviewModal({
@@ -146,7 +158,7 @@ export default function UserPreviewModal({
                               const baseColor = tone.base || '#0ea5e9';
                               const pastelBackground = tintTowardWhite(baseColor, 0.84);
                               const pastelBorder = tintTowardWhite(baseColor, 0.75);
-                              const label = getStyleLabel(id) || original;
+                              const label = styleLabelMap[id] || original;
 
                               return (
                                 <Badge
