@@ -37,6 +37,9 @@ export const photographyStyles = [
   { id: 'glamour', label: 'Glamour' },
 ];
 
+const styleIdLookup = Object.fromEntries(photographyStyles.map((style) => [style.id.toLowerCase(), style.id]));
+const styleLabelLookup = Object.fromEntries(photographyStyles.map((style) => [style.label.toLowerCase(), style.id]));
+
 const pastelTone = (color, base) => ({
   gradient: `from-${color}-50 via-${color}-100 to-${color}-200`,
   text: `text-${color}-900`,
@@ -44,6 +47,19 @@ const pastelTone = (color, base) => ({
   ring: `ring-${color}-200/70`,
   base,
 });
+
+export const resolveStyleId = (value) => {
+  if (!value) return null;
+  const normalized = value.toString().trim().toLowerCase();
+  return styleIdLookup[normalized] || styleLabelLookup[normalized] || normalized;
+};
+
+export const getStyleLabel = (value) => {
+  if (!value) return null;
+  const resolvedId = resolveStyleId(value);
+  const match = photographyStyles.find((style) => style.id === resolvedId);
+  return match?.label || value;
+};
 
 const styleToneMap = {
   portrait: pastelTone('amber', '#fbbf24'),
@@ -175,10 +191,11 @@ const hashStyle = (id) => {
 };
 
 export const getStyleTone = (styleId) => {
-  if (!styleId) return tonePalette[0];
-  const mapped = styleToneMap[styleId];
+  const resolvedId = resolveStyleId(styleId);
+  if (!resolvedId) return tonePalette[0];
+  const mapped = styleToneMap[resolvedId];
   if (mapped) return mapped;
-  const index = Math.abs(hashStyle(styleId)) % tonePalette.length;
+  const index = Math.abs(hashStyle(resolvedId)) % tonePalette.length;
   return tonePalette[index];
 };
 
