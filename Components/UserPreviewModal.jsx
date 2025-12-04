@@ -3,14 +3,7 @@ import PropTypes from 'prop-types';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-
-const palette = ['#8B5CF6', '#EC4899', '#10B981', '#06B6D4', '#F59E0B', '#3B82F6', '#F97316'];
-
-const themeColor = (themeLabel, fallbackIndex = 0) => {
-  if (!themeLabel) return palette[fallbackIndex % palette.length];
-  const hash = themeLabel.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-  return palette[Math.abs(hash) % palette.length];
-};
+import { getStyleTone, photographyStyles } from '../utils/photographyStyles';
 
 const tintTowardWhite = (hexColor, intensity = 0.9) => {
   const normalized = hexColor.replace('#', '');
@@ -20,6 +13,26 @@ const tintTowardWhite = (hexColor, intensity = 0.9) => {
 
   const blend = (channel) => Math.round(channel + (255 - channel) * intensity);
   return `rgb(${blend(r)}, ${blend(g)}, ${blend(b)})`;
+};
+
+const hexWithAlpha = (hexColor, alpha = 0.85) => {
+  const normalized = hexColor.replace('#', '');
+  const r = parseInt(normalized.slice(0, 2), 16);
+  const g = parseInt(normalized.slice(2, 4), 16);
+  const b = parseInt(normalized.slice(4, 6), 16);
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+};
+
+const styleLabelMap = Object.fromEntries(photographyStyles.map((style) => [style.id, style.label]));
+
+const resolveStyleId = (theme) => {
+  if (!theme) return null;
+  const normalized = theme.toLowerCase().trim();
+  const byId = photographyStyles.find((style) => style.id === normalized);
+  if (byId) return byId.id;
+
+  const byLabel = photographyStyles.find((style) => style.label.toLowerCase() === normalized);
+  return byLabel?.id || normalized;
 };
 
 export default function UserPreviewModal({
@@ -34,6 +47,14 @@ export default function UserPreviewModal({
 
   const [open, setOpen] = useState(initialOpen);
   const [renderModal, setRenderModal] = useState(initialOpen);
+
+  const resolvedThemes = useMemo(
+    () =>
+      themes
+        .map((theme) => ({ original: theme, id: resolveStyleId(theme) || theme }))
+        .filter((theme) => theme.id),
+    [themes],
+  );
 
   useEffect(() => {
     if (open) setRenderModal(true);
@@ -61,17 +82,23 @@ export default function UserPreviewModal({
   }, [favoritePhotos, latestPhotos]);
 
   const accentTextColor = useMemo(() => {
-    if (!themes.length) return '#f8fafc';
-    return tintTowardWhite(themeColor(themes[0], 0), 0.92);
-  }, [themes]);
+    if (!resolvedThemes.length) return '#f8fafc';
+    const tone = getStyleTone(resolvedThemes[0]?.id);
+    return tintTowardWhite(tone.base || '#94a3b8', 0.92);
+  }, [resolvedThemes]);
 
   const gradientStyle = useMemo(() => {
-    const start = `${themeColor(themes[0], 0)}dd`;
-    const end = `${themeColor(themes[1] || themes[0], 1)}aa`;
+    if (!resolvedThemes.length) {
+      return { backgroundImage: 'linear-gradient(140deg, rgba(15,23,42,0.75), rgba(15,23,42,0.55))' };
+    }
+    const primaryTone = getStyleTone(resolvedThemes[0]?.id);
+    const secondaryTone = getStyleTone(resolvedThemes[1]?.id || resolvedThemes[0]?.id);
+    const start = hexWithAlpha(primaryTone.base || '#0ea5e9', 0.88);
+    const end = hexWithAlpha(secondaryTone.base || primaryTone.base || '#0ea5e9', 0.68);
     return {
       backgroundImage: `linear-gradient(140deg, ${start}, ${end})`,
     };
-  }, [themes]);
+  }, [resolvedThemes]);
 
   return (
     <>
@@ -124,17 +151,29 @@ export default function UserPreviewModal({
                           </p>
                         )}
 
-                        {themes.length > 0 && (
+                        {resolvedThemes.length > 0 && (
                           <div className="flex flex-wrap justify-center gap-2.5 md:gap-3">
-                            {themes.map((theme) => (
-                              <Badge
-                                key={theme}
-                                variant="outline"
-                                className="rounded-full border-white/40 bg-white/10 px-4 py-1 text-xs font-semibold text-white"
-                              >
-                                {theme}
-                              </Badge>
-                            ))}
+                            {resolvedThemes.map(({ original, id }) => {
+                              const tone = getStyleTone(id);
+                              const baseColor = tone.base || '#0ea5e9';
+                              const pastelBackground = tintTowardWhite(baseColor, 0.84);
+                              const pastelBorder = tintTowardWhite(baseColor, 0.75);
+                              const label = styleLabelMap[id] || original;
+
+                              return (
+                                <Badge
+                                  key={id}
+                                  className="rounded-full px-4 py-1 text-xs font-semibold shadow-none"
+                                  style={{
+                                    backgroundColor: pastelBackground,
+                                    color: baseColor,
+                                    border: `1px solid ${pastelBorder}`,
+                                  }}
+                                >
+                                  {label}
+                                </Badge>
+                              );
+                            })}
                           </div>
                         )}
                       </div>

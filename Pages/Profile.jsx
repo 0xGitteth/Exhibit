@@ -24,6 +24,7 @@ import { sampleMoodboardPosts, sampleProfile, sampleProfilePosts, sampleUsers } 
 import { getMoodboardPosts } from "../utils/moodboardStorage";
 import { useAuth } from "@/context/AuthContext";
 import { useTheme } from "@/context/ThemeContext";
+import { getStyleTone } from "../utils/photographyStyles";
 
 const photographyStyles = [
   { id: "portrait", label: "Portrait" }, { id: "fashion", label: "Fashion" }, { id: "boudoir", label: "Boudoir" },
@@ -648,11 +649,11 @@ export default function Profile() {
               })}
             {user.styles?.slice(0, 3).map(styleId => {
               const styleInfo = photographyStyles.find(s => s.id === styleId);
+              const tone = getStyleTone(styleId);
               return (
                 <Badge
                   key={styleId}
-                  variant="outline"
-                  className="border-white/60 text-white bg-white/10"
+                  className={`bg-gradient-to-r ${tone.gradient} ${tone.text} border ${tone.border} ring-1 ring-white/70 shadow-none px-3 py-1 rounded-full text-sm font-semibold`}
                 >
                   {styleInfo?.label}
                 </Badge>
